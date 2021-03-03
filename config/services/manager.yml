@@ -1,0 +1,21 @@
+services:
+
+   #VIEW          
+    listener.view:
+        class: App\EventListener\ViewListener
+        arguments: ['@translator.default']
+        #, '@manager.logger']
+        tags:
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelView }
+     
+    listener.validator:
+        class: App\EventListener\ParameterValidatorListener
+        arguments: ['@annotation_reader', '@validator', '@doctrine' ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelRequest }
+
+
+    App\Manager\DemoManager:
+        public: true
+        class: App\Manager\DemoManager
+        arguments: [ '@doctrine',  '@request_stack']
