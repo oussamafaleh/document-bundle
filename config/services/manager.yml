@@ -19,3 +19,8 @@ services:
         public: true
         class: App\Manager\DemoManager
         arguments: [ '@doctrine',  '@request_stack']
+
+    App\Manager\FolderManager:
+        public: true
+        class: App\Manager\FolderManager
+        arguments: [ '@doctrine',  '@request_stack' ]
