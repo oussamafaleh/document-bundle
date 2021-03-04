@@ -7,8 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ItemRepository::class)
+ * @InheritanceType("SINGLE_TABLE")
+ * @DiscriminatorColumn(name="discr", type="string")
+ * @DiscriminatorMap({"folder" = "Folder", "document" = "Document"})
  */
-class Item
+abstract Item
 {
     /**
      * @ORM\Id
