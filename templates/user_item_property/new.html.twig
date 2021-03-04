@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Folder{% endblock %}
+{% block title %}New UserItemProperty{% endblock %}
 
 {% block body %}
-
 <div class="card-body">
     <div class="col-lg-11 col-md-12">
       <div class="card">
@@ -13,11 +12,11 @@
         </div>
         <div class="card-body table-responsive">
 
-    {{ include('folder/_form.html.twig') }}
 
-    <a href="{{ path('folder_index') }}">back to list</a>
+    {{ include('user_item_property/_form.html.twig') }}
 
-    
+    <a href="{{ path('user_item_property_index') }}">back to list</a>
+
 </div>
 </div>
 </div>

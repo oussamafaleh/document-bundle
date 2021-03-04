@@ -30,12 +30,12 @@ class Item
     /**
      * @ORM\Column(type="datetime")
      */
-    private $create_at;
+    private $Create_At;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $update_at;
+    private $update_At;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -48,7 +48,7 @@ class Item
     private $icon;
 
     /**
-     * @ORM\OneToOne(targetEntity=Folder::class, inversedBy="item", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Folder::class, cascade={"persist", "remove"})
      */
     private $folder;
 
@@ -88,24 +88,24 @@ class Item
 
     public function getCreateAt(): ?\DateTimeInterface
     {
-        return $this->create_at;
+        return $this->Create_At;
     }
 
-    public function setCreateAt(\DateTimeInterface $create_at): self
+    public function setCreateAt(\DateTimeInterface $Create_At): self
     {
-        $this->create_at = $create_at;
+        $this->Create_At = $Create_At;
 
         return $this;
     }
 
     public function getUpdateAt(): ?\DateTimeInterface
     {
-        return $this->update_at;
+        return $this->update_At;
     }
 
-    public function setUpdateAt(\DateTimeInterface $update_at): self
+    public function setUpdateAt(\DateTimeInterface $update_At): self
     {
-        $this->update_at = $update_at;
+        $this->update_At = $update_At;
 
         return $this;
     }

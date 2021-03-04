@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UserItemProperty{% endblock %}
+
+{% block body %}
+    <h1>UserItemProperty</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user_item_property.id }}</td>
+            </tr>
+            <tr>
+                <th>Role</th>
+                <td>{{ user_item_property.role }}</td>
+            </tr>
+            <tr>
+                <th>Accepted</th>
+                <td>{{ user_item_property.accepted ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Is_tagged</th>
+                <td>{{ user_item_property.isTagged ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('user_item_property_index') }}">back to list</a>
+
+    <a href="{{ path('user_item_property_edit', {'id': user_item_property.id}) }}">edit</a>
+
+    {{ include('user_item_property/_delete_form.html.twig') }}
+{% endblock %}

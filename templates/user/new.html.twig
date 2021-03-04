@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Folder{% endblock %}
+{% block title %}New User{% endblock %}
 
 {% block body %}
 
@@ -13,9 +13,10 @@
         </div>
         <div class="card-body table-responsive">
 
-    {{ include('folder/_form.html.twig') }}
 
-    <a href="{{ path('folder_index') }}">back to list</a>
+    {{ include('user/_form.html.twig') }}
+
+    <a href="{{ path('user_index') }}">back to list</a>
 
     
 </div>

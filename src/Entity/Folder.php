@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\FolderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=FolderRepository::class)
  */
-class Folder  extends AbstractEntity
+class Folder
 {
     /**
      * @ORM\Id
@@ -18,60 +20,40 @@ class Folder  extends AbstractEntity
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=Item::class, mappedBy="folder", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity=Folder::class, inversedBy="folders")
      */
-    private $document;
+    private $folders;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Item::class, mappedBy="folder", cascade={"persist", "remove"})
-     */
-    private $item;
+    public function __construct()
+    {
+        $this->folders = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDocument(): ?Item
+    /**
+     * @return Collection|self[]
+     */
+    public function getFolders(): Collection
     {
-        return $this->document;
+        return $this->folders;
     }
 
-    public function setDocument(?Item $document): self
+    public function addFolder(self $folder): self
     {
-        // unset the owning side of the relation if necessary
-        if ($document === null && $this->document !== null) {
-            $this->document->setFolder(null);
+        if (!$this->folders->contains($folder)) {
+            $this->folders[] = $folder;
         }
-
-        // set the owning side of the relation if necessary
-        if ($document !== null && $document->getFolder() !== $this) {
-            $document->setFolder($this);
-        }
-
-        $this->document = $document;
 
         return $this;
     }
 
-    public function getItem(): ?Item
+    public function removeFolder(self $folder): self
     {
-        return $this->item;
-    }
-
-    public function setItem(?Item $item): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($item === null && $this->item !== null) {
-            $this->item->setFolder(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($item !== null && $item->getFolder() !== $this) {
-            $item->setFolder($this);
-        }
-
-        $this->item = $item;
+        $this->folders->removeElement($folder);
 
         return $this;
     }

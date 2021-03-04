@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Folder{% endblock %}
+{% block title %}Edit Document{% endblock %}
 
 {% block body %}
-
 <div class="card-body">
     <div class="col-lg-11 col-md-12">
       <div class="card">
@@ -13,10 +12,13 @@
         </div>
         <div class="card-body table-responsive">
 
-    {{ include('folder/_form.html.twig') }}
 
-    <a href="{{ path('folder_index') }}">back to list</a>
 
+    {{ include('document/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('document_index') }}">back to list</a>
+
+    {{ include('document/_delete_form.html.twig') }}
     
 </div>
 </div>
