@@ -2,40 +2,31 @@
 
 namespace App\Entity;
 
-use App\Repository\DemoRepository;
 use Doctrine\ORM\Mapping as ORM;
-use \App\Entity\AbstractEntity;
+
 /**
- * @ORM\Entity(repositoryClass=DemoRepository::class)
+ * Demo
+ *
+ * @ORM\Table(name="demo")
+ * @ORM\Entity
  */
-class Demo extends AbstractEntity
+class Demo
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
      */
     private $name;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 }
