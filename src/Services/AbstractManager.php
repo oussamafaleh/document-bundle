@@ -16,7 +16,7 @@ use App\Entity\Polygon;
  * Base class for most animation objects.
  */
 
-abstract class AbstractManager //implements ModelInterface
+abstract class AbstractManager
 {
     /**
      * Date format

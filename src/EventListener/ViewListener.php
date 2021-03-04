@@ -9,10 +9,9 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ViewListener
 {
 
-    public function __construct(TranslatorInterface $translator)//, LoggerManager $loggerManager)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
-//        $this->loggerManager = $loggerManager;
     }
 
     /**

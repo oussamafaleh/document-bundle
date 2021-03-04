@@ -9,12 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 class DemoManager extends AbstractManager
 {
 
-    /** @var string */
-    private $code;
-
-
-    /** @var Quiz */
-    private $quiz;
 
 
     public function __construct(Registry $entityManager, RequestStack $requestStack)

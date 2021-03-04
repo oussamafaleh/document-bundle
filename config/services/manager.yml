@@ -19,3 +19,9 @@ services:
         public: true
         class: App\Manager\DemoManager
         arguments: [ '@doctrine',  '@request_stack']
+
+
+    App\Manager\FileManager:
+        public: true
+        class: App\Manager\FileManager
+        arguments: [ '@doctrine',  '@request_stack', '%uploads_directory%' ]
