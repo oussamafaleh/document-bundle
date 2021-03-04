@@ -16,3 +16,5 @@
 ###< symfony/phpunit-bridge ###
 
 nbproject/
+public/uploads/
+docker/logs
