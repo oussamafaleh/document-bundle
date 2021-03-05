@@ -15,5 +15,7 @@ RUN chown -R www-data:www-data /var/www
 RUN rm /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 RUN "date"
+# RUN php bin/console doctrine:mapping:import "App\Entity" annotation --path=src/Entity
+# RUN php bin/console make:entity --regenerate App
 
 WORKDIR /var/www/symfony

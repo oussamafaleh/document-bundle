@@ -19,16 +19,14 @@ services:
         public: true
         class: App\Manager\DemoManager
         arguments: [ '@doctrine',  '@request_stack']
-
-<<<<<<< HEAD
+        
 
     App\Manager\FileManager:
         public: true
         class: App\Manager\FileManager
         arguments: [ '@doctrine',  '@request_stack', '%uploads_directory%' ]
-=======
+        
     App\Manager\FolderManager:
         public: true
         class: App\Manager\FolderManager
         arguments: [ '@doctrine',  '@request_stack' ]
->>>>>>> features/crud-test-template
