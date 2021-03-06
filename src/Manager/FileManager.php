@@ -17,11 +17,16 @@ class FileManager extends AbstractManager
 {
 
 
+    /**
+     * @var FolderManager
+     */
+    private $folderManager;
 
-    public function __construct(Registry $entityManager, RequestStack $requestStack, $targetDirectory )
+    public function __construct(Registry $entityManager, RequestStack $requestStack, $targetDirectory ,FolderManager $folderManager)
     {
         parent::__construct($entityManager, $requestStack);
         $this->targetDirectory = $targetDirectory;
+        $this->folderManager = $folderManager;
     }
     
 
@@ -32,9 +37,12 @@ class FileManager extends AbstractManager
 
     public function create(string $key )
     {
-        $file =$this->upload($key);
+        $filename = $this->request->files->get($key)->getClientOriginalName();
         $fileParam = (array)$this->request->get('file');
-        $icon = $this->upload('icon');
+        if( !$this->folderManager->checkSubItemsLabelUniqueness($fileParam['parent_code'],$filename)){
+            return ['messages' => 'fond_exeption'];
+        }
+        $file =$this->upload($key);
         $user = $this->apiEntityManager
             ->getRepository(User::class)->findOneBy(['code' => $fileParam['user_code']]);
 
@@ -48,7 +56,6 @@ class FileManager extends AbstractManager
             ->setCode($file['code'])
             ->setExtension($file['extention'])
             ->setSize($file['size'])
-            ->setIcon($icon['name'])
             ->setParent($parent);
         $this->apiEntityManager->persist($this->document);
 
@@ -84,8 +91,8 @@ class FileManager extends AbstractManager
             "extention" => $fileName[1],
             "size" => $file->getSize()];
     }
- 
-    
+
+
 
 
 

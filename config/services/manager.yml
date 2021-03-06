@@ -24,9 +24,9 @@ services:
     App\Manager\FileManager:
         public: true
         class: App\Manager\FileManager
-        arguments: [ '@doctrine',  '@request_stack', '%uploads_directory%' ]
+        arguments: [ '@doctrine',  '@request_stack', '%uploads_directory%' , '@App\Manager\FolderManager']
         
     App\Manager\FolderManager:
         public: true
         class: App\Manager\FolderManager
-        arguments: [ '@doctrine',  '@request_stack' , '@App\Manager\FileManager' ]
+        arguments: [ '@doctrine',  '@request_stack' ]

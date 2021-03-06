@@ -53,13 +53,6 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      *         required=true
      *     ),
      *     @SWG\Parameter(
-     *         name="icon",
-     *         in="query",
-     *         type="file",
-     *         description="icon of user",
-     *         required=false
-     *     ),
-     *     @SWG\Parameter(
      *         name="user_code",
      *         in="query",
      *         type="string",
@@ -144,7 +137,9 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
       */
      public function list(Request $request ,$parent_code)
      {
-         return $this->manager->listSubItem($parent_code);
+
+         $filters =  (Array) $this->request->get("subItems");
+         return $this->manager->listSubItem($parent_code, $filters);
      }
      /**
       * @Route("/schema/{parent_code}", name="current_item_schema", methods={"GET"})

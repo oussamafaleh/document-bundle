@@ -6,7 +6,6 @@ use App\Entity\Folder;
 use App\Entity\Item;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
-use App\Manager\FileManager;
 use App\Utils\MyTools;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -15,15 +14,10 @@ class FolderManager extends AbstractManager
 {
 
 
-    /**
-     * @var FileManager
-     */
-    private $fileManager;
 
-    public function __construct(Registry $entityManager ,RequestStack $requestStack,  FileManager $fileManager)
+    public function __construct(Registry $entityManager ,RequestStack $requestStack)
     {
         parent::__construct($entityManager, $requestStack);
-        $this->fileManager = $fileManager;
     }
 
  
@@ -36,7 +30,9 @@ class FolderManager extends AbstractManager
 
 
         $folder = (array)$this->request->get('folder');
-        $icon = $this->fileManager->upload('icon');
+        if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
+            return ['messages' => 'fond_exeption'];
+        }
         $user = $this->apiEntityManager
             ->getRepository(User::class)->findOneBy(['code' => $folder['user_code']]);
 
@@ -47,7 +43,6 @@ class FolderManager extends AbstractManager
         $connection->beginTransaction();
         $this->folder = new Folder();
         $this->folder->setLabel($folder['label'])
-            ->setIcon($icon)
             ->setParent($parent);
         $this->apiEntityManager->persist($this->folder);
 
@@ -71,9 +66,8 @@ class FolderManager extends AbstractManager
          *
          * list of subItems
          */
-        public function listSubItem($parentCode)
+        public function listSubItem($parentCode , $filters)
         {
-            $filters =  (Array) $this->request->get("subItems");
 //            $user = $this->apiEntityManager
 //                ->getRepository(User::class)->findOneBy(['code' => $userCode]);
 
@@ -107,6 +101,25 @@ class FolderManager extends AbstractManager
             }
             return['schema' => array_reverse($schema)];
 
+        }
+        /**
+         * var parent_id
+         * @return bool
+         *
+         */
+        public function checkSubItemsLabelUniqueness ($parentCode , $label)
+        {
+            $filters = [
+                'index' => -1 ,
+                'size' => -1
+            ];
+            $subItems = $this->listSubItem($parentCode , $filters)['data']['rows'];
+            foreach($subItems as $subItem) {
+                if( $subItem['label'] === $label){
+                    return false;
+                }
+            }
+            return true ;
         }
 
     }

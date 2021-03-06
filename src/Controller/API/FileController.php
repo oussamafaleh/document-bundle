@@ -53,13 +53,6 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      *         required=true
      *     ),
      *     @SWG\Parameter(
-     *         name="icon",
-     *         in="query",
-     *         type="file",
-     *         description="icon of user",
-     *         required=false
-     *     ),
-     *     @SWG\Parameter(
      *         name="user_code",
      *         in="query",
      *         type="string",

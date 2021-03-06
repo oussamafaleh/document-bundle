@@ -591,11 +591,12 @@ class MyTools
      * @param integer $total
      * @return array
      */
-    public static function paginator($list, $index, $size, $total = null)
+    public static function paginator($list, $index , $size , $total = null)
     {
         if (!$total) {
             $total = MyTools::getValueFromResultSet($list, 'total', 0);
         }
+
 
         $list = array_map(function (&$element) {
             if (isset($element['total'])) {
