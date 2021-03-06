@@ -33,15 +33,37 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
     }
 
     /**
-     * @Route("/upload", name="quiz_lists", methods={"POST"})
+     * @Route("/upload", name="upload_file", methods={"POST"})
+     * @Mapping(object="App\ApiModel\File\File", as="file")
      * @Operation(
      *     tags={"File"},
      *     summary="file for skeleton",
      *     @SWG\Parameter(
-     *         name="name",
+     *         name="file",
+     *         in="formData",
+     *         type="file",
+     *         description="file",
+     *         required=true
+     *     ),
+     *     @SWG\Parameter(
+     *         name="parent_code",
      *         in="query",
      *         type="string",
-     *         description="name of user",
+     *         description="parent folder",
+     *         required=true
+     *     ),
+     *     @SWG\Parameter(
+     *         name="icon",
+     *         in="query",
+     *         type="file",
+     *         description="icon of user",
+     *         required=false
+     *     ),
+     *     @SWG\Parameter(
+     *         name="user_code",
+     *         in="query",
+     *         type="string",
+     *         description="code of user",
      *         required=true
      *     ),
      *     @SWG\Response(
@@ -60,7 +82,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      */
     public function upload(Request $request)
     {
-        return $this->manager->upload('file');
+        return $this->manager->create('file' );
     }
 
     
