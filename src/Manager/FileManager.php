@@ -15,7 +15,7 @@ class FileManager extends AbstractManager
 
 
 
-    public function __construct(Registry $entityManager, RequestStack $requestStack, $targetDirectory)
+    public function __construct(Registry $entityManager, RequestStack $requestStack, $targetDirectory )
     {
         parent::__construct($entityManager, $requestStack);
         $this->targetDirectory = $targetDirectory;
@@ -28,12 +28,11 @@ class FileManager extends AbstractManager
     }
     
     
-    public function upload()
+    public function upload(string $key )
     {
-        $file =$this->request->files->get('file');
+        $file =$this->request->files->get($key);
         $fileName = md5(uniqid()).'.'.$file->guessExtension();
-
-            $file->move($this->getTargetDirectory(), $fileName);
+        $file->move($this->getTargetDirectory(), $fileName);
         
 
         return $fileName;

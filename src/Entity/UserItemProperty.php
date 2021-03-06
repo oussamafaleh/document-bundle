@@ -18,14 +18,12 @@ class UserItemProperty
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var json
+     *
+     * @ORM\Column(name="roles", type="json", nullable=false)
+     * 
      */
-    private $role;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $accepted;
+    private $roles;
 
     /**
      * @ORM\Column(type="boolean")
@@ -47,29 +45,18 @@ class UserItemProperty
         return $this->id;
     }
 
-    public function getRole(): ?string
+    public function getRoles(): ?array
     {
-        return $this->role;
+        return $this->roles;
     }
 
-    public function setRole(string $role): self
+    public function setRoles(array $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function getAccepted(): ?bool
-    {
-        return $this->accepted;
-    }
-
-    public function setAccepted(bool $accepted): self
-    {
-        $this->accepted = $accepted;
-
-        return $this;
-    }
 
     public function getIsTagged(): ?bool
     {

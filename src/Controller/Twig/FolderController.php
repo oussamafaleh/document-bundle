@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Twig;
 
 use App\Entity\Folder;
 use App\Form\Folder1Type;

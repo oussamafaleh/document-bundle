@@ -1,6 +1,6 @@
 <?php
 
-namespace SSH\CommonBundle\Utils;
+namespace App\Utils;
 
 /**
  * MyTools: boite à outils

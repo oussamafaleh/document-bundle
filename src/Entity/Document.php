@@ -11,12 +11,7 @@ use App\Entity\Item;
  */
 class Document extends Item
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    
 
     /**
      * @ORM\Column(type="string", length=255)

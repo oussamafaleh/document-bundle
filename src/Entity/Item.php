@@ -7,11 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ItemRepository::class)
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="discr", type="string")
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"folder" = "Folder", "document" = "Document"})
  */
-abstract class Item
+abstract class Item extends AbstractEntity
 {
     /**
      * @ORM\Id
@@ -31,34 +31,25 @@ abstract class Item
     private $label;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\ManyToOne(targetEntity=folder::class)
      */
-    private $Create_At;
+    private $parent;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $update_At;
+    private $Created_at;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    private $path;
+    private $updated_at;
+
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $icon;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Folder::class, cascade={"persist", "remove"})
-     */
-    private $folder;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Document::class, inversedBy="item", cascade={"persist", "remove"})
-     */
-    private $document;
 
     public function getId(): ?int
     {
@@ -89,38 +80,26 @@ abstract class Item
         return $this;
     }
 
-    public function getCreateAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->Create_At;
+        return $this->Created_at;
     }
 
-    public function setCreateAt(\DateTimeInterface $Create_At): self
+    public function setCreatedAt(\DateTimeInterface $Created_at): self
     {
-        $this->Create_At = $Create_At;
+        $this->Created_at = $Created_at;
 
         return $this;
     }
 
-    public function getUpdateAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->update_At;
+        return $this->updated_at;
     }
 
-    public function setUpdateAt(\DateTimeInterface $update_At): self
+    public function setUpdatedAt(\DateTimeInterface $updated_at): self
     {
-        $this->update_At = $update_At;
-
-        return $this;
-    }
-
-    public function getPath(): ?string
-    {
-        return $this->path;
-    }
-
-    public function setPath(string $path): self
-    {
-        $this->path = $path;
+        $this->updated_at = $updated_at;
 
         return $this;
     }
@@ -137,27 +116,16 @@ abstract class Item
         return $this;
     }
 
-    public function getFolder(): ?Folder
+    public function getParent(): ?folder
     {
-        return $this->folder;
+        return $this->parent;
     }
 
-    public function setFolder(?Folder $folder): self
+    public function setParent(?folder $parent): self
     {
-        $this->folder = $folder;
+        $this->parent = $parent;
 
         return $this;
     }
-
-    public function getDocument(): ?Document
-    {
-        return $this->document;
-    }
-
-    public function setDocument(?Document $document): self
-    {
-        $this->document = $document;
-
-        return $this;
-    }
+    
 }

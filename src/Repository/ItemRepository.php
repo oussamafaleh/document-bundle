@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+
+use App\Utils\MyTools;
 use App\Entity\Item;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -47,4 +50,52 @@ class ItemRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findByFilters($filters)
+    {
+
+        $parent = MyTools::getOption($filters, 'parent');
+        $sortColumn = MyTools::getOption($filters, 'sort_column', 'created_at');
+        $sortOrder = MyTools::getOption($filters, 'sort_order', 'DESC');
+        $page = MyTools::getOption($filters, 'index', 1);
+        $maxPerPage = MyTools::getOption($filters, 'size', 10);
+        $dateFormat = MyTools::getOption($filters, 'date_format', 'YYYY-MM-DD');
+
+        $where = [];
+        $parameters =  [
+            ':parent_id' => $parent];
+        $select = [
+            'code' => 'i.code',
+            'label' => "i.label",
+            'type' => "i.type",
+            'created_at' => "i.created_at",
+        ];
+
+        $sql = '';
+        $rsm = new ResultSetMapping();
+
+        foreach ($select as $column => $value) {
+            $sql .= $value . ' AS ' . $column . ', ';
+            $rsm->addScalarResult($column, $column);
+        }
+        $sql = 'SELECT ' . substr($sql, 0, -2)
+            . ' FROM  item   AS i '
+            . 'WHERE i.parent_id =:parent_id'
+        ;
+
+
+        if (isset($select[$sortColumn])) {
+            $sql .= ' ORDER BY ' . $select[$sortColumn] . '  ' . $sortOrder;
+        }
+
+        if ($page > 0) {
+            $sql .= ' LIMIT ' . $maxPerPage . ' OFFSET ' . (($page - 1) * $maxPerPage);
+        }
+        $cacheKey = sha1($sql . json_encode($parameters));
+        return $this->getEntityManager()
+            ->createNativeQuery($sql, $rsm)
+            ->setParameters($parameters)
+            ->enableResultCache(3000, $cacheKey)
+            ->getResult();
+
+    }
 }

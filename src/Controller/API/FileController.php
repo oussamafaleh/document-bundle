@@ -60,7 +60,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      */
     public function upload(Request $request)
     {
-        return $this->manager->upload($request);
+        return $this->manager->upload('file');
     }
 
     

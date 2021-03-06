@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  *  ApiList Trait
  *
- * @author walid
  */
 trait ApiList
 {

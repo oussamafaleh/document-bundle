@@ -1,10 +1,17 @@
 version: '2'
 services:
-    db:
-        build: psql
-        restart: always
+    
+    mysql:
+        image: mysql:8.0.17
+        environment:
+          MYSQL_ROOT_PASSWORD: docb_psw
+          MYSQL_USER : docb_user
+          MYSQL_PASSWORD: docb_psw
+          MYSQL_DATABASE: testdb
         ports:
-            - 5400:5432
+          - "3306:3306"
+        networks:
+          - backend
     php:
         build: php-fpm
         restart: always 
@@ -13,6 +20,8 @@ services:
         volumes:
             - ../:/var/www/symfony:cached
             - ./logs/symfony:/var/www/symfony/var/logs:cached
+        networks:
+          - backend
     nginx:
         build: nginx
         restart: always 
@@ -23,5 +32,9 @@ services:
         volumes_from:
             - php
         volumes:
-            - ./logs/nginx/:/var/log/nginx:cached   
+            - ./logs/nginx/:/var/log/nginx:cached 
+        networks:
+          - backend  
 
+networks:
+    backend :
