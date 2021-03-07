@@ -75,7 +75,9 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      */
     public function create(Request $request)
     {
-        return $this->manager->create($request);
+
+        $folder = (array)$request->get('folder');
+        return $this->manager->create($folder);
     }
 
      /**

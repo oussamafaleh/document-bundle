@@ -25,11 +25,10 @@ class FolderManager extends AbstractManager
      * @return array
      * this method creates new folder for specific user
      */
-    public function create()
+    public function create($folder)
     {
 
 
-        $folder = (array)$this->request->get('folder');
         if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
             return ['messages' => 'fond_exeption'];
         }

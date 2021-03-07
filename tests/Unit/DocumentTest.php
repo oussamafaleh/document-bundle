@@ -11,7 +11,8 @@ class DocumentTest extends TestCase  {
 
     
    
-    public function testGetExtension(): void{
+    public function testGetExtension(): void
+    {
 
         $document= new Document();
         $value='extension 1';

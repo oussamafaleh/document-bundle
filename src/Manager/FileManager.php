@@ -35,14 +35,12 @@ class FileManager extends AbstractManager
         return $this->targetDirectory;
     }
 
-    public function create(string $key )
+    public function create($RequestFile , $fileParam )
     {
-        $filename = $this->request->files->get($key)->getClientOriginalName();
-        $fileParam = (array)$this->request->get('file');
-        if( !$this->folderManager->checkSubItemsLabelUniqueness($fileParam['parent_code'],$filename)){
+        if( !$this->folderManager->checkSubItemsLabelUniqueness($fileParam['parent_code'],$RequestFile->getClientOriginalName())){
             return ['messages' => 'fond_exeption'];
         }
-        $file =$this->upload($key);
+        $file =$this->upload($RequestFile);
         $user = $this->apiEntityManager
             ->getRepository(User::class)->findOneBy(['code' => $fileParam['user_code']]);
 
@@ -75,11 +73,8 @@ class FileManager extends AbstractManager
         'object' => $this->document->toArray()
     ]];
     }
-    public function upload(string $key)
+    public function upload( $file)
     {
-
-        $file =$this->request->files->get($key);
-
         $fileName= explode(".", $file->getClientOriginalName());
         $fileCode = $fileName[0] . MyTools::GUIDv4() . "." . $fileName[1];
         $file->move($this->getTargetDirectory(), $fileCode);

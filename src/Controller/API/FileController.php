@@ -2,7 +2,7 @@
 
  namespace App\Controller\API;
 
-use App\Entity\Quiz;
+use App\Entity\file;
 use App\Annotations\Mapping;
 use App\Manager\FileManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -14,7 +14,7 @@ use Swagger\Annotations as SWG;
 use Nelmio\ApiDocBundle\Annotation\Operation;
 
 /**
- * Class QuizController
+ * Class fileController
  * @package App\Controller\API
  * @Route("/api")
  *
@@ -65,17 +65,20 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      *     ),
      *     @SWG\Response(
      *         response="403",
-     *         description="Returned when the ws-quiz is not authorized"
+     *         description="Returned when the ws-file is not authorized"
      *     ),
      *     @SWG\Response(
      *         response="404",
-     *         description="Returned when the quiz is not found"
+     *         description="Returned when the file is not found"
      *     )
      * )
      */
     public function upload(Request $request)
     {
-        return $this->manager->create('file' );
+
+        $file = $request->files->get('file');
+        $fileParam = (array)$request->get('file');
+        return $this->manager->create($file ,$fileParam  );
     }
 
     

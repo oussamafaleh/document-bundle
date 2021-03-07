@@ -46,11 +46,6 @@ abstract class Item extends AbstractEntity
     private $updated_at;
 
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $icon;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -104,17 +99,6 @@ abstract class Item extends AbstractEntity
         return $this;
     }
 
-    public function getIcon(): ?string
-    {
-        return $this->icon;
-    }
-
-    public function setIcon(string $icon): self
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
 
     public function getParent(): ?folder
     {
