@@ -91,12 +91,12 @@ abstract class AbstractManager
      * @param ExceptionManager $exceptionManager
      * @param RequestStack $requestStack
      */
-    public function __construct(EntityManager $entityManager, ExceptionManager $exceptionManager= null, RequestStack $requestStack = null)
+    public function __construct(EntityManager $entityManager/*, ExceptionManager $exceptionManager= null*/, RequestStack $requestStack = null)
     {
         $this->apiEntityManager = $entityManager;
-        if ($requestStack instanceof RequestStack) {
-            $this->exceptionManager = $exceptionManager;
-        }
+//        if ($requestStack instanceof RequestStack) {
+//            $this->exceptionManager = $exceptionManager;
+//        }
 
         if ($requestStack instanceof RequestStack) {
             $this->request = $requestStack->getCurrentRequest();
