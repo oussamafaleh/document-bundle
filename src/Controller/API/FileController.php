@@ -25,7 +25,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      private $manager = null;
 
     /**
-     * ProfilController constructor.
+     * fileController constructor.
      */
     public function __construct(FileManager $fileManager)
     {

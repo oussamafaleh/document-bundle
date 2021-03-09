@@ -30,14 +30,22 @@ class FolderManager extends AbstractManager
 
 
         if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
-            return ['messages' => 'fond_exeption'];
+            return ['data' =>
+                        ['messages' => 'fond_exeption']
+                    ];
         }
+        try {
         $user = $this->apiEntityManager
             ->getRepository(User::class)->findOneBy(['code' => $folder['user_code']]);
 
         $parent = $this->apiEntityManager
             ->getRepository(Folder::class)->findOneBy(['code' => $folder['parent_code']]);
 
+        } catch (Exception $e) {
+            ['data' => [
+                'messages' => $e->getMessage(),
+            ]];
+        }
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();
         $this->folder = new Folder();
