@@ -7,6 +7,7 @@ use App\Entity\Item;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
 use App\Utils\MyTools;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
@@ -15,9 +16,9 @@ class FolderManager extends AbstractManager
 
 
 
-    public function __construct(Registry $entityManager ,RequestStack $requestStack)
+    public function __construct(EntityManager $entityManager )
     {
-        parent::__construct($entityManager, $requestStack);
+        parent::__construct($entityManager);
     }
 
  
@@ -29,23 +30,25 @@ class FolderManager extends AbstractManager
     {
 
 
-        if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
-            return ['data' =>
-                        ['messages' => 'fond_exeption']
-                    ];
-        }
-        try {
+
+
         $user = $this->apiEntityManager
             ->getRepository(User::class)->findOneBy(['code' => $folder['user_code']]);
 
         $parent = $this->apiEntityManager
             ->getRepository(Folder::class)->findOneBy(['code' => $folder['parent_code']]);
 
-        } catch (Exception $e) {
-            ['data' => [
-                'messages' => $e->getMessage(),
+
+        if ($user === null || $parent === null) {
+           return ['data' => [
+                'messages' => 'not_fond_exeption',
             ]];
         }
+        if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
+        return ['data' =>
+            ['messages' => 'fond_exeption']
+        ];
+    }
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();
         $this->folder = new Folder();

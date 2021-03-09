@@ -29,4 +29,4 @@ services:
     App\Manager\FolderManager:
         public: true
         class: App\Manager\FolderManager
-        arguments: [ '@doctrine',  '@request_stack' ]
+        arguments: [ '@doctrine.orm.entity_manager',  '@request_stack' ]

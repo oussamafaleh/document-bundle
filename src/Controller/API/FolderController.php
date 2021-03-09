@@ -140,7 +140,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      public function list(Request $request ,$parent_code)
      {
 
-         $filters =  (Array) $this->request->get("subItems");
+         $filters =  (Array) $request->get("subItems");
          return $this->manager->listSubItem($parent_code, $filters);
      }
      /**

@@ -4,6 +4,7 @@ namespace App\Manager;
 
 //use SSH\CommonBundle\Utils\MyTools;
 //use SSH\CommonBundle\Manager\ExceptionManager;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -86,14 +87,16 @@ abstract class AbstractManager
     /**
      * AbstractModel constructor.
      *
-     * @param Registry $entityManager
+     * @param EntityManager $entityManager
      * @param ExceptionManager $exceptionManager
      * @param RequestStack $requestStack
      */
-    public function __construct(Registry $entityManager/*, ExceptionManager $exceptionManager*/, RequestStack $requestStack = null)
+    public function __construct(EntityManager $entityManager, ExceptionManager $exceptionManager= null, RequestStack $requestStack = null)
     {
-        $this->apiEntityManager = $entityManager->getManager();
-        //$this->exceptionManager = $exceptionManager;
+        $this->apiEntityManager = $entityManager;
+        if ($requestStack instanceof RequestStack) {
+            $this->exceptionManager = $exceptionManager;
+        }
 
         if ($requestStack instanceof RequestStack) {
             $this->request = $requestStack->getCurrentRequest();

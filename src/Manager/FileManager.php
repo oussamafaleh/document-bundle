@@ -8,8 +8,8 @@ use App\Entity\Folder;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
 use App\Utils\MyTools;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Doctrine\Bundle\DoctrineBundle\Registry;
 
 
 
@@ -22,7 +22,7 @@ class FileManager extends AbstractManager
      */
     private $folderManager;
 
-    public function __construct(Registry $entityManager, RequestStack $requestStack, $targetDirectory ,FolderManager $folderManager)
+    public function __construct(EntityManager $entityManager, RequestStack $requestStack, $targetDirectory ,FolderManager $folderManager)
     {
         parent::__construct($entityManager, $requestStack);
         $this->targetDirectory = $targetDirectory;
