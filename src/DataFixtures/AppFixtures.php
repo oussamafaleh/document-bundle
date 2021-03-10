@@ -50,8 +50,8 @@ class AppFixtures extends Fixture
         $manager->persist($subFolder2);
 
         $userItemProp = new UserItemProperty();
-        $userItemProp->setIdUser($user1)
-            ->setIdItem($folder1)
+        $userItemProp->setUser($user1)
+            ->setItem($folder1)
             ->setIsTagged(false)
             ->setRoles(array("OWNER" => "ROLE_OWNER"));
 

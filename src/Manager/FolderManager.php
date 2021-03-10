@@ -8,8 +8,6 @@ use App\Entity\User;
 use App\Entity\UserItemProperty;
 use App\Utils\MyTools;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Doctrine\Bundle\DoctrineBundle\Registry;
 
 class FolderManager extends AbstractManager
 {
@@ -30,8 +28,6 @@ class FolderManager extends AbstractManager
     {
 
 
-
-
         $user = $this->apiEntityManager
             ->getRepository(User::class)->findOneBy(['code' => $folder['user_code']]);
 
@@ -45,10 +41,10 @@ class FolderManager extends AbstractManager
             ]];
         }
         if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
-        return ['data' =>
-            ['messages' => 'fond_exeption']
-        ];
-    }
+            return ['data' =>
+                ['messages' => 'fond_exeption']
+            ];
+        }
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();
         $this->folder = new Folder();
@@ -58,8 +54,8 @@ class FolderManager extends AbstractManager
 
 
         $this->user_item_property = new UserItemProperty();
-        $this->user_item_property->setIdItem($this->folder)
-            ->setIdUser($user)
+        $this->user_item_property->setItem($this->folder)
+            ->setUser($user)
             ->setIsTagged(false)
             ->setRoles(array("OWNER" => "ROLE_OWNER"));
         $this->apiEntityManager->persist($this->user_item_property);
@@ -73,7 +69,7 @@ class FolderManager extends AbstractManager
     }
         /**
          * @return array
-         *
+         * @var $parentCode == parent folder code
          * list of subItems
          */
         public function listSubItem($parentCode , $filters)
@@ -89,9 +85,9 @@ class FolderManager extends AbstractManager
                 ->getRepository(Item::class)->findByFilters($filters);
 
 
-            return ['data' => MyTools::paginator($data, $filters['index'], $filters['size'])];
+            return ['data' => MyTools::paginator($data, $filters['index'], $filters['size']),
+                    'parent_folder' => $parent->getLabel() ];
         }
-
         /**
          * @return array
          *

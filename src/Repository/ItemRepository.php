@@ -67,6 +67,7 @@ class ItemRepository extends ServiceEntityRepository
             'code' => 'i.code',
             'label' => "i.label",
             'type' => "i.type",
+            'updated_at' => "i.updated_at",
             'created_at' => "i.created_at",
         ];
 

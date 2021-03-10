@@ -22,9 +22,9 @@ class FileManager extends AbstractManager
      */
     private $folderManager;
 
-    public function __construct(EntityManager $entityManager, RequestStack $requestStack, $targetDirectory ,FolderManager $folderManager)
+    public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager)
     {
-        parent::__construct($entityManager, $requestStack);
+        parent::__construct($entityManager);
         $this->targetDirectory = $targetDirectory;
         $this->folderManager = $folderManager;
     }
@@ -59,8 +59,8 @@ class FileManager extends AbstractManager
 
 
         $this->user_item_property = new UserItemProperty();
-        $this->user_item_property->setIdItem($this->document)
-            ->setIdUser($user)
+        $this->user_item_property->setItem($this->document)
+            ->setUser($user)
             ->setIsTagged(false)
             ->setRoles(array("OWNER" => "ROLE_OWNER"));
         $this->apiEntityManager->persist($this->user_item_property);

@@ -14,12 +14,9 @@ class ItemType extends AbstractType
         $builder
             ->add('code')
             ->add('label')
-            ->add('Create_At')
-            ->add('update_At')
-            ->add('path')
-            ->add('icon')
-            ->add('folder')
-            ->add('document')
+            ->add('createdAt')
+            ->add('updatedAt')
+            ->add('parent')
         ;
     }
 

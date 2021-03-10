@@ -28,17 +28,17 @@ class UserItemProperty
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_tagged;
+    private $isTagged;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=User::class, cascade={"persist", "remove"})
      */
-    private $id_user;
+    private $user;
 
     /**
-     * @ORM\OneToOne(targetEntity=Item::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Item::class, cascade={"persist", "remove"})
      */
-    private $id_item;
+    private $item;
 
     public function getId(): ?int
     {
@@ -60,36 +60,36 @@ class UserItemProperty
 
     public function getIsTagged(): ?bool
     {
-        return $this->is_tagged;
+        return $this->isTagged;
     }
 
-    public function setIsTagged(bool $is_tagged): self
+    public function setIsTagged(bool $isTagged): self
     {
-        $this->is_tagged = $is_tagged;
+        $this->isTagged = $isTagged;
 
         return $this;
     }
 
-    public function getIdUser(): ?User
+    public function getUser(): ?User
     {
-        return $this->id_user;
+        return $this->user;
     }
 
-    public function setIdUser(?User $id_user): self
+    public function setUser(?User $user): self
     {
-        $this->id_user = $id_user;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getIdItem(): ?Item
+    public function getItem(): ?Item
     {
-        return $this->id_item;
+        return $this->item;
     }
 
-    public function setIdItem(?Item $id_item): self
+    public function setItem(?Item $item): self
     {
-        $this->id_item = $id_item;
+        $this->item = $item;
 
         return $this;
     }

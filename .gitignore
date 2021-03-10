@@ -17,5 +17,5 @@
 
 nbproject/
 public/uploads/
-docker/logs
+docker/logs/
 .idea/

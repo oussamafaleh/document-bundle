@@ -24,7 +24,7 @@ services:
     App\Manager\FileManager:
         public: true
         class: App\Manager\FileManager
-        arguments: [ '@doctrine.orm.entity_manager',  '@request_stack', '%uploads_directory%' , '@App\Manager\FolderManager']
+        arguments: [ '@doctrine.orm.entity_manager', '%uploads_directory%' , '@App\Manager\FolderManager']
         
     App\Manager\FolderManager:
         public: true

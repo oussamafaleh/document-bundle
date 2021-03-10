@@ -16,7 +16,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
 /**
  * Class fileController
  * @package App\Controller\API
- * @Route("/api")
+ * @Route("/api/file")
  *
  */
  class FileController extends AbstractController
