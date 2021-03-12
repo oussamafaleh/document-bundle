@@ -36,11 +36,13 @@ class FolderManager extends AbstractManager
 
 
         if ($user === null || $parent === null) {
+            dump('not_fond_exeption');exit();
            return ['data' => [
                 'messages' => 'not_fond_exeption',
             ]];
         }
         if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
+            dump('fond_exeption');exit();
             return ['data' =>
                 ['messages' => 'fond_exeption']
             ];
@@ -99,13 +101,14 @@ class FolderManager extends AbstractManager
             $schema = array();
             $parent = $this->apiEntityManager
                 ->getRepository(Folder::class)->findOneBy(['code' => $parentCode]);
-            array_push($schema, $parent->getLabel());
+            $current= ['label' => $parent->getLabel() , 'code' => $parent->getCode()];
             while( null !== $parent->getParent()){
                 $i ++;
                 $parent = $parent->getParent();
-                $schema[$i] = $parent->getLabel();
+                array_push($schema, ['label' => $parent->getLabel() , 'code' => $parent->getCode()]);
             }
-            return['schema' => array_reverse($schema)];
+            $schema = array_reverse($schema);
+            return ['current'=>$current, 'schema'=>$schema];
 
         }
         /**

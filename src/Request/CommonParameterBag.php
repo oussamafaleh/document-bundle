@@ -62,7 +62,7 @@ class CommonParameterBag implements CommonParameterBagInterface
                         $request->$type->all() :
                         array_intersect_key($request->$type->all(), array_flip($filteredKeys));
 
-                if ($request->isMethod('POST') && !empty($request->getContent())) {
+                if ($request->isMethod('POST') && !empty($request->getContent()) && json_decode($request->getContent()) !== null) {
                     $params = array_merge($params, json_decode($request->getContent(), true));
                 }
 
