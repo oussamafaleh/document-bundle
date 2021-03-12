@@ -23,15 +23,8 @@ class Document extends Item
      */
     private $size;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Item::class, mappedBy="document", cascade={"persist", "remove"})
-     */
-    private $item;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+
 
     public function getExtension(): ?string
     {
@@ -57,25 +50,25 @@ class Document extends Item
         return $this;
     }
 
-    public function getItem(): ?Item
-    {
-        return $this->item;
-    }
-
-    public function setItem(?Item $item): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($item === null && $this->item !== null) {
-            $this->item->setDocument(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($item !== null && $item->getDocument() !== $this) {
-            $item->setDocument($this);
-        }
-
-        $this->item = $item;
-
-        return $this;
-    }
+//    public function getItem(): ?Item
+//    {
+//        return $this->item;
+//    }
+//
+//    public function setItem(?Item $item): self
+//    {
+//        // unset the owning side of the relation if necessary
+//        if ($item === null && $this->item !== null) {
+//            $this->item->setDocument(null);
+//        }
+//
+//        // set the owning side of the relation if necessary
+//        if ($item !== null && $item->getDocument() !== $this) {
+//            $item->setDocument($this);
+//        }
+//
+//        $this->item = $item;
+//
+//        return $this;
+//    }
 }

@@ -82,8 +82,6 @@ class ItemRepository extends ServiceEntityRepository
             . ' FROM  item   AS i '
             . 'WHERE i.parent_id =:parent_id'
         ;
-
-
         if (isset($select[$sortColumn])) {
             $sql .= ' ORDER BY ' . $select[$sortColumn] . '  ' . $sortOrder;
         }

@@ -4,6 +4,7 @@ namespace App\Controller\Twig;
 
 use App\Entity\Folder;
 use App\Annotations\Mapping;
+use App\Form\DocumentType;
 use App\Form\FolderType;
 use App\Manager\FolderManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,13 +18,13 @@ use Symfony\Component\HttpFoundation\Response;
  * @Route("/folder")
  *
  */
-class TwFolderController extends AbstractController
+class FolderController extends AbstractController
 {
 
     private $manager = null;
 
     /**
-     * ProfilController constructor.
+     * folderController constructor.
      */
     public function __construct(FolderManager $folderManager)
     {
@@ -59,15 +60,16 @@ class TwFolderController extends AbstractController
      */
     public function list(Request $request, $parent_code): Response
     {
+        $fileForm = $this->createForm(DocumentType::class );
+        $folderForm = $this->createForm(FolderType::class );
 
-        $form = $this->createForm(FolderType::class );
-        $form->handleRequest($request);
         $filters = (array)$request->get("subItems");
         return $this->render('folder/index.html.twig', [
             'items' => $this->manager->listSubItem($parent_code, $filters)['data']['rows'],
             'schema' => $this->manager->getschema($parent_code)['schema'],
             'current' => $this->manager->getschema($parent_code)['current'],
-            'form' => $form->createView(),
+            'folder_form' => $folderForm->createView(),
+            'file_form'=> $fileForm->createView()
         ]);
     }
 

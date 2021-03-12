@@ -5,6 +5,7 @@ namespace App\Manager;
 use App\Entity\Demo;
 use App\Entity\Document;
 use App\Entity\Folder;
+use App\Entity\Item;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
 use App\Utils\MyTools;
@@ -67,10 +68,11 @@ class FileManager extends AbstractManager
         $this->apiEntityManager->flush();
         $connection->commit();
 
-
+        $item = $this->document->toArray();
+        $item["code"]=$this->document->getCode();
         return ['data' => [
         'messages' => 'create_success',
-        'object' => $this->document->toArray()
+        'object' => $item
     ]];
     }
     public function upload( $file)

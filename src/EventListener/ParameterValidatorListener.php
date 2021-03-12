@@ -15,7 +15,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 /**
  * Description of ParameterValidatorListener
  *
- * @author walid
  */
 class ParameterValidatorListener
 {
@@ -174,14 +173,7 @@ class ParameterValidatorListener
             }
         }
 
-        $content = $request->files->all();
-        if (!empty($content)) {
-            if ($request->getMethod() == 'POST') {
-                foreach ($content as $param => $file) {
-                    $request->request->set($param, $file->getClientOriginalName());
-                }
-            }
-        }
+
 
         if ($request->get('locale')) {
             $request->setLocale(strtolower($request->get('locale')));
