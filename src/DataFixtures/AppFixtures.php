@@ -33,15 +33,14 @@ class AppFixtures extends Fixture
 
 
         // cerate other folders under root
+        foreach (range(0, 20) as $number) {
+            $subFolder1 = new Folder();
+            $subFolder1->setLabel('sub_folder_'.$number)
+                ->setParent($folder1)
+                ->setCreatedAt(new \DateTime());
 
-        $subFolder1 = new Folder();
-        $subFolder1->setLabel('sub_folder_1')
-            ->setCode('b9c4c548-058c-48cf-8caa-c086d5a030be')
-            ->setParent($folder1)
-            ->setCreatedAt(new \DateTime());
-
-        $manager->persist($subFolder1);
-
+            $manager->persist($subFolder1);
+        }
         $subFolder2 = new Folder();
         $subFolder2->setLabel('sub_folder_2')
             ->setCode('3776d01e-a994-433b-ba95-a7720ed65fe9')

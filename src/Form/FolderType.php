@@ -12,7 +12,7 @@ class FolderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('label')
+            ->add('label',null,['attr' => ['class' => 'form-control', 'id' => 'customFile']])
         ;
     }
 

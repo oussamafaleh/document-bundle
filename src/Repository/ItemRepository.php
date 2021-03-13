@@ -64,6 +64,7 @@ class ItemRepository extends ServiceEntityRepository
         $parameters =  [
             ':parent_id' => $parent];
         $select = [
+            'total' => 'count(*) OVER() ',
             'code' => 'i.code',
             'label' => "i.label",
             'type' => "i.type",

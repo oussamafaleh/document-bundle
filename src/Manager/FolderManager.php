@@ -86,7 +86,6 @@ class FolderManager extends AbstractManager
             $data = $this->apiEntityManager
                 ->getRepository(Item::class)->findByFilters($filters);
 
-
             return ['data' => MyTools::paginator($data, $filters['index'], $filters['size']),
                     'parent_folder' => $parent->getLabel() ];
         }

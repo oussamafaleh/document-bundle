@@ -13,7 +13,7 @@ class DocumentType extends AbstractType
     {
         $builder
             ->add('file',FileType::class ,[
-                'row_attr' => ['class' => 'form-control ml-3', 'id' => 'customFile'],])
+                'attr' => ['class' => 'file-upload ml-3', 'id' => 'customFile'],'label'=>'file',])
         ;
     }
 

@@ -64,8 +64,9 @@ class FolderController extends AbstractController
         $folderForm = $this->createForm(FolderType::class );
 
         $filters = (array)$request->get("subItems");
+
         return $this->render('folder/index.html.twig', [
-            'items' => $this->manager->listSubItem($parent_code, $filters)['data']['rows'],
+            'data' => $this->manager->listSubItem($parent_code, $filters)['data'],
             'schema' => $this->manager->getschema($parent_code)['schema'],
             'current' => $this->manager->getschema($parent_code)['current'],
             'folder_form' => $folderForm->createView(),
