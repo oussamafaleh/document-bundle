@@ -18,7 +18,8 @@
 <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
 <link rel="stylesheet" sizes="76x76" href="{{ asset('assets/css/adminlte.css') }}">
-    <link rel="icon" type="image/png" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}>
+<link rel="icon" type="image/png" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}>
+<link rel="stylesheet"  href="{{ asset('assets/file-icons-js/style.css') }}">
 
 
     {% endblock %}
@@ -40,7 +41,7 @@
     <script src="{{ asset('assets/js/demo.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('assets/js/pages/dashboard3.js') }}"></script>
-
+    <script src="{{ asset('assets/file-icons-js/dist/file-icons.js') }}"></script>
 
     {% endblock %}
 </head>
@@ -852,4 +853,22 @@
 
 </body>
 
+<script>
+    var icons = window.FileIcons;
+    console.log([...document.getElementsByClassName('file-icon')]);
+    //for( let icon in [...document.getElementsByClassName('file-icon')]){
+        [...document.getElementsByClassName('file-icon')].map(icon => {
+           // icon.classList.add(icons.getClassWithColor(icon.id).)
+            console.log(icons.getClass(icon.id).toString());
+            document.getElementById(icon.id).classList.add(icons.getClass(icon.id).toString());
+        } );
+    //     console.log(icon);
+    //   //  let element = ;
+    //   //  let class_name = icons.getClassWithColor(icon.id);
+    //     document.getElementById(icon.id).classList.add(icons.getClassWithColor(icon.id));
+    // }
+
+
+
+</script>
 </html>

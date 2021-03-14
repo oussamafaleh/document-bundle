@@ -28989,7 +28989,26 @@ select.form-control-sm ~ .select2-container--default .select2-selection--multipl
 .img-size-32{
   height: auto;
 }
+.danger {
 
+  font-size: 1.3rem !important;
+  color: #ff4444;
+}
+.success {
+
+  font-size: 1.3rem !important;
+  color: #007e33;
+}
+.warning {
+
+  font-size: 1.3rem !important;
+  color: #ff8800;
+}
+.marine{
+  color :#254558;
+  font-size: 1.3rem !important;
+
+}
 .img-size-40 {
   width: 40px;
 }
