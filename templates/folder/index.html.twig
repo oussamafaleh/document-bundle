@@ -135,7 +135,7 @@
                                    class="marine mr-4 ml-4"><i class="fas fa-folder-open"></i></a>
 
 
-                                {# <a href="{{ path('item_edit', {'code': item.code}) }}">edit</a> #}
+
                             </td>
 
                         </tr>
@@ -170,7 +170,7 @@
             });
             function folderListFucntion(folderToMove, folderMovingIn) {
                 jQuery(document).ready(function ($) {
-                var moveLFolderist = $('div#move_list')
+                var moveLFolderList = $('div#move_list')
 
 
                     $.ajax({
@@ -181,7 +181,7 @@
                         }
 
                     }).done(function (res) {
-                        moveLFolderist.empty();
+                        moveLFolderList.empty();
                         let data = res.results.data;
 
         ///////////////////////fill dropdown list with folders
@@ -189,20 +189,31 @@
                         $('<span/>')
                             .addClass('dropdown-item dropdown-header')
                             .text(res.results.parent_folder)
-                            .appendTo(moveLFolderist);
+                            .appendTo(moveLFolderList);
+                        $('<div/>')
+                            .addClass('dropdown-divider')
+                            .appendTo(moveLFolderList);
                         $.each(data.rows, function (i) {
-                            var id = 'move_list' + i;
+                          // var id = 'move_list' + i;
+                            let listItem =$('<div/>')
+                                .addClass('d-flex  flex-row m-2 border-bottom')
+                                .appendTo(moveLFolderList);
                             $('<div/>')
                                 .addClass('dropdown-divider')
-                                .appendTo(moveLFolderist);
+                                .appendTo(listItem);
                             $('<i/>')
-                                .addClass('fas fa-folder m-2 ')
-                                .appendTo(moveLFolderist);
+                                .addClass('fas fa-folder mr-2')
+                                .appendTo(listItem);
                             let liFolder = $('<a/>')
                                 .attr('href',"#")
                                 .attr('id',data.rows[i].code)
                                 .text(data.rows[i].label)
-                                .appendTo(moveLFolderist);
+                                .appendTo(listItem);
+
+                            /* ********
+                              move to specific folder content in dropdown list
+                              by refilling the dropdown menu       *************  */
+
                             liFolder.click(function() {
                                 folderListFucntion(folderToMove ,data.rows[i].code);
 
@@ -212,16 +223,18 @@
                             url = url.replace("newParentC", data.rows[i].code);
                             url = url.replace("userC", 'e499799d-4015-430a-ab91-8ae9b36c4b76');
                             console.log(url)
-                                let moveIcon = $('<form/>')
+                            let moveForm = $('<form/>')
+                                .addClass('ml-auto')
                                 .attr('action',url)
                                 .attr('method','post')
-                                .appendTo(moveLFolderist);
-                            $('<input/>')
-                                .addClass('ml-4 mt-2')
+                                .appendTo(listItem);
+                            let submitButton = $('<button/>')
+                                .addClass('btn btn-block btn-outline-secondary  p-0 mb-1')
                                 .attr('type','submit')
-                                .attr('value','move here')
-                                .appendTo(moveIcon);
-
+                                .appendTo(moveForm);
+                            $('<i/>')
+                                .addClass('fas fa-chevron-circle-down mr-1 ml-1')
+                                .appendTo(submitButton);
 
                         });
                     });

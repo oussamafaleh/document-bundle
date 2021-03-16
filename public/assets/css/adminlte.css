@@ -100,6 +100,10 @@ abbr[data-original-title] {
   text-decoration-skip-ink: none;
 }
 
+.border-bottom{
+  padding-bottom: 1rem !important;
+  border-bottom: 1px solid #e9ecef !important;
+}
 address {
   margin-bottom: 1rem;
   font-style: normal;
@@ -32968,5 +32972,11 @@ a.text-muted:hover {
 .dark-mode .link-black,
 .dark-mode .link-dark {
   color: #ced4da;
+}
+.fabutton{
+
+  background: none;
+  padding: 0px;
+  border: none;
 }
 /*# sourceMappingURL=adminlte.css.map */
