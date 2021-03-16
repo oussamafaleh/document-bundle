@@ -61,6 +61,9 @@ class FolderManager extends AbstractManager
             ->setIsTagged(false)
             ->setRoles(array("OWNER" => "ROLE_OWNER"));
         $this->apiEntityManager->persist($this->user_item_property);
+        $parent->setUpdatedAt(new \DateTime());
+        $this->apiEntityManager->persist($parent);
+
         $this->apiEntityManager->flush();
         $connection->commit();
         return ['data' => [
@@ -158,7 +161,14 @@ class FolderManager extends AbstractManager
             ]];
         }
         $item->setParent($new_parent);
+
         $this->apiEntityManager->persist($item);
+        $this->apiEntityManager->persist($item);
+
+        $parent =$item->getParent($new_parent);
+        $parent->setUpdatedAt(new \DateTime());
+        $this->apiEntityManager->persist($item);
+
         $this->apiEntityManager->flush();
         return ['data' => [
             'messages' => 'update_success',

@@ -65,6 +65,8 @@ class FileManager extends AbstractManager
             ->setIsTagged(false)
             ->setRoles(array("OWNER" => "ROLE_OWNER"));
         $this->apiEntityManager->persist($this->user_item_property);
+        $parent->setUpdatedAt(new \DateTime());
+        $this->apiEntityManager->persist($parent);
         $this->apiEntityManager->flush();
         $connection->commit();
 
