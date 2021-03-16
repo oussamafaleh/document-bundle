@@ -3225,7 +3225,11 @@ input[type="button"].btn-block {
 .dropdown-toggle:empty::after {
   margin-left: 0;
 }
-
+.scrollable-menu {
+  height: 200px;
+  max-height: 200px;
+  overflow-x: scroll;
+}
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -3245,6 +3249,9 @@ input[type="button"].btn-block {
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 0.25rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+  height: auto;
+  max-height: 200px;
+  overflow-y: scroll;
 }
 
 .dropdown-menu-left {

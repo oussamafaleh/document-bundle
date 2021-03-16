@@ -106,12 +106,8 @@ class ParameterValidatorListener
 
                 if ($configuration instanceof Mapping) {
 
-                   
-
-                    
-
-                    $apiBagClass = $configuration->object;
-                    $apiBagName = $configuration->as;
+                   $apiBagClass = $configuration->object;
+                   $apiBagName = $configuration->as;
                 }
             }
         }

@@ -102,26 +102,37 @@
                     {% for item in data.rows %}
 
                         <tr>
-                            <td >
+                            <td>
                                 {% if item.type == 'folder' %}
                                     <i class="fas fa-folder mr-2 "></i>
                                     <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}">{{ item.label }}</a>
                                 {% else %}
-                                    <i class="image-icon" id="{{ item.label }}" ></i>
+                                    <i class="image-icon" id="{{ item.label }}"></i>
                                     {{ item.label }}
                                 {% endif %}
                             </td>
                             <td>{{ item.created_at ? item.created_at|date('Y-m-d H:i:s') : '' }}</td>
                             <td>{{ item.updated_at ? item.updated_at|date('Y-m-d H:i:s') : '' }}</td>
-                            <td>
+                            <td class="navbar-nav d-flex flex-row">
                                 {% if item.type == 'folder' %}
 
-                                    <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}" class="danger m-3"><i class="fas fa-folder-minus"></i></a>
+                                    <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
+                                       class="danger mr-4 ml-4"><i class="fas fa-folder-minus"></i></a>
                                 {% else %}
-                                <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}" class="danger m-3"><i class="fas fa-file-excel"></i></a>
+                                    <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
+                                       class="danger mr-4 ml-4"><i class="fas fa-file-excel"></i></a>
                                 {% endif %}
-                                <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}" class="warning m-3"><i class="fas fa-angle-double-right"></i></a>
-                                <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}" class="marine"m-3><i class="fas fa-folder-open"></i></a>
+                                <li class="dropdown  mr-4 ml-4">
+                                    <a hrep="#" class="warning" data-toggle="dropdown" onclick="folderListFucntion('{{ item.code }}','{{ current.code }}')"><i
+                                                class="fas fa-angle-double-right"></i></a>
+
+                                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right scrollable-menu"
+                                         style="height: 200px;max-height: 200px;  overflow-x: scroll;" id="move_list">
+
+                                    </div>
+                                </li>
+                                <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
+                                   class="marine mr-4 ml-4"><i class="fas fa-folder-open"></i></a>
 
 
                                 {# <a href="{{ path('item_edit', {'code': item.code}) }}">edit</a> #}
@@ -140,8 +151,10 @@
                     <ul class="pagination">
 
                         <li class="page-item page-link">Pages:</li>
-                        {% for i in range(1, data.total_indexs) %}
-                            <li class="page-item"><a class="page-link" href="{{ path('list_sub_items_twig', {'parent_code': current.code,('index'):i }) }}">{{ i }}</a></li>
+                        {% for i in range(0, data.total_indexs) %}
+                            <li class="page-item"><a class="page-link"
+                                                     href="{{ path('list_sub_items_twig', {'parent_code': current.code,('index'):i }) }}">{{ i }}</a>
+                            </li>
                         {% endfor %}
                     </ul>
                 </nav>
@@ -149,6 +162,75 @@
 
             <!-- /.card-body -->
         </div>
+        <script type="text/javascript">
+            $('div.dropdown-menu.dropdown-menu-lg.dropdown-menu-right.scrollable-menu').on('click', function(event){
+                // The event won't be propagated up to the document NODE and
+                // therefore delegated events won't be fired
+                event.stopPropagation();
+            });
+            function folderListFucntion(folderToMove, folderMovingIn) {
+                jQuery(document).ready(function ($) {
+                var moveLFolderist = $('div#move_list')
+
+
+                    $.ajax({
+                        method: "GET",
+                        url: "/api/folder/list-sub-item/" + folderMovingIn,
+                        data: {
+                            index: -1
+                        }
+
+                    }).done(function (res) {
+                        moveLFolderist.empty();
+                        let data = res.results.data;
+
+        ///////////////////////fill dropdown list with folders
+
+                        $('<span/>')
+                            .addClass('dropdown-item dropdown-header')
+                            .text(res.results.parent_folder)
+                            .appendTo(moveLFolderist);
+                        $.each(data.rows, function (i) {
+                            var id = 'move_list' + i;
+                            $('<div/>')
+                                .addClass('dropdown-divider')
+                                .appendTo(moveLFolderist);
+                            $('<i/>')
+                                .addClass('fas fa-folder m-2 ')
+                                .appendTo(moveLFolderist);
+                            let liFolder = $('<a/>')
+                                .attr('href',"#")
+                                .attr('id',data.rows[i].code)
+                                .text(data.rows[i].label)
+                                .appendTo(moveLFolderist);
+                            liFolder.click(function() {
+                                folderListFucntion(folderToMove ,data.rows[i].code);
+
+                            });
+                            let url = "{{ path('move_item_twig', {'item_code':'itemC','parent_code': current.code,('new_parent_code'):'newParentC',('user_code'):'userC' }) }}";
+                            url = url.replace("itemC", folderToMove);
+                            url = url.replace("newParentC", data.rows[i].code);
+                            url = url.replace("userC", 'e499799d-4015-430a-ab91-8ae9b36c4b76');
+                            console.log(url)
+                                let moveIcon = $('<form/>')
+                                .attr('action',url)
+                                .attr('method','post')
+                                .appendTo(moveLFolderist);
+                            $('<input/>')
+                                .addClass('ml-4 mt-2')
+                                .attr('type','submit')
+                                .attr('value','move here')
+                                .appendTo(moveIcon);
+
+
+                        });
+                    });
+                })
+
+
+            };
+
+        </script>
         <!-- /.card -->
     </section>
 

@@ -73,7 +73,18 @@ class FolderController extends AbstractController
             'file_form'=> $fileForm->createView()
         ]);
     }
+    /**
+     * @Route("/move/{item_code}/{parent_code}", name="move_item_twig", methods={"POST"})
+     * @Mapping(object="App\ApiModel\Item\NewParent", as="newParent")
+     */
+    public function setParent(Request $request, $parent_code)
+    {
 
+        $param =  (Array) $request->get("newParent");
+      //  dump($request->get("newParent"));exit();
+        $this->manager->moveItem($param);
+        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
+    }
 
 
 

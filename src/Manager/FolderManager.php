@@ -87,7 +87,8 @@ class FolderManager extends AbstractManager
                 ->getRepository(Item::class)->findByFilters($filters);
 
             return ['data' => MyTools::paginator($data, $filters['index'], $filters['size']),
-                    'parent_folder' => $parent->getLabel() ];
+                    'parent_folder' => $parent->getLabel(),
+                    'parent_code' => $parent->getCode() ];
         }
         /**
          * @return array
@@ -129,7 +130,41 @@ class FolderManager extends AbstractManager
             }
             return true ;
         }
+    /**
+     * @return array
+     *
+     * move Item
+     */
+    public function moveItem($param)
+    {
+        $user = $this->apiEntityManager
+            ->getRepository(User::class)->findOneBy(['code' => $param['user_code']]);
 
+        $item = $this->apiEntityManager
+            ->getRepository(Folder::class)->findOneBy(['code' => $param['item_code']]);
+        $new_parent = $this->apiEntityManager
+            ->getRepository(Folder::class)->findOneBy(['code' => $param['new_parent_code']]);
+//        if ($user === null) {
+//            dump('user_not_fond_exeption');exit();
+//            return ['data' => [
+//                'messages' => 'not_fond_exeption',
+//            ]];
+//        }
+
+        if ( $item === null) {
+            dump('item_not_fond_exeption');exit();
+            return ['data' => [
+                'messages' => 'not_fond_exeption',
+            ]];
+        }
+        $item->setParent($new_parent);
+        $this->apiEntityManager->persist($item);
+        $this->apiEntityManager->flush();
+        return ['data' => [
+            'messages' => 'update_success',
+            'object' => $item->getParent()->getCode(),
+        ]];
+    }
     }
 
 
