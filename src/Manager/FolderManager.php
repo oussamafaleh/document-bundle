@@ -77,13 +77,13 @@ class FolderManager extends AbstractManager
          * @var $parentCode == parent folder code
          * list of subItems
          */
-        public function listSubItem($parentCode , $filters)
+        public function listSubItem( $filters)
         {
 //            $user = $this->apiEntityManager
 //                ->getRepository(User::class)->findOneBy(['code' => $userCode]);
 
             $parent = $this->apiEntityManager
-                ->getRepository(Folder::class)->findOneBy(['code' => $parentCode]);
+                ->getRepository(Folder::class)->findOneBy(['code' => $filters['parent_code']]);
             $filters['parent']= $parent->getId();
 
             $data = $this->apiEntityManager
@@ -93,6 +93,8 @@ class FolderManager extends AbstractManager
                     'parent_folder' => $parent->getLabel(),
                     'parent_code' => $parent->getCode() ];
         }
+
+
         /**
          * @return array
          *
@@ -122,10 +124,11 @@ class FolderManager extends AbstractManager
         public function checkSubItemsLabelUniqueness ($parentCode , $label)
         {
             $filters = [
+                'parent_code' => $parentCode ,
                 'index' => -1 ,
                 'size' => -1
             ];
-            $subItems = $this->listSubItem($parentCode , $filters)['data']['rows'];
+            $subItems = $this->listSubItem( $filters)['data']['rows'];
             foreach($subItems as $subItem) {
                 if( $subItem['label'] === $label){
                     return false;

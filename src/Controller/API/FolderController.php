@@ -135,11 +135,11 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
       *     )
       * )
       */
-     public function list(Request $request ,$parent_code)
+     public function list(Request $request )
      {
 
          $filters =  (Array) $request->get("subItems");
-         return $this->manager->listSubItem($parent_code, $filters);
+         return $this->manager->listSubItem( $filters);
      }
      /**
       * @Route("/schema/{parent_code}", name="current_item_schema", methods={"GET"})

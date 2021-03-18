@@ -52,17 +52,16 @@ class ItemRepository extends ServiceEntityRepository
     */
     public function findByFilters($filters)
     {
-
         $parent = MyTools::getOption($filters, 'parent');
+        $type = MyTools::getOption($filters, 'type');
         $sortColumn = MyTools::getOption($filters, 'sort_column', 'created_at');
         $sortOrder = MyTools::getOption($filters, 'sort_order', 'DESC');
         $page = MyTools::getOption($filters, 'index', 1);
         $maxPerPage = MyTools::getOption($filters, 'size', 10);
         $dateFormat = MyTools::getOption($filters, 'date_format', 'YYYY-MM-DD');
 
-        $where = [];
-        $parameters =  [
-            ':parent_id' => $parent];
+
+        $parameters = $where = [];
         $select = [
             'total' => 'count(*) OVER() ',
             'code' => 'i.code',
@@ -81,8 +80,21 @@ class ItemRepository extends ServiceEntityRepository
         }
         $sql = 'SELECT ' . substr($sql, 0, -2)
             . ' FROM  item   AS i '
-            . 'WHERE i.parent_id =:parent_id'
         ;
+
+
+        if (!empty($parent)) {
+            $parameters[':parent_id'] = $parent;
+            $where [] = ' i.parent_id = :parent_id';
+        }
+
+        if (!empty($type)) {
+            $parameters[':type'] = $type;
+            $where [] = ' i.type = :type';
+        }
+        if (!empty($where)) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
         if (isset($select[$sortColumn])) {
             $sql .= ' ORDER BY ' . $select[$sortColumn] . '  ' . $sortOrder;
         }
@@ -90,6 +102,9 @@ class ItemRepository extends ServiceEntityRepository
         if ($page > 0) {
             $sql .= ' LIMIT ' . $maxPerPage . ' OFFSET ' . (($page - 1) * $maxPerPage);
         }
+
+
+
         $cacheKey = sha1($sql . json_encode($parameters));
         return $this->getEntityManager()
             ->createNativeQuery($sql, $rsm)

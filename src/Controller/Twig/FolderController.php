@@ -58,7 +58,7 @@ class FolderController extends AbstractController
      * @Route("/list-sub-item/{parent_code}", name="list_sub_items_twig", methods={"GET"})
      * @Mapping(object="App\ApiModel\Folder\SubItems", as="subItems")
      */
-    public function list(Request $request, $parent_code): Response
+    public function list(Request $request): Response
     {
         $fileForm = $this->createForm(DocumentType::class );
         $folderForm = $this->createForm(FolderType::class );
@@ -66,9 +66,9 @@ class FolderController extends AbstractController
         $filters = (array)$request->get("subItems");
 
         return $this->render('folder/index.html.twig', [
-            'data' => $this->manager->listSubItem($parent_code, $filters)['data'],
-            'schema' => $this->manager->getschema($parent_code)['schema'],
-            'current' => $this->manager->getschema($parent_code)['current'],
+            'data' => $this->manager->listSubItem( $filters)['data'],
+            'schema' => $this->manager->getschema($filters['parent_code'])['schema'],
+            'current' => $this->manager->getschema($filters['parent_code'])['current'],
             'folder_form' => $folderForm->createView(),
             'file_form'=> $fileForm->createView()
         ]);
@@ -81,7 +81,7 @@ class FolderController extends AbstractController
     {
 
         $param =  (Array) $request->get("newParent");
-      //  dump($request->get("newParent"));exit();
+        dump($request->get("newParent"));exit();
         $this->manager->moveItem($param);
         return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
     }

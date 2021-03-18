@@ -54,7 +54,8 @@ class FileManager extends AbstractManager
         $this->document->setLabel($file['name'])
             ->setCode($file['code'])
             ->setExtension($file['extention'])
-            ->setSize($file['size'])
+            ->setSize(
+                $this->convetFileSize($file['size']) )
             ->setParent($parent);
         $this->apiEntityManager->persist($this->document);
 
@@ -92,7 +93,16 @@ class FileManager extends AbstractManager
     }
 
 
-
+    public function convetFileSize(int $size){
+        $units = ["Byte","Kb","Mb"];
+        foreach ( $units as $unit) {
+            if( ($size / 1000) < 1 ){
+                return strval($size).$unit;
+            }
+            $size = $size / 1000;
+        }
+        return strval($size) . "Gb";
+    }
 
 
 }

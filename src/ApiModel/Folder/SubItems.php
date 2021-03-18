@@ -19,12 +19,23 @@ class SubItems extends CommonParameterBag
      * @var string
      *
      */
-    public $user_code;
+    public $user_code = '84150eb1-336a-4193-ba8d-6237bb7e374e';
 
     /**
      * @var string
      *
-     * @Assert\Regex("/^(type|label|created_at)/")
+     */
+    public $type;
+    /**
+     * @var string
+     *
+     */
+    public $parent_code;
+
+    /**
+     * @var string
+     *
+     * @Assert\Regex("/^(type|label|created_at|updated_at)/")
      */
     public $sort_column = 'created_at';
 

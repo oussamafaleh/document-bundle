@@ -4,7 +4,7 @@
 
 {% block body %}
     <!-- Content Header (Page header) -->
-    <div class="content-header mb-5">
+    <div class="folder-content-header content-header mb-5">
         <div class="container-fluid  p-2 pt-5 pb-2">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -107,12 +107,12 @@
                                     <i class="fas fa-folder mr-2 "></i>
                                     <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}">{{ item.label }}</a>
                                 {% else %}
-                                    <i class="image-icon" id="{{ item.label }}"></i>
+                                    <i class="far fa-file mr-2" id="{{ item.label }}"></i>
                                     {{ item.label }}
                                 {% endif %}
                             </td>
-                            <td>{{ item.created_at ? item.created_at|date('Y-m-d H:i:s') : '' }}</td>
-                            <td>{{ item.updated_at ? item.updated_at|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>{{ item.created_at ? item.created_at|date('Y-m-d H:i') : '' }}</td>
+                            <td>{{ item.updated_at ? item.updated_at|date('Y-m-d H:i') : '' }}</td>
                             <td class="navbar-nav d-flex flex-row">
                                 {% if item.type == 'folder' %}
 
@@ -218,7 +218,7 @@
                                 folderListFucntion(folderToMove ,data.rows[i].code);
 
                             });
-                            let url = "{{ path('move_item_twig', {'item_code':'itemC','parent_code': current.code,('new_parent_code'):'newParentC',('user_code'):'userC' }) }}";
+                            let url = "{{ path('move_item_twig', {'item_code':'itemC','parent_code': current.code,'new_parent_code':'newParentC','user_code':'userC' }) }}";
                             url = url.replace("itemC", folderToMove);
                             url = url.replace("newParentC", data.rows[i].code);
                             url = url.replace("userC", 'e499799d-4015-430a-ab91-8ae9b36c4b76');
