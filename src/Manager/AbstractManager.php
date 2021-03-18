@@ -2,12 +2,9 @@
 
 namespace App\Manager;
 
-//use SSH\CommonBundle\Utils\MyTools;
-//use SSH\CommonBundle\Manager\ExceptionManager;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;

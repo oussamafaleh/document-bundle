@@ -52,6 +52,8 @@ class ItemRepository extends ServiceEntityRepository
     */
     public function findByFilters($filters)
     {
+        $isTagged = MyTools::getOption($filters, 'is_tagged');
+        $user = MyTools::getOption($filters, 'user');
         $parent = MyTools::getOption($filters, 'parent');
         $type = MyTools::getOption($filters, 'type');
         $sortColumn = MyTools::getOption($filters, 'sort_column', 'created_at');
@@ -67,6 +69,8 @@ class ItemRepository extends ServiceEntityRepository
             'code' => 'i.code',
             'label' => "i.label",
             'type' => "i.type",
+            'roles' => 'p.roles',
+            'is_tagged' => 'p.is_tagged',
             'updated_at' => "i.updated_at",
             'created_at' => "i.created_at",
         ];
@@ -80,8 +84,18 @@ class ItemRepository extends ServiceEntityRepository
         }
         $sql = 'SELECT ' . substr($sql, 0, -2)
             . ' FROM  item   AS i '
+            . ' INNER JOIN user_item_property AS p ON ( p.item_id = i.id ) '
         ;
 
+        if (!empty($isTagged)) {
+            $parameters[':is_tagged'] = $isTagged;
+            $where [] = ' p.is_tagged = :is_tagged';
+        }
+
+        if (!empty($user)) {
+            $parameters[':user_id'] = $user;
+            $where [] = ' p.user_id = :user_id';
+        }
 
         if (!empty($parent)) {
             $parameters[':parent_id'] = $parent;

@@ -41,7 +41,7 @@ class FolderManager extends AbstractManager
                 'messages' => 'not_fond_exeption',
             ]];
         }
-        if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['label'])){
+        if( !$this->checkSubItemsLabelUniqueness($folder['parent_code'],$folder['user_code'],$folder['label'])){
             dump('fond_exeption');exit();
             return ['data' =>
                 ['messages' => 'fond_exeption']
@@ -74,17 +74,24 @@ class FolderManager extends AbstractManager
     }
         /**
          * @return array
-         * @var $parentCode == parent folder code
+         * @var parentCode == parent folder code
          * list of subItems
          */
         public function listSubItem( $filters)
         {
-//            $user = $this->apiEntityManager
-//                ->getRepository(User::class)->findOneBy(['code' => $userCode]);
+            $user = $this->apiEntityManager
+                ->getRepository(User::class)->findOneBy(['code' => $filters['user_code']]);
 
             $parent = $this->apiEntityManager
                 ->getRepository(Folder::class)->findOneBy(['code' => $filters['parent_code']]);
+            if ($user === null || $parent === null) {
+                dump('not_fond_exeption');exit();
+                return ['data' => [
+                    'messages' => 'not_fond_exeption',
+                ]];
+            }
             $filters['parent']= $parent->getId();
+            $filters['user']= $user->getId();
 
             $data = $this->apiEntityManager
                 ->getRepository(Item::class)->findByFilters($filters);
@@ -121,9 +128,10 @@ class FolderManager extends AbstractManager
          * @return bool
          *
          */
-        public function checkSubItemsLabelUniqueness ($parentCode , $label)
+        public function checkSubItemsLabelUniqueness ($parentCode ,$user_code, $label)
         {
             $filters = [
+                'user_code'=> $user_code,
                 'parent_code' => $parentCode ,
                 'index' => -1 ,
                 'size' => -1
@@ -147,18 +155,18 @@ class FolderManager extends AbstractManager
             ->getRepository(User::class)->findOneBy(['code' => $param['user_code']]);
 
         $item = $this->apiEntityManager
-            ->getRepository(Folder::class)->findOneBy(['code' => $param['item_code']]);
+            ->getRepository(Item::class)->findOneBy(['code' => $param['item_code']]);
         $new_parent = $this->apiEntityManager
             ->getRepository(Folder::class)->findOneBy(['code' => $param['new_parent_code']]);
-//        if ($user === null) {
-//            dump('user_not_fond_exeption');exit();
-//            return ['data' => [
-//                'messages' => 'not_fond_exeption',
-//            ]];
-//        }
+        if ($user === null) {
+            dump('not_fond_exeption');exit();
+            return ['data' => [
+                'messages' => 'not_fond_exeption',
+            ]];
+        }
 
         if ( $item === null) {
-            dump('item_not_fond_exeption');exit();
+            dump('item_not_found');exit();
             return ['data' => [
                 'messages' => 'not_fond_exeption',
             ]];

@@ -38,15 +38,22 @@ class FileManager extends AbstractManager
 
     public function create($RequestFile , $fileParam )
     {
-        if( !$this->folderManager->checkSubItemsLabelUniqueness($fileParam['parent_code'],$RequestFile->getClientOriginalName())){
-            return ['messages' => 'fond_exeption'];
-        }
-        $file =$this->upload($RequestFile);
+
         $user = $this->apiEntityManager
             ->getRepository(User::class)->findOneBy(['code' => $fileParam['user_code']]);
 
         $parent = $this->apiEntityManager
             ->getRepository(Folder::class)->findOneBy(['code' => $fileParam['parent_code']]);
+        if ($user === null || $parent === null) {
+            dump('not_fond_exeption');exit();
+            return ['data' => [
+                'messages' => 'not_fond_exeption',
+            ]];
+        }
+        if( !$this->folderManager->checkSubItemsLabelUniqueness($fileParam['parent_code'],$fileParam['user_code'],$RequestFile->getClientOriginalName())){
+            return ['messages' => 'fond_exeption'];
+        }
+        $file =$this->upload($RequestFile);
 
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();

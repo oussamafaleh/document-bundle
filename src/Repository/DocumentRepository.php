@@ -51,6 +51,8 @@ class DocumentRepository extends ServiceEntityRepository
     */
     public function findByFilters($filters = [])
     {
+
+        $user = MyTools::getOption($filters, 'user');
         $parent = MyTools::getOption($filters, 'parent');
         $sortColumn = MyTools::getOption($filters, 'sort_column', 'updated_at');
         $sortOrder = MyTools::getOption($filters, 'sort_order', 'DESC');
@@ -65,6 +67,7 @@ class DocumentRepository extends ServiceEntityRepository
             'label' => "i.label",
             'extension' => "d.extension",
             'size' => "d.size",
+            'roles' => 'p.roles',
             'updated_at' => "i.updated_at",
             'created_at' => "i.created_at",
         ];
@@ -79,9 +82,13 @@ class DocumentRepository extends ServiceEntityRepository
         $sql = 'SELECT ' . substr($sql, 0, -2)
             . ' FROM  item   AS i '
             . ' INNER JOIN document AS d ON ( d.id = i.id ) '
+            . ' INNER JOIN user_item_property AS p ON ( p.item_id = i.id ) '
         ;
 
-
+        if (!empty($user)) {
+            $parameters[':user_id'] = $user;
+            $where [] = ' p.user_id = :user_id';
+        }
         if (!empty($parent)) {
             $parameters[':parent_id'] = $parent;
             $where [] = ' i.parent_id = :parent_id';

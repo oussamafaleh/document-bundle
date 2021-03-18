@@ -25,7 +25,7 @@ class DashboardController extends AbstractController
     /**
      * dashboardController constructor.
      */
-    public function __construct(DashboardManager $dashboardManager)
+    public function __construct(DashboardManager $dashboardManager )
     {
         $this->manager = $dashboardManager;
     }
@@ -34,17 +34,19 @@ class DashboardController extends AbstractController
 
     /**
      * @Route("/", name="dashboard_twig", methods={"GET"})
+     * @Mapping(object="App\ApiModel\Dashboard\Dashboard", as="dashboard")
      */
     public function list(Request $request): Response
     {
-        $user = $request->getContent('user_code');
-        $quickAccess = $this->manager->getQuickAccess($user )['data'];
-        //dump($quickAccess); exit();
+        $user= (array)$request->get('dashboard');
+        $quickAccess = $this->manager->getQuickAccess($user['user_code'] )['data'];
         return $this->render('dashboard/dashboard.html.twig', [
             'quick_access' => $quickAccess
 
         ]);
     }
+
+
 
 
 }

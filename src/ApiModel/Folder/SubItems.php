@@ -2,6 +2,7 @@
 
 namespace App\ApiModel\Folder;
 
+use App\ApiModel\Traits\ApiUser;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Request\CommonParameterBag;
 use App\ApiModel\Traits\ApiList;
@@ -15,17 +16,14 @@ class SubItems extends CommonParameterBag
 
     use ApiList;
 
-    /**
-     * @var string
-     *
-     */
-    public $user_code = '84150eb1-336a-4193-ba8d-6237bb7e374e';
+    use ApiUser;
 
     /**
      * @var string
      *
      */
     public $type;
+
     /**
      * @var string
      *

@@ -2,6 +2,7 @@
 
 namespace App\ApiModel\Item;
 
+use App\ApiModel\Traits\ApiUser;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Request\CommonParameterBag;
 
@@ -12,7 +13,7 @@ use App\Request\CommonParameterBag;
 class NewParent extends CommonParameterBag
 {
 
-
+        use ApiUser;
 
     /**
      * @var string
@@ -26,10 +27,6 @@ class NewParent extends CommonParameterBag
      */
     public $new_parent_code;
 
-    /**
-     * @var string
-     *
-     */
-    public $user_code = "84150eb1-336a-4193-ba8d-6237bb7e374e";
+
 
 }

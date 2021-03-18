@@ -51,25 +51,7 @@ class FileController extends AbstractController
         }
         return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
     }
-//    public function create(Request $request,$parent_code): Response
-//    {
-//        $folder['parent_code'] = $parent_code;
-//        $folder['user_code']  = '0970229e-4867-4ada-b0ac-a199446cbc21';
-//        $form = $this->createForm(FolderType::class );
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $form->getData();
-//            $folder['label']= $form->getData()['label'];
-//
-//            $this->manager->create($folder);
-//
-//        }
-//
-//        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
-//
-//
-//    }
+
 
 
 

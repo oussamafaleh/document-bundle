@@ -177,7 +177,9 @@
                         method: "GET",
                         url: "/api/folder/list-sub-item/" + folderMovingIn,
                         data: {
-                            index: -1
+                            index: -1,
+                            type: "folder",
+                            user_code: "0970229e-4867-4ada-b0ac-a199446cbc21"
                         }
 
                     }).done(function (res) {
@@ -221,7 +223,7 @@
                             let url = "{{ path('move_item_twig', {'item_code':'itemC','parent_code': current.code,'new_parent_code':'newParentC','user_code':'userC' }) }}";
                             url = url.replace("itemC", folderToMove);
                             url = url.replace("newParentC", data.rows[i].code);
-                            url = url.replace("userC", 'e499799d-4015-430a-ab91-8ae9b36c4b76');
+                            url = url.replace("userC", "0970229e-4867-4ada-b0ac-a199446cbc21");
                             console.log(url)
                             let moveForm = $('<form/>')
                                 .addClass('ml-auto')

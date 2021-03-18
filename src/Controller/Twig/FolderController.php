@@ -37,7 +37,7 @@ class FolderController extends AbstractController
     public function create(Request $request,$parent_code): Response
     {
         $folder['parent_code'] = $parent_code;
-        $folder['user_code']  = '0970229e-4867-4ada-b0ac-a199446cbc21';
+        $folder['user_code']  = "0970229e-4867-4ada-b0ac-a199446cbc21";
         $form = $this->createForm(FolderType::class );
         $form->handleRequest($request);
 
@@ -49,7 +49,7 @@ class FolderController extends AbstractController
 
         }
 
-        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
+        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code , 'user_code' => $folder['user_code']]);
 
 
     }
@@ -81,7 +81,7 @@ class FolderController extends AbstractController
     {
 
         $param =  (Array) $request->get("newParent");
-        dump($request->get("newParent"));exit();
+       // dump($request->get("newParent"));exit();
         $this->manager->moveItem($param);
         return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
     }
