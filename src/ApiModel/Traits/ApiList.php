@@ -37,7 +37,7 @@ trait ApiList
      *     message="Your maxPerPage should be a number"
      * )
      */
-    public $sizesize = 10;
+    public $size = 10;
 
 
 }
