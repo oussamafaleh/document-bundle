@@ -164,8 +164,10 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      {
          return $this->manager->getschema($parent_code);
      }
+
+
      /**
-      * @Route("/move/{iem_code}", name="move_item", methods={"PATCH"})
+      * @Route("/move/{item_code}", name="move_item", methods={"PATCH"})
       * @Mapping(object="App\ApiModel\Item\NewParent", as="newParent")
       * @Operation(
       *     tags={"Item"},
@@ -204,6 +206,42 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
          $param =  (Array) $request->get("newParent");
 
          return $this->manager->moveItem($param);
+     }
+
+     /**
+      * @Route("/tag/{item_code}", name="move_item", methods={"PATCH"})
+      * @Mapping(object="App\ApiModel\Item\Tag", as="tag")
+      * @Operation(
+      *     tags={"Item"},
+      *     summary="list of sub items",
+      *     @SWG\Parameter(
+      *         name="user_code",
+      *         in="query",
+      *         type="string",
+      *         description="page number",
+      *         required=false
+      *     ),
+      *     @SWG\Response(
+      *         response="200",
+      *         description="Returned when successful"
+      *     ),
+      *     @SWG\Response(
+      *         response="403",
+      *         description="Returned when the ws-folder is not authorized"
+      *     ),
+      *     @SWG\Response(
+      *         response="404",
+      *         description="Returned when the folder is not found"
+      *     )
+      * )
+      */
+     public function setTagged(Request $request)
+     {
+
+         $param =  (Array) $request->get("tag");
+
+
+         return $this->manager->setTagged($param);
      }
     
 }

@@ -39,9 +39,11 @@ class DashboardController extends AbstractController
     public function list(Request $request): Response
     {
         $user= (array)$request->get('dashboard');
+        $TaggedFolders = $this->manager->getTaggedFolders($user['user_code'] )['data'];
         $quickAccess = $this->manager->getQuickAccess($user['user_code'] )['data'];
         return $this->render('dashboard/dashboard.html.twig', [
-            'quick_access' => $quickAccess
+            'quick_access' => $quickAccess,
+            'tagged' => $TaggedFolders
 
         ]);
     }

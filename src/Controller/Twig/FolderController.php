@@ -6,6 +6,7 @@ use App\Entity\Folder;
 use App\Annotations\Mapping;
 use App\Form\DocumentType;
 use App\Form\FolderType;
+use App\Manager\DashboardManager;
 use App\Manager\FolderManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,8 +27,9 @@ class FolderController extends AbstractController
     /**
      * folderController constructor.
      */
-    public function __construct(FolderManager $folderManager)
+    public function __construct(FolderManager $folderManager, DashboardManager $dashboardManager)
     {
+        $this->dashboardManager =$dashboardManager;
         $this->manager = $folderManager;
     }
 
@@ -60,12 +62,15 @@ class FolderController extends AbstractController
      */
     public function list(Request $request): Response
     {
+
         $fileForm = $this->createForm(DocumentType::class );
         $folderForm = $this->createForm(FolderType::class );
 
         $filters = (array)$request->get("subItems");
+        $TaggedFolders = $this->dashboardManager->getTaggedFolders($filters['user_code'] )['data'];
 
         return $this->render('folder/index.html.twig', [
+            'tagged' => $TaggedFolders,
             'data' => $this->manager->listSubItem( $filters)['data'],
             'schema' => $this->manager->getschema($filters['parent_code'])['schema'],
             'current' => $this->manager->getschema($filters['parent_code'])['current'],

@@ -37,6 +37,28 @@ class DashboardManager extends AbstractManager
 
         return ['data' => $data];
     }
+    function getTaggedFolders($userCode)
+    {
+
+        $user = $this->apiEntityManager
+            ->getRepository(User::class)->findOneBy(['code' => $userCode]);
+        if ($user === null) {
+            dump('not_fond_exeption');exit();
+            return ['data' => [
+                'messages' => 'not_fond_exeption',
+            ]];
+        }
+        $filters = [
+            'user' => $user->getId(),
+            'is_tagged' => "1",
+            'type'=> "folder"
+        ];
+
+        $data =   $this->apiEntityManager
+            ->getRepository(Item::class)->findByFilters($filters);
+
+        return ['data' => $data];
+    }
 
 
 }
