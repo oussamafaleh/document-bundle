@@ -2,7 +2,6 @@
 
 namespace App\Manager;
 
-use App\Entity\Demo;
 use App\Entity\Document;
 use App\Entity\Folder;
 use App\Entity\Item;
@@ -23,34 +22,96 @@ class FileManager extends AbstractManager
      */
     private $folderManager;
 
+    /** @var string */
+    private $userCode;
+
+    /** @var string */
+    private $parentCode;
+
+
+
     public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager)
     {
         parent::__construct($entityManager);
         $this->targetDirectory = $targetDirectory;
         $this->folderManager = $folderManager;
     }
-    
 
+    public function init($settings = [])
+    {
+        parent::setSettings($settings);
+
+        if ($this->getUserCode()) {
+
+            // find existing User
+            $this->user = $this->apiEntityManager
+                ->getRepository(User::class)
+                ->findOneBy(['code' => $this->getUserCode()]);
+
+            if (!$this->user instanceof User) {
+                throw new \Exception('UNKNOWN_USER');
+            }
+        }
+        if ($this->getParentCode()) {
+
+            // find existing Parent
+            $this->parent = $this->apiEntityManager
+                ->getRepository(Folder::class)
+                ->findOneBy(['code' => $this->getParentCode()]);
+
+            if (!$this->parent instanceof Folder) {
+                throw new \Exception('UNKNOWN_PARENT');
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getUserCode()
+    {
+        return $this->userCode;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getParentCode()
+    {
+        return $this->parentCode;
+    }
+
+
+    /**
+     * @param string $userCode
+     */
+    public function setUserCode(string $userCode)
+    {
+        $this->userCode = $userCode;
+    }
+
+    /**
+     * @param string $parentCode
+     */
+    public function setParentCode(string $parentCode)
+    {
+        $this->parentCode = $parentCode;
+    }
     public function getTargetDirectory()
     {
         return $this->targetDirectory;
     }
 
-    public function create($RequestFile , $fileParam )
+    public function create($RequestFile )
     {
 
-        $user = $this->apiEntityManager
-            ->getRepository(User::class)->findOneBy(['code' => $fileParam['user_code']]);
-
-        $parent = $this->apiEntityManager
-            ->getRepository(Folder::class)->findOneBy(['code' => $fileParam['parent_code']]);
-        if ($user === null || $parent === null) {
-            dump('not_fond_exeption');exit();
-            return ['data' => [
-                'messages' => 'not_fond_exeption',
-            ]];
-        }
-        if( !$this->folderManager->checkSubItemsLabelUniqueness($fileParam['parent_code'],$fileParam['user_code'],$RequestFile->getClientOriginalName())){
+        $fileUniquness =$this->folderManager->init(['parentCode'=> $this->getParentCode(),'userCode' => $this->getUserCode()])
+            ->checkSubItemsLabelUniqueness($RequestFile->getClientOriginalName());
+        if(!$fileUniquness){
             return ['messages' => 'fond_exeption'];
         }
         $file =$this->upload($RequestFile);
@@ -63,18 +124,18 @@ class FileManager extends AbstractManager
             ->setExtension($file['extention'])
             ->setSize(
                 $this->convetFileSize($file['size']) )
-            ->setParent($parent);
+            ->setParent($this->parent);
         $this->apiEntityManager->persist($this->document);
 
 
         $this->user_item_property = new UserItemProperty();
         $this->user_item_property->setItem($this->document)
-            ->setUser($user)
+            ->setUser($this->user)
             ->setIsTagged(false)
             ->setRoles(array("OWNER" => "ROLE_OWNER"));
         $this->apiEntityManager->persist($this->user_item_property);
-        $parent->setUpdatedAt(new \DateTime());
-        $this->apiEntityManager->persist($parent);
+        $this->parent->setUpdatedAt(new \DateTime());
+        $this->apiEntityManager->persist($this->parent);
         $this->apiEntityManager->flush();
         $connection->commit();
 

@@ -46,10 +46,12 @@ class FileController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($files as $file ){
-                $this->manager->create($file ,$fileParam  );
+                $this->manager
+                    ->init(['parentCode' => $fileParam['parent_code'] , 'userCode' => $fileParam['user_code']])
+                    ->create($file );
             }
         }
-        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
+        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $fileParam['parent_code'], 'user_code' => $fileParam['user_code']]);
     }
 
 

@@ -78,7 +78,9 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
 
         $file = $request->files->get('file');
         $fileParam = (array)$request->get('file');
-        return $this->manager->create($file ,$fileParam  );
+        return $this->manager
+            ->init(['parentCode' => $fileParam['parent_code'] , 'userCode' => $fileParam['user_code']])
+            ->create($file);
     }
 
     

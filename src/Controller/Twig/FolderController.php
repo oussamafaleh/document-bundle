@@ -38,20 +38,22 @@ class FolderController extends AbstractController
      */
     public function create(Request $request,$parent_code): Response
     {
-        $folder['parent_code'] = $parent_code;
-        $folder['user_code']  = "0970229e-4867-4ada-b0ac-a199446cbc21";
+        $folderParam['parent_code'] = $parent_code;
+        $folderParam['user_code']  = "0970229e-4867-4ada-b0ac-a199446cbc21";
         $form = $this->createForm(FolderType::class );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $form->getData();
-            $folder['label']= $form->getData()['label'];
+            $folderParam['label']= $form->getData()['label'];
 
-            $this->manager->create($folder);
+            $this->manager
+                ->init(['parentCode' => $folderParam['parent_code'] , 'userCode' => $folderParam['user_code']])
+                ->create($folderParam);
 
         }
 
-        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code , 'user_code' => $folder['user_code']]);
+        return $this->redirectToRoute('list_sub_items_twig',['parent_code' =>$folderParam['parent_code'] , 'user_code' => $folderParam['user_code']]);
 
 
     }
@@ -67,11 +69,16 @@ class FolderController extends AbstractController
         $folderForm = $this->createForm(FolderType::class );
 
         $filters = (array)$request->get("subItems");
-        $TaggedFolders = $this->dashboardManager->getTaggedFolders($filters['user_code'] )['data'];
+        $TaggedFolders = $this->dashboardManager
+            ->init(['userCode' => $filters['user_code']])
+            ->getTaggedFolders()['data'];
 
+        $data = $this->manager
+            ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
+            ->listSubItem( $filters);
         return $this->render('folder/index.html.twig', [
             'tagged' => $TaggedFolders,
-            'data' => $this->manager->listSubItem( $filters)['data'],
+            'data' => $data['data'],
             'schema' => $this->manager->getschema($filters['parent_code'])['schema'],
             'current' => $this->manager->getschema($filters['parent_code'])['current'],
             'folder_form' => $folderForm->createView(),
@@ -86,8 +93,9 @@ class FolderController extends AbstractController
     {
 
         $param =  (Array) $request->get("newParent");
-       // dump($request->get("newParent"));exit();
-        $this->manager->moveItem($param);
+        $this->manager
+            ->init(['parentCode' => $param['new_parent_code'] , 'userCode' => $param['user_code'], 'itemCode' => $param['item_code']])
+            ->moveItem($param);
         return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $parent_code]);
     }
 

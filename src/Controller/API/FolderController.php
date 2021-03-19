@@ -74,8 +74,10 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
     public function create(Request $request)
     {
 
-        $folder = (array)$request->get('folder');
-        return $this->manager->create($folder);
+        $folderParam = (array)$request->get('folder');
+        return $this->manager
+            ->init(['parentCode' => $folderParam['parent_code'] , 'userCode' => $folderParam['user_code']])
+            ->create($folderParam);
     }
 
      /**
@@ -139,13 +141,23 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      {
 
          $filters =  (Array) $request->get("subItems");
-         return $this->manager->listSubItem( $filters);
+         return $this->manager
+             ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
+             ->listSubItem( $filters);
      }
      /**
       * @Route("/schema/{parent_code}", name="current_item_schema", methods={"GET"})
+      * @Mapping(object="App\ApiModel\Folder\SubItems", as="subItems")
       * @Operation(
       *     tags={"Folder"},
       *     summary="current item schema",
+      *     @SWG\Parameter(
+      *         name="user_code",
+      *         in="query",
+      *         type="string",
+      *         description="code of user",
+      *         required=true
+      *     ),
       *     @SWG\Response(
       *         response="200",
       *         description="Returned when successful"
@@ -160,9 +172,12 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
       *     )
       * )
       */
-     public function getschema($parent_code)
+     public function getschema(Request $request)
      {
-         return $this->manager->getschema($parent_code);
+         $filters =  (Array) $request->get("subItems");
+         return $this->manager
+             ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
+             ->getschema();
      }
 
 
@@ -205,7 +220,9 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
 
          $param =  (Array) $request->get("newParent");
 
-         return $this->manager->moveItem($param);
+         return $this->manager
+             ->init(['parentCode' => $param['new_parent_code'] , 'userCode' => $param['user_code'], 'itemCode' => $param['item_code']])
+             ->moveItem();
      }
 
      /**
@@ -241,7 +258,9 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
          $param =  (Array) $request->get("tag");
 
 
-         return $this->manager->setTagged($param);
+         return $this->manager
+             ->init(['itemCode' => $param['item_code'] , 'userCode' => $param['user_code']])
+             ->setTagged();
      }
     
 }

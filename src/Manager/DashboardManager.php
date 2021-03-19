@@ -10,26 +10,59 @@ use Doctrine\ORM\EntityManager;
 class DashboardManager extends AbstractManager
 {
 
+    /** @var string */
+    private $userCode;
+
 
     public function __construct(EntityManager $entityManager)
     {
         parent::__construct($entityManager);
     }
 
+    public function init($settings = [])
+    {
+        parent::setSettings($settings);
 
-    function getQuickAccess($userCode)
+        if ($this->getUserCode()) {
+
+            // find existing User
+            $this->user = $this->apiEntityManager
+                ->getRepository(User::class)
+                ->findOneBy(['code' => $this->getUserCode()]);
+
+            if (!$this->user instanceof User) {
+                throw new \Exception('UNKNOWN_USER');
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getUserCode()
+    {
+        return $this->userCode;
+    }
+
+
+
+    /**
+     * @param string $userCode
+     */
+    public function setUserCode(string $userCode)
+    {
+        $this->userCode = $userCode;
+    }
+
+
+    function getQuickAccess()
     {
 
-        $user = $this->apiEntityManager
-            ->getRepository(User::class)->findOneBy(['code' => $userCode]);
-        if ($user === null) {
-            dump('not_fond_exeption');exit();
-            return ['data' => [
-                'messages' => 'not_fond_exeption',
-            ]];
-        }
         $filters = [
-            'user' => $user->getId()
+            'user' => $this->user->getId()
         ];
 
         $data =   $this->apiEntityManager
@@ -37,19 +70,12 @@ class DashboardManager extends AbstractManager
 
         return ['data' => $data];
     }
-    function getTaggedFolders($userCode)
+    function getTaggedFolders()
     {
 
-        $user = $this->apiEntityManager
-            ->getRepository(User::class)->findOneBy(['code' => $userCode]);
-        if ($user === null) {
-            dump('not_fond_exeption');exit();
-            return ['data' => [
-                'messages' => 'not_fond_exeption',
-            ]];
-        }
+
         $filters = [
-            'user' => $user->getId(),
+            'user' => $this->user->getId(),
             'is_tagged' => "1",
             'type'=> "folder"
         ];

@@ -59,7 +59,9 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
     public function getQuickAccess(Request $request)
     {
         $user= (array)$request->get('dashboard');
-        return $this->manager->getQuickAccess($user['user_code'] );
+        return $this->manager
+            ->init(['userCode' => $user['user_code']])
+            ->getQuickAccess();
     }
 
      /**
@@ -92,7 +94,9 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      public function getTaggedFolders(Request $request)
      {
          $user= (array)$request->get('dashboard');
-         return $this->manager->getTaggedFolders($user['user_code'] );
+         return $this->manager
+             ->init(['userCode' => $user['user_code']])
+             ->getTaggedFolders();
      }
 
     
