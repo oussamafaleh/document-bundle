@@ -6,7 +6,9 @@
 imports:
     - { resource: services/manager.yml }
 parameters:
+    locale: en
     uploads_directory: '%kernel.project_dir%/public/uploads'
+    
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -26,5 +28,9 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
+
+
+framework:
+    translator: { fallbacks: ['%locale%'] }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

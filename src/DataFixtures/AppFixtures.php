@@ -49,7 +49,7 @@ class AppFixtures extends Fixture
             $manager->persist($userItemProp);
         }
 
-       //init history actions
+       //init history actions API
         $createFolderService = new ServiceMessage();
         $createFolderService->setLabel("create_folder")
             ->setMessage("created the item");
@@ -65,6 +65,21 @@ class AppFixtures extends Fixture
             ->setMessage("uploaded the file");
         $manager->persist($uploadFileService);;
 
+        //init history actions
+        $createFolderService = new ServiceMessage();
+        $createFolderService->setLabel("create_folder_twig")
+            ->setMessage("created the item");
+        $manager->persist($createFolderService);
+
+        $moveItemService = new ServiceMessage();
+        $moveItemService->setLabel("move_item_twig")
+            ->setMessage("moved the item");
+        $manager->persist($moveItemService);
+
+        $uploadFileService = new ServiceMessage();
+        $uploadFileService->setLabel("upload_file_twig")
+            ->setMessage("uploaded the file");
+        $manager->persist($uploadFileService);;
         $manager->flush();
     }
 }

@@ -3,7 +3,8 @@
 namespace App\EventListener;
 
 use App\Manager\LoggerManager;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -19,9 +20,9 @@ class ViewListener
     /**
      * Handle the output from the controllers.
      *
-     * @param GetResponseForControllerResultEvent $event
+     * @param ViewEvent $event
      */
-    public function onKernelView(GetResponseForControllerResultEvent $event)
+    public function onKernelView(ViewEvent $event)
     {
         $result = $event->getControllerResult();
 
@@ -48,7 +49,6 @@ class ViewListener
                 'code' => 400,
                 'level' => 'ERROR',
                 'scope' => 'RESPONSE',
-//                'scope' => 'REQUEST',
                 'value' => $this->translator->trans('result_not_found', [], 'errors')
             ];
             $response = new JsonResponse($response, JsonResponse::HTTP_BAD_REQUEST);
@@ -58,5 +58,6 @@ class ViewListener
 
         $event->setResponse($response);
     }
+
 
 }
