@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Folder;
+use App\Entity\ServiceMessage;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -48,7 +49,21 @@ class AppFixtures extends Fixture
             $manager->persist($userItemProp);
         }
 
+       //init history actions
+        $createFolderService = new ServiceMessage();
+        $createFolderService->setLabel("create_folder")
+            ->setMessage("created the item");
+        $manager->persist($createFolderService);
 
+        $moveItemService = new ServiceMessage();
+        $moveItemService->setLabel("move_item")
+            ->setMessage("moved the item");
+        $manager->persist($moveItemService);
+
+        $uploadFileService = new ServiceMessage();
+        $uploadFileService->setLabel("upload_file")
+            ->setMessage("uploaded the file");
+        $manager->persist($uploadFileService);;
 
         $manager->flush();
     }

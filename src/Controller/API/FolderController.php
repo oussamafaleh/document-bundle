@@ -226,7 +226,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      }
 
      /**
-      * @Route("/tag/{item_code}", name="move_item", methods={"PATCH"})
+      * @Route("/tag/{item_code}", name="tag_item", methods={"PATCH"})
       * @Mapping(object="App\ApiModel\Item\Tag", as="tag")
       * @Operation(
       *     tags={"Item"},

@@ -112,7 +112,7 @@ class FileManager extends AbstractManager
         $fileUniquness =$this->folderManager->init(['parentCode'=> $this->getParentCode(),'userCode' => $this->getUserCode()])
             ->checkSubItemsLabelUniqueness($RequestFile->getClientOriginalName());
         if(!$fileUniquness){
-            return ['messages' => 'fond_exeption'];
+            throw new \Exception('FOUND_ITEM');
         }
         $file =$this->upload($RequestFile);
 
@@ -139,11 +139,11 @@ class FileManager extends AbstractManager
         $this->apiEntityManager->flush();
         $connection->commit();
 
-        $item = $this->document->toArray();
-        $item["code"]=$this->document->getCode();
+
         return ['data' => [
         'messages' => 'create_success',
-        'object' => $item
+        'code' => $this->document->getCode(),
+        'label' => $this->document->getLabel(),
     ]];
     }
     public function upload( $file)

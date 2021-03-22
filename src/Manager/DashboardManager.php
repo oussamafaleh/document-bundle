@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Entity\Document;
+use App\Entity\History;
 use App\Entity\Item;
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
@@ -83,6 +84,18 @@ class DashboardManager extends AbstractManager
         $data =   $this->apiEntityManager
             ->getRepository(Item::class)->findByFilters($filters);
 
+        return ['data' => $data];
+    }
+
+    function getBreafHistory()
+    {
+        $filters = [
+            'index' => 1 ,
+            'size' => 7
+        ];
+
+        $data =   $this->apiEntityManager
+            ->getRepository(History::class)->findByFilters($filters);
         return ['data' => $data];
     }
 

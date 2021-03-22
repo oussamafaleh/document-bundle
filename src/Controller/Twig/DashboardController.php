@@ -40,6 +40,7 @@ class DashboardController extends AbstractController
     {
         $user= (array)$request->get('dashboard');
 
+        $history = $this->manager->getBreafHistory();
         $TaggedFolders = $this->manager
             ->init(['userCode' => $user['user_code']])
             ->getTaggedFolders()['data'];
@@ -49,6 +50,7 @@ class DashboardController extends AbstractController
             ->getQuickAccess()['data'];
 
         return $this->render('dashboard/dashboard.html.twig', [
+            'history' => $history,
             'quick_access' => $quickAccess,
             'tagged' => $TaggedFolders
 

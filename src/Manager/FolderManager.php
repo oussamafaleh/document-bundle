@@ -153,7 +153,7 @@ class FolderManager extends AbstractManager
         $connection->commit();
         return ['data' => [
             'messages' => 'create_success',
-            'object' => $folder->getLabel()
+            'code' => $folder->getCode()
         ]];
 
     }
@@ -238,7 +238,8 @@ class FolderManager extends AbstractManager
         $this->apiEntityManager->flush();
         return ['data' => [
             'messages' => 'update_success',
-            'object' => $this->item->getParent()->getLabel(),
+            'code' => $this->item->getCode(),
+            'label' => $this->item->getParent()->getLabel(),
         ]];
     }
 

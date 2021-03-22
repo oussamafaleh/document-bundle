@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ItemRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -44,6 +46,19 @@ abstract class Item extends AbstractEntity
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=History::class, mappedBy="item")
+     */
+    private $histories;
+
+  
+    public function __construct()
+    {
+        parent::__construct();
+        $this->histories = new ArrayCollection();
+       
+    }
 
 
     public function getId(): ?int
@@ -111,5 +126,37 @@ abstract class Item extends AbstractEntity
 
         return $this;
     }
+
+    /**
+     * @return Collection|History[]
+     */
+    public function getHistories(): Collection
+    {
+        return $this->histories;
+    }
+
+    public function addHistory(History $history): self
+    {
+        if (!$this->histories->contains($history)) {
+            $this->histories[] = $history;
+            $history->setItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHistory(History $history): self
+    {
+        if ($this->histories->removeElement($history)) {
+            // set the owning side to null (unless already changed)
+            if ($history->getItem() === $this) {
+                $history->setItem(null);
+            }
+        }
+
+        return $this;
+    }
+
+
     
 }
