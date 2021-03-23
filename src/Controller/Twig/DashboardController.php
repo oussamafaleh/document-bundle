@@ -52,7 +52,6 @@ class DashboardController extends AbstractController
         return $this->render('dashboard/dashboard.html.twig', [
             'history' => $history,
             'quick_access' => $quickAccess,
-            'tagged' => $TaggedFolders
 
         ]);
     }

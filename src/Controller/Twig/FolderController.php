@@ -77,11 +77,9 @@ class FolderController extends AbstractController
             ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
             ->listSubItem( $filters);
         return $this->render('folder/index.html.twig', [
-            'tagged' => $TaggedFolders,
             'data' => $data['data'],
             'schema' => $this->manager->getschema($filters['parent_code'])['schema'],
             'current' => $this->manager->getschema($filters['parent_code'])['current'],
-            'folder_form' => $folderForm->createView(),
             'file_form'=> $fileForm->createView()
         ]);
     }

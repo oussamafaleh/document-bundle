@@ -19,6 +19,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelRequest }
 
+    listener.twigvar:
+        class: App\EventListener\TwigEventSubscriber
+        arguments: ['@twig', '@App\Manager\DashboardManager','@form.factory','@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onControllerEvent }
+
     manager.logger:
         class: App\Manager\LoggerManager
         arguments: ['@doctrine.orm.entity_manager','@request_stack', 'true' ]

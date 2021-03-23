@@ -98,7 +98,7 @@ class ParameterValidatorListener
 
 
         if (is_array($controller = $event->getController())) {
-
+            $request->attributes->set('user_code' ,"0970229e-4867-4ada-b0ac-a199446cbc21" );
             $object = new \ReflectionObject($controller[0]);
             $method = $object->getMethod($controller[1]);
 
