@@ -91,8 +91,9 @@ class FolderController extends AbstractController
      */
     public function setParent(Request $request, $parent_code)
     {
-
         $param =  (Array) $request->get("newParent");
+        $request->attributes->set("user_code",$param['user_code']);
+       // dump($request);exit();
         $this->manager
             ->init(['parentCode' => $param['new_parent_code'] , 'userCode' => $param['user_code'], 'itemCode' => $param['item_code']])
             ->moveItem($param);
