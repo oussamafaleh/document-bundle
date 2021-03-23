@@ -3,7 +3,6 @@
 namespace App\EventListener;
 
 use App\Manager\LoggerManager;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -41,7 +40,6 @@ class ViewListener
 
 
         if ($result) {
-            $this->loggerManager->add('RESPONSE', $result);
             $response = new JsonResponse($response, JsonResponse::HTTP_OK);
         } else {
             $response['status'] = 'failure';

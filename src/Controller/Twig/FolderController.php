@@ -35,11 +35,11 @@ class FolderController extends AbstractController
 
     /**
      * @Route("/create/{parent_code}", name="create_folder_twig", methods={"POST"})
+     * @Mapping(object="App\ApiModel\Folder\Folder", as="folder")
      */
-    public function create(Request $request,$parent_code): Response
+    public function create(Request $request): Response
     {
-        $folderParam['parent_code'] = $parent_code;
-        $folderParam['user_code']  = "0970229e-4867-4ada-b0ac-a199446cbc21";
+        $folderParam= (array)$request->get('folder');
         $form = $this->createForm(FolderType::class );
         $form->handleRequest($request);
 

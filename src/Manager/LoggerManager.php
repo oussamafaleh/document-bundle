@@ -69,7 +69,7 @@ class LoggerManager extends AbstractManager
      * @param string $error
      * @return bool
      */
-    public function add($type, $data, $duration = 0, $error = '')
+    public function add($type,  $duration = 0, $error = '')
     {
         // @todo disabled before manager initialization ?
         if (!$this->logsEnabled) {
@@ -85,7 +85,7 @@ class LoggerManager extends AbstractManager
                 ->findOneBy(['code' => $this->request->get('user_code')]);
             $item = $this->apiEntityManager
                 ->getRepository(Item::class)
-                ->findOneBy(['code' => $data['data']['code']]);
+                ->findOneBy(['code' =>$this->request->get('parent_code')]);
             $message = $user->getCode()." ".$service->getMessage()." ".$item->getLabel();
             $historyField = new History();
             $historyField->setIp( $this->request->getClientIp())

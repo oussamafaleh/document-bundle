@@ -4,10 +4,14 @@ services:
     listener.view:
         class: App\EventListener\ViewListener
         arguments: ['@translator.default', '@manager.logger']
-        #, '@manager.logger']
         tags:
             - { name: kernel.event_listener, event: kernel.view, method: onKernelView }
         #VIEW
+    listener.action:
+        class: App\EventListener\ActionListener
+        arguments: [ '@manager.logger' ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
     listener.validator:
         class: App\EventListener\ParameterValidatorListener
@@ -17,7 +21,7 @@ services:
 
     manager.logger:
         class: App\Manager\LoggerManager
-        arguments: ['@doctrine.orm.entity_manager','@request_stack', 'true' ]#,  '@logger.ws'
+        arguments: ['@doctrine.orm.entity_manager','@request_stack', 'true' ]
         public: false
 
 
