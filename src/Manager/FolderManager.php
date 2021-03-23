@@ -258,6 +258,34 @@ class FolderManager extends AbstractManager
         ]];
 
     }
+    /**
+     * @return array
+     * this method creates new folder for specific user
+     */
+    public function createTag($folderParam)
+    {
+
+        $connection = $this->apiEntityManager->getConnection();
+        $connection->beginTransaction();
+        $folder = new Folder();
+        $folder->setLabel($folderParam['label']);
+        $this->apiEntityManager->persist($folder);
+
+
+        $user_item_property = new UserItemProperty();
+        $user_item_property->setItem($folder)
+            ->setUser($this->user)
+            ->setIsTagged(true)
+            ->setRoles(array("OWNER" => "ROLE_OWNER"));
+        $this->apiEntityManager->persist($user_item_property);
+        $this->apiEntityManager->flush();
+        $connection->commit();
+        return ['data' => [
+            'messages' => 'create_success',
+            'code' => $folder->getCode()
+        ]];
+
+    }
 }
 
 

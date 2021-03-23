@@ -101,5 +101,27 @@ class FolderController extends AbstractController
     }
 
 
+    /**
+     * @Route("/create-tagged-folder", name="create_tagged_folder_twig", methods={"POST"})
+     * @Mapping(object="App\ApiModel\Folder\Folder", as="folder")
+     */
+    public function createTag(Request $request): Response
+    {
+        $folderParam= (array)$request->get('folder');
+        $form = $this->createForm(FolderType::class );
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $form->getData();
+            $folderParam['label']= $form->getData()['label'];
+
+            $newTag = $this->manager
+                ->init( [ 'userCode' => $folderParam['user_code']])
+                ->createTag($folderParam );
+        }
+        return $this->redirectToRoute('list_sub_items_twig',['parent_code' => $newTag['data']['code'] , 'user_code' => $folderParam['user_code']]);
+
+
+
+    }
 }

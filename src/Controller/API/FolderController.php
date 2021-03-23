@@ -229,13 +229,13 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
       * @Route("/tag/{item_code}", name="tag_item", methods={"PATCH"})
       * @Mapping(object="App\ApiModel\Item\Tag", as="tag")
       * @Operation(
-      *     tags={"Item"},
-      *     summary="list of sub items",
+      *     tags={"Tag"},
+      *     summary="tag a folder",
       *     @SWG\Parameter(
       *         name="user_code",
       *         in="query",
       *         type="string",
-      *         description="page number",
+      *         description="user code",
       *         required=false
       *     ),
       *     @SWG\Response(
@@ -262,5 +262,45 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
              ->init(['itemCode' => $param['item_code'] , 'userCode' => $param['user_code']])
              ->setTagged();
      }
-    
+     /**
+      * @Route("/create-tagged-folder", name="create_tagged_folder", methods={"POST"})
+      * @Mapping(object="App\ApiModel\Folder\Folder", as="folder")
+      * @Operation(
+      *     tags={"Tag"},
+      *     summary="create a tagged folder",
+      *     @SWG\Parameter(
+      *         name="label",
+      *         in="query",
+      *         type="string",
+      *         description="name of folder",
+      *         required=true
+      *     ),
+      *     @SWG\Parameter(
+      *         name="user_code",
+      *         in="query",
+      *         type="string",
+      *         description="code of user",
+      *         required=true
+      *     ),
+      *     @SWG\Response(
+      *         response="200",
+      *         description="Returned when successful"
+      *     ),
+      *     @SWG\Response(
+      *         response="403",
+      *         description="Returned when the ws-folder is not authorized"
+      *     ),
+      *     @SWG\Response(
+      *         response="404",
+      *         description="Returned when the folder is not found"
+      *     )
+      * )
+      */
+     public function createTag(Request $request)
+     {
+         $folderParam = (array)$request->get('folder');
+         return $this->manager
+             ->init(['userCode' => $folderParam['user_code']])
+             ->createTag($folderParam );
+     }
 }
