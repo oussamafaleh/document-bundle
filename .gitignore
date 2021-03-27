@@ -20,3 +20,4 @@ public/uploads/
 docker/logs/
 .idea/
 docker/logs/nginx/symfony_access.log
+docker/mongodb/
