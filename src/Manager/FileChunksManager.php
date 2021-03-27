@@ -6,7 +6,7 @@ use App\Entity\Document;
 use App\Entity\Item;
 use Doctrine\ORM\EntityManager;
 
-class BaseLayoutManager extends AbstractManager
+class FileChunksManager extends AbstractManager
 {
 
 
