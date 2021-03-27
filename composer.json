@@ -9,6 +9,7 @@
         "doctrine/annotations": "^1.8",
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
+        "doctrine/mongodb-odm-bundle": "^4.3",
         "doctrine/orm": "^2.8",
         "knplabs/knp-time-bundle": "^1.16",
         "nelmio/api-doc-bundle": "^3.0",

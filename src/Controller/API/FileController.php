@@ -80,7 +80,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
         $fileParam = (array)$request->get('file');
         return $this->manager
             ->init(['parentCode' => $fileParam['parent_code'] , 'userCode' => $fileParam['user_code']])
-            ->create($file);
+             ->create($file);
     }
 
     

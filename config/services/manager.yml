@@ -46,3 +46,9 @@ services:
         public: true
         class: App\Manager\DashboardManager
         arguments: [ '@doctrine.orm.entity_manager' ]
+
+
+    App\Manager\FileChunksManager:
+        public: true
+        class: App\Manager\FileChunksManager
+        arguments: [ '@doctrine.orm.entity_manager','@doctrine_mongodb.odm.document_manager' ] #

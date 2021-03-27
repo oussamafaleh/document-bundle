@@ -1,40 +1,36 @@
 <?php
 
- namespace App\Controller\API;
+namespace App\Controller\API;
 
-use App\Entity\file;
 use App\Annotations\Mapping;
-use App\Manager\FileManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use App\Manager\FileChunksManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Swagger\Annotations as SWG;
 use Nelmio\ApiDocBundle\Annotation\Operation;
 
 /**
- * Class fileController
+ * Class FileChunkController
  * @package App\Controller\API
- * @Route("/api/file")
+ * @Route("/api/chunk")
  *
  */
- class FileController extends AbstractController
- {
+class FileChunkController extends AbstractController
+{
 
-     private $manager = null;
+    private $manager = null;
 
     /**
      * fileController constructor.
      */
-    public function __construct(FileManager $fileManager)
+    public function __construct(FileChunksManager $fileChunksManager)
     {
-        $this->manager = $fileManager;
+        $this->manager = $fileChunksManager;
     }
 
     /**
-     * @Route("/upload", name="upload_file", methods={"POST"})
-     * @Mapping(object="App\ApiModel\File\File", as="file")
+     * @Route("/upload", name="upload_file_chunk", methods={"POST"})
      * @Operation(
      *     tags={"File"},
      *     summary="file for skeleton",
@@ -43,20 +39,6 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
      *         in="formData",
      *         type="file",
      *         description="file",
-     *         required=true
-     *     ),
-     *     @SWG\Parameter(
-     *         name="parent_code",
-     *         in="query",
-     *         type="string",
-     *         description="parent folder",
-     *         required=true
-     *     ),
-     *     @SWG\Parameter(
-     *         name="user_code",
-     *         in="query",
-     *         type="string",
-     *         description="code of user",
      *         required=true
      *     ),
      *     @SWG\Response(
@@ -77,11 +59,19 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
     {
 
         $file = $request->files->get('file');
-        $fileParam = (array)$request->get('file');
+        //$fileParam = (array)$request->get('file');
         return $this->manager
-            ->init(['parentCode' => $fileParam['parent_code'] , 'userCode' => $fileParam['user_code']])
-            ->create($file);
+            ->uploadChunks($file);
     }
 
-    
+    /**
+     * @Route("/download/{id}", name="upload_show")
+     */
+    public function downloadChunks($id)
+    {
+        return $this->manager
+            ->downloadChunks($id);
+    }
+
+
 }

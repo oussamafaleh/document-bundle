@@ -43,7 +43,7 @@ class TwigEventSubscriber
     }
 
     public function getGlobalData(){
-        $user_code =$this->request->get("user_code");
+        $user_code = "0970229e-4867-4ada-b0ac-a199446cbc21";
 
         $globalData['tagged'] = $this->manager
             ->init(['userCode' => $user_code])

@@ -135,14 +135,14 @@ class ParameterValidatorListener
     private function updateRequest($request)
     {
         $content = json_decode($request->getContent(), true);
-        if ($request->getContent() && empty($content)) {
-            $content = [];
-            $contentTmp = explode('&', $request->getContent());
-            foreach ($contentTmp as $elmt) {
-                list($attribute, $value) = explode('=', $elmt);
-                $content[$attribute] = $value;
-            }
-        }
+//        if ($request->getContent() && empty($content)) {
+//            $content = [];
+//            $contentTmp = explode('&', $request->getContent());
+//            foreach ($contentTmp as $elmt) {
+//                list($attribute, $value) = explode('=', $elmt);
+//                $content[$attribute] = $value;
+//            }
+//        }
 
         if (!empty($content)) {
             if ($request->getMethod() == 'POST') {

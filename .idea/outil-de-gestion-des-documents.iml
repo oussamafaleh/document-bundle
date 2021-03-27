@@ -112,8 +112,14 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/data-fixtures" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/doctrine-fixtures-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/knplabs/knp-time-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/jean85/pretty-package-versions" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/mongodb-odm" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/mongodb-odm-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mongodb/mongodb" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="use_doc_bundle" />
+    <orderEntry type="module" module-name="doc-bundle-impl" />
   </component>
 </module>

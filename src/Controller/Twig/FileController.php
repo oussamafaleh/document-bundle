@@ -40,7 +40,6 @@ class FileController extends AbstractController
         $fileParam['user_code']  = '0970229e-4867-4ada-b0ac-a199446cbc21';
         $fileParam['parent_code'] = $parent_code;
         $files = $request->files->get('document');
-
         $form = $this->createForm(DocumentType::class );
         $form->handleRequest($request);
 

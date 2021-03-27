@@ -3,74 +3,21 @@
 
 namespace App\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-/** @MongoDB\File(bucketName="filechunk") */
+/** @MongoDB\EmbeddedDocument */
 
-class FileChunk
+class FileMetadata
 {
-    /** @MongoDB\Id */
-    private $id;
+    /** @MongoDB\Field(type="string") */
+    private $contentType;
 
-    /** @MongoDB\File */
-    private $file;
-
-    /** @MongoDB\File\Filename */
-    private $filename;
-
-    /** @MongoDB\Field */
-    private $mimeType;
-
-    /** @MongoDB\File\UploadDate */
-    private $uploadDate;
-
-    /** @MongoDB\File\Length */
-    private $length;
-
-    /** @MongoDB\File\ChunkSize */
-    private $chunkSize;
-
-    /** @File\Metadata(targetDocument=FileMetadata::class) */
-    private $metadata;
-
-    public function getId(): ?string
+    public function __construct(string $contentType)
     {
-        return $this->id;
-    }
-    public function getFile()
-    {
-        return $this->file;
+        $this->contentType = $contentType;
     }
 
-    public function setFile($file)
+    public function getContentType(): ?string
     {
-        $this->file = $file;
-    }
-    public function getFilename()
-    {
-        return $this->filename;
-    }
-
-    public function setFilename($filename)
-    {
-        $this->filename = $filename;
-    }
-
-    public function getChunkSize(): ?int
-    {
-        return $this->chunkSize;
-    }
-
-    public function getLength(): ?int
-    {
-        return $this->length;
-    }
-
-    public function getUploadDate(): \DateTimeInterface
-    {
-        return $this->uploadDate;
-    }
-    public function getMetadata(): ?FileMetadata
-    {
-        return $this->metadata;
+        return $this->contentType;
     }
 
 }

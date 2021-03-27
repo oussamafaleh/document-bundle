@@ -1,47 +1,34 @@
 <?php
 
 
-namespace App\Entity;
+namespace App\Document;
+//use App\Document\FileMetadata;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-
-/**
- * @MongoDB\Document
- */
+/** @MongoDB\File(bucketName="filechunk") */
 
 class FileChunk
 {
     /** @MongoDB\Id */
     private $id;
 
-    /** @MongoDB\File */
-    private $file;
-
-    /** @MongoDB\String */
+    /** @MongoDB\File\Filename */
     private $filename;
 
-    /** @MongoDB\String */
-    private $mimeType;
-
-    /** @MongoDB\Date */
+    /** @MongoDB\File\UploadDate */
     private $uploadDate;
 
-    /** @MongoDB\Int */
+    /** @MongoDB\File\Length */
     private $length;
 
-    /** @MongoDB\Int */
+    /** @MongoDB\File\ChunkSize */
     private $chunkSize;
 
-    /** @MongoDB\String */
-    private $md5;
+    /** @MongoDB\File\Metadata(targetDocument=FileMetadata::class) */
+    private $metadata;
 
-    public function getFile()
+    public function getId(): ?string
     {
-        return $this->file;
-    }
-
-    public function setFile($file)
-    {
-        $this->file = $file;
+        return $this->id;
     }
 
     public function getFilename()
@@ -54,33 +41,23 @@ class FileChunk
         $this->filename = $filename;
     }
 
-    public function getMimeType()
-    {
-        return $this->mimeType;
-    }
-
-    public function setMimeType($mimeType)
-    {
-        $this->mimeType = $mimeType;
-    }
-
-    public function getChunkSize()
+    public function getChunkSize(): ?int
     {
         return $this->chunkSize;
     }
 
-    public function getLength()
+    public function getLength(): ?int
     {
         return $this->length;
     }
 
-    public function getMd5()
-    {
-        return $this->md5;
-    }
-
-    public function getUploadDate()
+    public function getUploadDate(): \DateTimeInterface
     {
         return $this->uploadDate;
     }
+    public function getMetadata(): ?FileMetadata
+    {
+        return $this->metadata;
+    }
+
 }
