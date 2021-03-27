@@ -33,12 +33,11 @@ class FileChunksManager extends AbstractManager
         $uploadOptions->metadata = new FileMetadata($data->getClientMimeType());
         $document = $this->documentManager->getRepository(FileChunk::class)->uploadFromFile($data->getPathName(),$data->getClientOriginalName(), $uploadOptions);
 
-        dump($document);exit();
 
         return ['data' => [
             'messages' => 'create_success',
-//            'code' => $document->getMd5(),
-//            'label' => $document->getFilename(),
+            'code' => $document->getId(),
+            'label' => $document->getFilename(),
         ]];
     }
     public function downloadChunks($id)
