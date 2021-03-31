@@ -1,0 +1,48 @@
+
+<div class="timeline">
+    <h5 class="mb-2">Quick Access</h5>
+    <!-- timeline item -->
+    <div>
+        <div class="timeline-item">
+
+            <div class="timeline-body d-flex flex-row">
+                <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+
+                    {% for file in quick_access %}
+                        <li class="d-flex  flex-column">
+                            {% if file.extension == "pdf" %}
+                                <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
+                            {% elseif file.extension == "doc" or file.extension == "docx" %}
+                                <span class="mailbox-attachment-icon"><i class="far fa-file-word"></i></span>
+
+                            {% elseif file.extension == "ppt" or file.extension == "pptx" %}
+                                <span class="mailbox-attachment-icon"><i class="far fa-file-powerpoint"></i></span>
+
+                            {% elseif file.extension == "xls" or file.extension == "xlsx" %}
+                                <span class="mailbox-attachment-icon"><i class="far fa-file-excel"></i></span>
+
+                            {% elseif file.extension == "jpg" or file.extension == "jpeg" or file.extension == "png" %}
+                                <span class="mailbox-attachment-icon has-img">
+                                            <img src="{{  asset('uploads/')}}{{ file.code }}" alt="...">
+                                        </span>
+                            {% else %}
+                                <span class="mailbox-attachment-icon"><i class="far fa-file"></i></span>
+
+                            {% endif %}
+
+                            <div class="mailbox-attachment-info mt-auto">
+                                <a href="#" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> {{ file.label }}</a>
+                                <span class="mailbox-attachment-size clearfix mt-1">
+                                                <span>{{ file.size }}</span>
+                                                <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                                            </span>
+                            </div>
+                        </li>
+
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END timeline item -->

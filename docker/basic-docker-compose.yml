@@ -1,0 +1,53 @@
+version: '2'
+services:
+    
+    mysql:
+        image: mysql:8.0.17
+        environment:
+          MYSQL_ROOT_PASSWORD: docb_psw
+          MYSQL_USER : docb_user
+          MYSQL_PASSWORD: docb_psw
+          MYSQL_DATABASE: testdb
+        ports:
+          - "3306:3306"
+        networks:
+          - backend
+    php:
+        build: php-fpm
+        restart: always 
+        ports:
+            - '9002:9000'
+        volumes:
+            - ../:/var/www/symfony:cached
+            - ./logs/symfony:/var/www/symfony/var/logs:cached
+        networks:
+          - backend
+    nginx:
+        build: nginx
+        restart: always 
+        ports:
+            - '8080:80'
+        links:
+            - php
+        volumes_from:
+            - php
+        volumes:
+            - ./logs/nginx/:/var/log/nginx:cached 
+        networks:
+          - backend
+    mongodb:
+        image: mongo
+        container_name: mongodb
+        environment:
+          - PUID=1000
+          - PGID=1000
+        volumes:
+          - ~/mongodb/database:/data/db
+        ports:
+          - 27017:27017
+        restart: unless-stopped
+        networks:
+          - backend
+
+networks:
+    backend :

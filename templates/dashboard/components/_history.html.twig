@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header border-0">
+        <div class="d-flex justify-content-between">
+            <h3 class="card-title">Document Latest Modifications</h3>
+        </div>
+    </div>
+    <div class="card-body">
+        {% for action in history.data %}
+            <a href="#" class="history-item">
+                <!-- Message Start -->
+                <div class="d-flex align-self-center">
+                    <img src="{{ asset('assets/img/user1-128x128.jpg') }}" alt="User Avatar"
+                         class="img-size-50 mr-3 img-circle">
+
+                        <p class="text-sm">{{ action.message }}</p>
+                        <p class="float-right text-sm text-muted ml-auto">
+                            <i class="far fa-clock mr-1"></i> {{ action.created_at|ago }}</p>
+
+
+                </div>
+                <!-- Message End -->
+
+            </a>
+            <div class="dropdown-divider"></div>
+        {% endfor %}
+        <a href="#" class="dropdown-item dropdown-footer">See All History</a>
+    </div>
+</div>

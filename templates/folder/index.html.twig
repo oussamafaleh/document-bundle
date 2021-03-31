@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Item index{% endblock %}
+
+{% block body %}
+    <!-- Content Header (Page header) -->
+    <div class="folder-content-header content-header mb-5"><!-- schema of current file -->
+       {{ include('folder/components/_schema.html.twig' , {'schema': schema ,'current': current } ) }}
+        <div class="d-flex flex-column">
+
+            <!-- Button trigger modal -->
+            <div class="d-flex  flex-row justify-content-end ">
+                {% if folder_form is defined %}
+
+                    {{ include('folder/components/_folderForm.html.twig' , {'folder_form': folder_form ,'current': current  } ) }}
+                {% endif %}
+                {% if file_form is defined %}
+                    {{ include('folder/components/_fileForm.html.twig' , {'file_form': folder_form ,'current': current  } ) }}
+                {% endif %}
+
+
+
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <section class="content">
+        <div class="card">
+            <!-- /.card-header -->
+            {{ include('folder/components/_listSubItems.html.twig' , {'data': data  } ) }}
+
+
+        </div>
+        <script type="text/javascript">
+            $('div.dropdown-menu.dropdown-menu-lg.dropdown-menu-right.scrollable-menu').on('click', function(event){
+                // The event won't be propagated up to the document NODE and
+                // therefore delegated events won't be fired
+                event.stopPropagation();
+            });
+            function folderListFucntion(folderToMove, folderMovingIn) {
+                jQuery(document).ready(function ($) {
+                var moveLFolderList = $('div#move_list')
+
+
+                    $.ajax({
+                        method: "GET",
+                        url: "/api/folder/list-sub-item/" + folderMovingIn,
+                        data: {
+                            index: -1,
+                            type: "folder",
+                            user_code: "0970229e-4867-4ada-b0ac-a199446cbc21"
+                        }
+
+                    }).done(function (res) {
+                        moveLFolderList.empty();
+                        let data = res.results.data;
+
+        ///////////////////////fill dropdown list with folders
+
+                        $('<span/>')
+                            .addClass('dropdown-item dropdown-header')
+                            .text(res.results.parent_folder)
+                            .appendTo(moveLFolderList);
+                        $('<div/>')
+                            .addClass('dropdown-divider')
+                            .appendTo(moveLFolderList);
+                        $.each(data.rows, function (i) {
+                          // var id = 'move_list' + i;
+                            let listItem =$('<div/>')
+                                .addClass('d-flex  flex-row m-2 border-bottom')
+                                .appendTo(moveLFolderList);
+                            $('<div/>')
+                                .addClass('dropdown-divider')
+                                .appendTo(listItem);
+                            $('<i/>')
+                                .addClass('fas fa-folder mr-2')
+                                .appendTo(listItem);
+                            let liFolder = $('<a/>')
+                                .attr('href',"#")
+                                .attr('id',data.rows[i].code)
+                                .text(data.rows[i].label)
+                                .appendTo(listItem);
+
+                            /* ********
+                              move to specific folder content in dropdown list
+                              by refilling the dropdown menu       *************  */
+
+                            liFolder.click(function() {
+                                folderListFucntion(folderToMove ,data.rows[i].code);
+
+                            });
+                            let url = "{{ path('move_item_twig', {'item_code':'itemC','parent_code': current.code,'new_parent_code':'newParentC','user_code':'userC' }) }}";
+                            url = url.replace("itemC", folderToMove);
+                            url = url.replace("newParentC", data.rows[i].code);
+                            url = url.replace("userC", "0970229e-4867-4ada-b0ac-a199446cbc21");
+                            console.log(url)
+                            let moveForm = $('<form/>')
+                                .addClass('ml-auto')
+                                .attr('action',url)
+                                .attr('method','post')
+                                .appendTo(listItem);
+                            let submitButton = $('<button/>')
+                                .addClass('btn btn-block btn-outline-secondary  p-0 mb-1')
+                                .attr('type','submit')
+                                .appendTo(moveForm);
+                            $('<i/>')
+                                .addClass('fas fa-chevron-circle-down mr-1 ml-1')
+                                .appendTo(submitButton);
+
+                        });
+                    });
+                })
+
+
+            };
+
+        </script>
+        <!-- /.card -->
+    </section>
+
+
+{% endblock %}

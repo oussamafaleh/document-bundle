@@ -1,0 +1,17 @@
+
+<!-- schema of current file -->
+<div class="container-fluid  p-2 pt-5 pb-2">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-left d-flex align-items-center">
+                <li class="breadcrumb-item"><i class="fas fa-home"></i></li>
+                {% for feald in schema %}
+                    <li class="breadcrumb-item"><a class="breadcrumb-item-link"
+                                                   href="{{ path('list_sub_items_twig', {'parent_code': feald.code}) }}">{{ feald.label }}</a>
+                    </li>
+                {% endfor %}
+                <li class="breadcrumb-item active">{{ current.label }}</li>
+            </ol>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+</div><!-- /.container-fluid -->
