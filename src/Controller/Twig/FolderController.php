@@ -67,31 +67,13 @@ class FolderController extends AbstractController
      */
     public function list(Request $request): Response
     {
-        $folderForm = $this->createForm(FolderType::class );
 
         $filters = (array)$request->get("subItems");
 
-
-        $data = $this->manager
+        $rederedData = $this->manager
             ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
-            ->listSubItem( $filters);
-        $schema = $this->manager->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])->getschema();
-        $rederedData = [
-         //   'data' => $data['data'],
-            'current' => $schema['current'],
-            'schema' => []
-        ];
-        if ($this->security->isGranted("ROLE_CREATE")){
-            $folderForm = $this->createForm(FolderType::class );
-            $rederedData['folder_form'] = $folderForm->createView();
+            ->listSubItemTwigData( $filters);
 
-            $fileForm = $this->createForm(DocumentType::class );
-            $rederedData['file_form'] =$fileForm->createView();
-        }
-
-        if ($this->security->isGranted('ROLE_OWNER')){
-            $rederedData['schema'] =$schema['schema'];
-        }
         return $this->render('folder/index.html.twig',$rederedData);
     }
 

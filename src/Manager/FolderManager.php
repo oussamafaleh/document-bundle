@@ -6,9 +6,13 @@ use App\Entity\Folder;
 use App\Entity\Item;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
+use App\Form\DocumentType;
+use App\Form\FolderType;
 use App\Utils\MyTools;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Security\Core\Security;
 
 class FolderManager extends AbstractManager
 {
@@ -22,10 +26,21 @@ class FolderManager extends AbstractManager
     /** @var string */
     private $parentCode;
 
+    /**
+     * @var FormFactory
+     */
+    private $form;
 
-    public function __construct(EntityManager $entityManager)
+
+    private $security;
+
+
+    public function __construct(EntityManager $entityManager, Security $security ,FormFactory $formFactory)
     {
         parent::__construct($entityManager);
+
+        $this->form  = $formFactory ;
+        $this->security = $security;
     }
 
     public function init($settings = [])
@@ -292,6 +307,28 @@ class FolderManager extends AbstractManager
             'code' => $folder->getCode()
         ]];
 
+    }
+    public function listSubItemTwigData($filters){
+        $data = $this->listSubItem( $filters);
+        $schema = $this->getschema();
+        $rederedData = [
+            'data' => $data['data'],
+            'current' => $schema['current'],
+            'schema' => []
+        ];
+        if ($this->security->isGranted('ROLE_OWNER',$this->parent )){
+            $rederedData['schema'] =$schema['schema'];
+        }
+        if ($this->security->isGranted("ROLE_CREATE",$this->parent )){
+            $folderForm = $this->form->create(FolderType::class );
+            $rederedData['folder_form'] = $folderForm->createView();
+
+            $fileForm = $this->form->create(DocumentType::class );
+            $rederedData['file_form'] =$fileForm->createView();
+        }
+
+
+        return $rederedData;
     }
 }
 

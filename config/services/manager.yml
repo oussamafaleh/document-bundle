@@ -1,8 +1,8 @@
 services:
 
     #TOKEN
-    App\Manager\AuthenticationManager:
-        arguments: ['@doctrine.orm.entity_manager','@security.helper']
+    App\Security\Voter\ItemVoter:
+        arguments: ['@doctrine.orm.default_entity_manager','@security.helper']
    #VIEW          
     listener.view:
         class: App\EventListener\ViewListener
@@ -43,7 +43,7 @@ services:
     App\Manager\FolderManager:
         public: true
         class: App\Manager\FolderManager
-        arguments: [ '@doctrine.orm.entity_manager' ]
+        arguments: [ '@doctrine.orm.entity_manager','@security.helper','@form.factory' ]
 
     App\Manager\DashboardManager:
         public: true
