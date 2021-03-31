@@ -171,10 +171,16 @@ class FolderManager extends AbstractManager
 
         $data = $this->apiEntityManager
             ->getRepository(Item::class)->findByFilters($filters);
+        $parentRole =
+            $this->apiEntityManager
+                ->getRepository(UserItemProperty::class)
+                ->findOneBy(['item' => $this->parent, 'user' => $this->user])
+                ->getRoles();
 
         return ['data' => MyTools::paginator($data, $filters['index'], $filters['size']),
             'parent_folder' => $this->parent->getLabel(),
-            'parent_code' => $this->parent->getCode()];
+            'parent_code' => $this->parent->getCode(),
+            'parent_roles' =>$parentRole ];
     }
 
 
@@ -188,6 +194,7 @@ class FolderManager extends AbstractManager
         $i = 0;
         $schema = array();
          $current = ['label' => $this->parent->getLabel(), 'code' => $this->parent->getCode()];
+
         while (null !== $this->parent->getParent()) {
             $i++;
             $this->parent = $this->parent->getParent();

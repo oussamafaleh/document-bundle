@@ -51,7 +51,7 @@ class TwigEventSubscriber
 
         $folderForm = $this->form->create(FolderType::class );
 
-        $globalData['folder_form'] = $folderForm->createView();
+        $globalData['tag_form'] = $folderForm->createView();
         return $globalData;
 
     }
@@ -59,7 +59,7 @@ class TwigEventSubscriber
      public function onControllerEvent(ControllerEvent $event)
 {
             $this->twig->addGlobal('tagged', $this->getGlobalData()['tagged']);
-            $this->twig->addGlobal('folder_form', $this->getGlobalData()['folder_form']);
+            $this->twig->addGlobal('tag_form', $this->getGlobalData()['tag_form']);
 }
 
      public static function getSubscribedEvents(){}

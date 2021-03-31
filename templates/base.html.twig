@@ -221,10 +221,10 @@
                         <div class="navbar-search-block mt-1">
                             <!-- SidebarSearch Form -->
                             <div class="form-inline">
-                                {{ form_start(folder_form, {'action': path('create_tagged_folder_twig',{'request': app.request }), 'method': 'POST'}) }}
+                                {{ form_start(tag_form, {'action': path('create_tagged_folder_twig',{'request': app.request }), 'method': 'POST'}) }}
 
                                 <div class="input-group" >
-                                    {{ form_widget(folder_form.label, {'attr': {'class': 'form-control form-control-sidebar', 'placeholder':'Create new tag' , 'aria-label':'Search'}}) }}
+                                    {{ form_widget(tag_form.label, {'attr': {'class': 'form-control form-control-sidebar', 'placeholder':'Create new tag' , 'aria-label':'Search'}}) }}
 
                                     <div class="input-group-append">
                                         <button class="btn btn-sidebar" type="submit">
@@ -232,7 +232,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                {{ form_end(folder_form) }}
+                                {{ form_end(tag_form) }}
 
                             </div>
                             {# <div class="input-group input-group-sm"> #}

@@ -12,11 +12,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class FolderController
  * @package App\Controller\Twig
- * @Route("/folder")
+ * @Route("/doc-bundle/folder")
  *
  */
 class FolderController extends AbstractController
@@ -24,13 +25,15 @@ class FolderController extends AbstractController
 
     private $manager = null;
 
+    private $security;
     /**
      * folderController constructor.
      */
-    public function __construct(FolderManager $folderManager, DashboardManager $dashboardManager)
+    public function __construct(FolderManager $folderManager, DashboardManager $dashboardManager, Security $security)
     {
         $this->dashboardManager =$dashboardManager;
         $this->manager = $folderManager;
+        $this->security = $security;
     }
 
     /**
@@ -64,25 +67,35 @@ class FolderController extends AbstractController
      */
     public function list(Request $request): Response
     {
-
-        $fileForm = $this->createForm(DocumentType::class );
         $folderForm = $this->createForm(FolderType::class );
 
         $filters = (array)$request->get("subItems");
-        $TaggedFolders = $this->dashboardManager
-            ->init(['userCode' => $filters['user_code']])
-            ->getTaggedFolders()['data'];
+
 
         $data = $this->manager
             ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
             ->listSubItem( $filters);
-        return $this->render('folder/index.html.twig', [
-            'data' => $data['data'],
-            'schema' => $this->manager->getschema($filters['parent_code'])['schema'],
-            'current' => $this->manager->getschema($filters['parent_code'])['current'],
-            'file_form'=> $fileForm->createView()
-        ]);
+        $schema = $this->manager->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])->getschema();
+        $rederedData = [
+         //   'data' => $data['data'],
+            'current' => $schema['current'],
+            'schema' => []
+        ];
+        if ($this->security->isGranted("ROLE_CREATE")){
+            $folderForm = $this->createForm(FolderType::class );
+            $rederedData['folder_form'] = $folderForm->createView();
+
+            $fileForm = $this->createForm(DocumentType::class );
+            $rederedData['file_form'] =$fileForm->createView();
+        }
+
+        if ($this->security->isGranted('ROLE_OWNER')){
+            $rederedData['schema'] =$schema['schema'];
+        }
+        return $this->render('folder/index.html.twig',$rederedData);
     }
+
+
     /**
      * @Route("/move/{item_code}/{parent_code}", name="move_item_twig", methods={"POST"})
      * @Mapping(object="App\ApiModel\Item\NewParent", as="newParent")

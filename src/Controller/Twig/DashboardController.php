@@ -10,11 +10,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class DashboardController
  * @package App\Controller\Twig
- * @Route("/dashboard")
+ * @Route("/doc-bundle/dashboard")
  *
  */
 class DashboardController extends AbstractController
@@ -22,12 +23,15 @@ class DashboardController extends AbstractController
 
     private $manager = null;
 
+    private $security;
+
     /**
      * dashboardController constructor.
      */
-    public function __construct(DashboardManager $dashboardManager )
+    public function __construct(DashboardManager $dashboardManager, Security $security )
     {
         $this->manager = $dashboardManager;
+        $this->security = $security;
     }
 
 

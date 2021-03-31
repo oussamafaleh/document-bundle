@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\UserItemPropertyRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserItemPropertyRepository::class)
  */
-class UserItemProperty
+class UserItemProperty  implements UserInterface
 {
     /**
      * @ORM\Id
@@ -92,5 +93,25 @@ class UserItemProperty
         $this->item = $item;
 
         return $this;
+    }
+
+    public function getPassword()
+    {
+        // TODO: Implement getPassword() method.
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function getUsername()
+    {
+        return $this->user->getCode();
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }

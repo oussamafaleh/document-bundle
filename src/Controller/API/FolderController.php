@@ -81,7 +81,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
     }
 
      /**
-      * @Route("/list-sub-item/{parent_code}", name="list_sub_items", methods={"GET"})
+      * @Route("/list-sub-item/{parent_code}", name="doc_bundle_list_sub_items", methods={"GET"})
       * @Mapping(object="App\ApiModel\Folder\SubItems", as="subItems")
       * @Operation(
       *     tags={"Folder"},

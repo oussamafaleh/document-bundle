@@ -1,5 +1,8 @@
 services:
 
+    #TOKEN
+    App\Manager\AuthenticationManager:
+        arguments: ['@doctrine.orm.entity_manager','@security.helper']
    #VIEW          
     listener.view:
         class: App\EventListener\ViewListener

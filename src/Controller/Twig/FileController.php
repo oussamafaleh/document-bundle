@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class FileController
  * @package App\Controller\Twig
- * @Route("/folder")
+ * @Route("/doc-bundle/folder")
  *
  */
 class FileController extends AbstractController

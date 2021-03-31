@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User extends AbstractEntity
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -21,6 +22,7 @@ class User extends AbstractEntity
      * @ORM\Column(type="string", length=255)
      */
     private $code;
+
 
     public function getId(): ?int
     {
@@ -37,5 +39,31 @@ class User extends AbstractEntity
         $this->code = $code;
 
         return $this;
+    }
+
+    public function getRoles()
+    {
+        return [];
+    }
+
+    public function getPassword()
+    {
+        // TODO: Implement getPassword() method.
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function getUsername()
+    {
+        return $this->code;
+    }
+
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }

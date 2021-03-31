@@ -1,0 +1,30 @@
+<button type="button" class="btn btn-blue  icon-btn" data-toggle="modal" data-target="#addFolderModal">
+    <i class=" fas fa-folder-plus icon-btn"></i>
+</button>
+
+<div class="modal fade" id="addFolderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Folder</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="card-body">
+                {{ form_start(folder_form, {'action': path('create_folder_twig',{'request': app.request ,'parent_code': current.code }), 'method': 'POST'}) }}
+
+                <div class="form-group">
+                    {{ form_label(folder_form.label, 'label') }}
+                    {{ form_widget(folder_form.label, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn">{{ 'Create'|default('Save') }}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+                {{ form_end(folder_form) }}
+            </div>
+
+        </div>
+    </div>
+</div>

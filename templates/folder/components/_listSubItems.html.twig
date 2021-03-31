@@ -1,0 +1,73 @@
+<div id="example2" class="table table-hover">
+    <table class="table">
+        <thead class=" text-primary">
+        <tr>
+            <th>Label</th>
+            <th>Created at</th>
+            <th>Last update</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in data.rows %}
+
+            <tr>
+                <td>
+                    {% if item.type == 'folder' %}
+                        <i class="fas fa-folder mr-2 "></i>
+                        <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}">{{ item.label }}</a>
+                    {% else %}
+                        <i class="far fa-file mr-2" id="{{ item.label }}"></i>
+                        {{ item.label }}
+                    {% endif %}
+                </td>
+                <td>{{ item.created_at ? item.created_at|date('Y-m-d H:i') : '' }}</td>
+                <td>{{ item.updated_at ? item.updated_at|date('Y-m-d H:i') : '' }}</td>
+                <td class="navbar-nav d-flex flex-row">
+                    {% if item.type == 'folder' %}
+
+                        <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
+                           class="danger mr-4 ml-4"><i class="fas fa-folder-minus"></i></a>
+                    {% else %}
+                        <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
+                           class="danger mr-4 ml-4"><i class="fas fa-file-excel"></i></a>
+                    {% endif %}
+                    <li class="dropdown  mr-4 ml-4">
+                        <a hrep="#" class="warning" data-toggle="dropdown" onclick="folderListFucntion('{{ item.code }}','{{ current.code }}')"><i
+                                    class="fas fa-angle-double-right"></i></a>
+
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right scrollable-menu"
+                             style="height: 200px;max-height: 200px;  overflow-x: scroll;" id="move_list">
+
+                        </div>
+                    </li>
+                    <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
+                       class="marine mr-4 ml-4"><i class="fas fa-folder-open"></i></a>
+
+
+
+                </td>
+
+            </tr>
+
+        {% else %}
+            <tr>
+                <td colspan="6">no records found with current granted access </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example" class=" ml-2">
+        <ul class="pagination">
+
+            <li class="page-item page-link">Pages:</li>
+            {% for i in range(0, data.total_indexs) %}
+                <li class="page-item"><a class="page-link"
+                                         href="{{ path('list_sub_items_twig', {'parent_code': current.code,('index'):i }) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+
+<!-- /.card-body -->

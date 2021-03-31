@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
         $userItemProp->setUser($user1)
             ->setItem($folder1)
             ->setIsTagged(false)
-            ->setRoles(array("OWNER" => "ROLE_OWNER"));
+            ->setRoles(array('ROLE_OWNER'));
 
         $manager->persist($userItemProp);
 
