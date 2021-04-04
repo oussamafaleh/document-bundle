@@ -9,6 +9,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Logger Manager.
@@ -35,11 +36,15 @@ class LoggerManager extends AbstractManager
     private $loggerFile;
 
 
-    public function __construct(EntityManager $entityManager,RequestStack $requestStack,  bool $logsEnabled)
+    private $security;
+
+
+    public function __construct(EntityManager $entityManager,RequestStack $requestStack,  bool $logsEnabled,Security $security)
     {
         parent::__construct($entityManager, $requestStack);
 
         $this->logsEnabled = $logsEnabled;
+        $this->security = $security;
 
     }
 
@@ -80,9 +85,7 @@ class LoggerManager extends AbstractManager
             ->findOneBy(['label' => $this->request->get('_route')]);
 
         if($service instanceof ServiceMessage){
-            $user = $this->apiEntityManager
-                ->getRepository(User::class)
-                ->findOneBy(['code' => $this->request->get('user_code')]);
+            $user = $this->security->getUser();
             $item = $this->apiEntityManager
                 ->getRepository(Item::class)
                 ->findOneBy(['code' =>$this->request->get('parent_code')]);

@@ -15,7 +15,7 @@
                     {{ include('folder/components/_folderForm.html.twig' , {'folder_form': folder_form ,'current': current  } ) }}
                 {% endif %}
                 {% if file_form is defined %}
-                    {{ include('folder/components/_fileForm.html.twig' , {'file_form': folder_form ,'current': current  } ) }}
+                    {{ include('folder/components/_fileForm.html.twig' , {'file_form': file_form ,'current': current  } ) }}
                 {% endif %}
 
 

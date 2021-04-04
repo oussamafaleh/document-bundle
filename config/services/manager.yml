@@ -30,7 +30,7 @@ services:
 
     manager.logger:
         class: App\Manager\LoggerManager
-        arguments: ['@doctrine.orm.entity_manager','@request_stack', 'true' ]
+        arguments: ['@doctrine.orm.entity_manager','@request_stack', 'true','@security.helper' ]
         public: false
 
 

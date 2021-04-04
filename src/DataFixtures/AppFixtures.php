@@ -17,7 +17,9 @@ class AppFixtures extends Fixture
          $user1->setCode('0970229e-4867-4ada-b0ac-a199446cbc21');
          $manager->persist($user1);
 
-
+        $user2 = new User();
+        $user2->setCode('a5a38063-7fe1-4e8a-9841-aaad32afc0b1');
+        $manager->persist($user2);
         // cerate root folder
 
         $folder1 = new Folder();
@@ -32,6 +34,14 @@ class AppFixtures extends Fixture
             ->setRoles(array('ROLE_OWNER'));
 
         $manager->persist($userItemProp);
+
+        $userItemProp1 = new UserItemProperty();
+        $userItemProp1->setUser($user2)
+            ->setItem($folder1)
+            ->setIsTagged(false)
+            ->setRoles(array('ROLE_READ'));
+
+        $manager->persist($userItemProp1);
 
         // cerate other folders under root
         foreach (range(0, 20) as $number) {
