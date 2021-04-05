@@ -70,6 +70,7 @@ class FolderController extends AbstractController
 
         $filters = (array)$request->get("subItems");
 
+
         $rederedData = $this->manager
             ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
             ->listSubItemTwigData( $filters);

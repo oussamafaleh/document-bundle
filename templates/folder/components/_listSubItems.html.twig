@@ -24,6 +24,7 @@
                 <td>{{ item.created_at ? item.created_at|date('Y-m-d H:i') : '' }}</td>
                 <td>{{ item.updated_at ? item.updated_at|date('Y-m-d H:i') : '' }}</td>
                 <td class="navbar-nav d-flex flex-row">
+                    {% if is_granted('ROLE_REMOVE',item ) %}
                     {% if item.type == 'folder' %}
 
                         <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
@@ -31,6 +32,7 @@
                     {% else %}
                         <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
                            class="danger mr-4 ml-4"><i class="fas fa-file-excel"></i></a>
+                    {% endif %}
                     {% endif %}
                     <li class="dropdown  mr-4 ml-4">
                         <a hrep="#" class="warning" data-toggle="dropdown" onclick="folderListFucntion('{{ item.code }}','{{ current.code }}')"><i

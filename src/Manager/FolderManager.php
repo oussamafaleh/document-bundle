@@ -59,7 +59,6 @@ class FolderManager extends AbstractManager
             }
         }
         if ($this->getParentCode()) {
-
             // find existing Parent
             $this->parent = $this->apiEntityManager
                 ->getRepository(Folder::class)
