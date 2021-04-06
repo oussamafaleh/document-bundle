@@ -25,6 +25,14 @@ use Symfony\Component\HttpFoundation\File\File;
 class FileManager extends AbstractManager
 {
 
+    /** @var string */
+    private $itemCode;
+
+    /** @var string */
+    private $userCode;
+
+    /** @var string */
+    private $parentCode;
 
     /**
      * @var FolderManager
@@ -106,6 +114,22 @@ class FileManager extends AbstractManager
     public function getParentCode()
     {
         return $this->parentCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getItemCode()
+    {
+        return $this->itemCode;
+    }
+
+    /**
+     * @param string $itemCode
+     */
+    public function setItemCode(string $itemCode)
+    {
+        $this->itemCode = $itemCode;
     }
 
 
@@ -203,12 +227,12 @@ public function download($item_code){
        var_dump($fileExist);
       
        */
+
         $file = $this->apiEntityManager
-        ->getRepository(Document::class)->findByCode($item_code);
+        ->getRepository(Document::class)->findOneBy(['code' => $item_code]);
       
         $targetDirectory= $this->getTargetDirectory();
-        
-        
+
         if (!$file) {
             return ' file not found!';
          
@@ -253,7 +277,7 @@ public function download($item_code){
        */
       
         $file = $this->apiEntityManager
-        ->getRepository(Document::class)->findByCode($item_code);
+        ->getRepository(Document::class)->findOneBy(['code' => $item_code]);
         
         $targetDirectory= $this->getTargetDirectory();
         
@@ -299,7 +323,7 @@ public function download($item_code){
        */
         
         $file = $this->apiEntityManager
-        ->getRepository(Document::class)->findByCode($item_code);
+        ->getRepository(Document::class)->findOneBy(['code' => $item_code]);
         
       
         if (!$file) {
@@ -356,7 +380,7 @@ public function download($item_code){
        */
 
     $file = $this->apiEntityManager
-    ->getRepository(Document::class)->findByCode($item_code);
+    ->getRepository(Document::class)->findOneBy(['code' => $item_code]);
      
   
 

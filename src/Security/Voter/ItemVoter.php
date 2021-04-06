@@ -2,13 +2,16 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Item;
 use App\Entity\UserItemProperty;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\Self_;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Normalizer\DataUriNormalizer;
 
 class ItemVoter extends Voter
 {
@@ -21,19 +24,21 @@ class ItemVoter extends Voter
         'ROLE_EDIT' => ['ROLE_EDIT','ROLE_READ'],
         'ROLE_OWNER' => ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'],
 ];
+    private $item ;
 
-    public function __construct(EntityManagerInterface $em, Security $security )
+    public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
         $this->security = $security;
+
     }
 
     protected function supports($attribute, $subject)
     {
-        // replace with your own logic
-        // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ'])
-            && $subject instanceof \App\Entity\Item;
+        $this->item = $this->em->getRepository(Item::class)
+            ->findOneBy(['code' => $subject ]);
+        return in_array($attribute, ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'])
+            && $this->item instanceof Item;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -44,15 +49,14 @@ class ItemVoter extends Voter
             return false;
         }
         $userItemProp = $this->em->getRepository(UserItemProperty::class)
-            ->findOneBy(['user' => $user ]);
+            ->findOneBy(['user' => $user , 'item' => $this->item ]);
         $allUserRoles = $this->getAllRoles( $userItemProp->getRoles());
-
-      //  dd( $userItemProp);
         return in_array($attribute,$allUserRoles);
     }
     protected function getAllRoles($roles)
     {
         $allRoles = $roles;
+
         foreach ($roles as $role) {
             foreach ($this->ROLES_HIRARCHY[$role] as $subRoleHyrarchy) {
                 if (!in_array($subRoleHyrarchy, $allRoles)) {

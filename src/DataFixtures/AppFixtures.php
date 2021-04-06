@@ -13,12 +13,16 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
+        $roles = ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'];
          $user1 = new User();
-         $user1->setCode('0970229e-4867-4ada-b0ac-a199446cbc21');
+         $user1->setCode('0970229e-4867-4ada-b0ac-a199446cbc21')
+         ->setEmail('oussamafaleh1998@gmail.com');
+
          $manager->persist($user1);
 
         $user2 = new User();
-        $user2->setCode('a5a38063-7fe1-4e8a-9841-aaad32afc0b1');
+        $user2->setCode('a5a38063-7fe1-4e8a-9841-aaad32afc0b1')
+            ->setEmail('amelhamoudi22@gmail.com');
         $manager->persist($user2);
         // cerate root folder
 
@@ -44,19 +48,21 @@ class AppFixtures extends Fixture
         $manager->persist($userItemProp1);
 
         // cerate other folders under root
-        foreach (range(0, 20) as $number) {
-            $subFolder1 = new Folder();
-            $subFolder1->setLabel('sub_folder_'.$number)
-                ->setParent($folder1)
-                ->setCreatedAt(new \DateTime());
+        foreach (range(0, 5) as $number) {
+            foreach ($roles as $role) {
+                $subFolder1 = new Folder();
+                $subFolder1->setLabel('sub_folder_' .$role. $number)
+                    ->setParent($folder1)
+                    ->setCreatedAt(new \DateTime());
 
-            $manager->persist($subFolder1);
-            $userItemProp = new UserItemProperty();
-            $userItemProp->setUser($user1)
-                ->setItem($subFolder1)
-                ->setIsTagged(false)
-                ->setRoles(array("OWNER" => "ROLE_OWNER"));
-            $manager->persist($userItemProp);
+                $manager->persist($subFolder1);
+                $userItemProp = new UserItemProperty();
+                $userItemProp->setUser($user1)
+                    ->setItem($subFolder1)
+                    ->setIsTagged(false)
+                    ->setRoles(array($role));
+                $manager->persist($userItemProp);
+            }
         }
 
        //init history actions API

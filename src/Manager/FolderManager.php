@@ -80,6 +80,7 @@ class FolderManager extends AbstractManager
             }
         }
 
+
         return $this;
     }
 
@@ -207,12 +208,13 @@ class FolderManager extends AbstractManager
     {
         $i = 0;
         $schema = array();
-         $current = ['label' => $this->parent->getLabel(), 'code' => $this->parent->getCode()];
+        $parent = $this->parent;
+         $current = ['label' => $parent->getLabel(), 'code' => $parent->getCode()];
 
-        while (null !== $this->parent->getParent()) {
+        while (null !== $parent->getParent()) {
             $i++;
-            $this->parent = $this->parent->getParent();
-            array_push($schema, ['label' => $this->parent->getLabel(), 'code' => $this->parent->getCode()]);
+            $parent = $parent->getParent();
+            array_push($schema, ['label' => $parent->getLabel(), 'code' => $parent->getCode()]);
         }
         $schema = array_reverse($schema);
         return ['current' => $current, 'schema' => $schema];
@@ -308,24 +310,24 @@ class FolderManager extends AbstractManager
 
     }
     public function listSubItemTwigData($filters){
-        $data = $this->listSubItem( $filters);
         $schema = $this->getschema();
+        $data =$this->listSubItem($filters);
         $rederedData = [
             'data' => $data['data'],
             'current' => $schema['current'],
             'schema' => []
         ];
-        if ($this->security->isGranted('ROLE_OWNER',$this->parent )){
+
+        if ($this->security->isGranted('ROLE_OWNER',$this->parent->getCode() )){
             $rederedData['schema'] =$schema['schema'];
         }
-        if ($this->security->isGranted("ROLE_CREATE",$this->parent )){
+        if ($this->security->isGranted("ROLE_CREATE",$this->parent->getCode() )){
             $folderForm = $this->form->create(FolderType::class );
             $rederedData['folder_form'] = $folderForm->createView();
 
             $fileForm = $this->form->create(DocumentType::class );
             $rederedData['file_form'] =$fileForm->createView();
         }
-
 
         return $rederedData;
     }

@@ -74,7 +74,6 @@ class FolderController extends AbstractController
         $rederedData = $this->manager
             ->init(['parentCode' => $filters['parent_code'] , 'userCode' => $filters['user_code']])
             ->listSubItemTwigData( $filters);
-
         return $this->render('folder/index.html.twig',$rederedData);
     }
 
@@ -87,7 +86,6 @@ class FolderController extends AbstractController
     {
         $param =  (Array) $request->get("newParent");
         $request->attributes->set("user_code",$param['user_code']);
-       // dump($request);exit();
         $this->manager
             ->init(['parentCode' => $param['new_parent_code'] , 'userCode' => $param['user_code'], 'itemCode' => $param['item_code']])
             ->moveItem($param);

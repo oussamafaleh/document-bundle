@@ -9,6 +9,7 @@
 
 
 {#     ******************************** move *****************************************  #}
+    {% if is_granted('ROLE_EDIT', item.code ) %}
     <li class="dropdown  mr-4 ml-4">
         <a hrep="#" class="warning" data-toggle="dropdown" onclick="folderListFucntion('{{ item.code }}','{{ current.code }}')"><i
                     class="fas fa-angle-double-right"></i></a>
@@ -18,6 +19,7 @@
 
         </div>
     </li>
+    {% endif %}
 
 {#        ************************** end move **********************************************#}
 

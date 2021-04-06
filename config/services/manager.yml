@@ -2,7 +2,7 @@ services:
 
     #TOKEN
     App\Security\Voter\ItemVoter:
-        arguments: ['@doctrine.orm.default_entity_manager','@security.helper']
+        arguments: ['@doctrine.orm.default_entity_manager','@security.helper','@monolog.logger']
    #VIEW          
     listener.view:
         class: App\EventListener\ViewListener
