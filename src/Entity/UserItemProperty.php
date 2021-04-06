@@ -32,12 +32,14 @@ class UserItemProperty  implements UserInterface
     private $isTagged;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Item::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Item::class)
+     *@ORM\JoinColumn(onDelete="CASCADE")
      */
     private $item;
 

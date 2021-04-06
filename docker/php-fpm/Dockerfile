@@ -2,10 +2,10 @@ FROM php:7.4-fpm
 
 RUN apt-get update
 
-RUN apt-get install -y libzip-dev zlib1g-dev git libicu-dev libxml2-dev \
+RUN apt-get install -y libzip-dev zlib1g-dev git libicu-dev libxml2-dev libpng-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
-    && docker-php-ext-install zip xml \
+    && docker-php-ext-install zip xml gd\
     && docker-php-ext-install mysqli pdo pdo_mysql \
     && docker-php-ext-enable pdo_mysql
 

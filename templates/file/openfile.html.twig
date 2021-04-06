@@ -1,0 +1,16 @@
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <!--Begin modal open file -->
+
+  
+
+  <div class="card" style="width: 100%; height:900px">
+
+    <div class="card-body">
+      <iframe  frameborder="1"  height="80%" width="90%" src="{{ asset('uploads/' ~ docname ) }}"> </iframe>
+    </div>
+  </div>
+
+{% endblock %}

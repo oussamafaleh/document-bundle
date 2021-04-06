@@ -38,7 +38,7 @@ services:
     App\Manager\FileManager:
         public: true
         class: App\Manager\FileManager
-        arguments: [ '@doctrine.orm.entity_manager', '%uploads_directory%' , '@App\Manager\FolderManager']
+        arguments: [ '@doctrine.orm.entity_manager', '%uploads_directory%' , '@App\Manager\FolderManager' , '@App\Manager\ItemManager']
         
     App\Manager\FolderManager:
         public: true
@@ -55,3 +55,8 @@ services:
         public: true
         class: App\Manager\FileChunksManager
         arguments: [ '@doctrine.orm.entity_manager','@doctrine_mongodb.odm.document_manager' ] #
+
+    App\Manager\ItemManager:
+        public: true
+        class: App\Manager\ItemManager
+        arguments: [ '@doctrine.orm.entity_manager' , '%uploads_directory%' ,'@form.factory' ]  

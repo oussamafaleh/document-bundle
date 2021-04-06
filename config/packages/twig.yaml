@@ -5,3 +5,6 @@ twig:
     exception_controller: null
     globals:
         uploads_directory: '%uploads_directory%/'
+
+    form_themes:
+        - '@FOSCKEditor/Form/ckeditor_widget.html.twig'

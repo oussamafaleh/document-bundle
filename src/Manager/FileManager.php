@@ -2,6 +2,10 @@
 
 namespace App\Manager;
 
+
+
+use App\Repository\ItemRepository;
+use App\Entity\Demo;
 use App\Entity\Document;
 use App\Entity\Folder;
 use App\Entity\Item;
@@ -10,7 +14,12 @@ use App\Entity\UserItemProperty;
 use App\Utils\MyTools;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
+use Symfony\Component\HttpFoundation\File\File;
 
 
 class FileManager extends AbstractManager
@@ -22,20 +31,20 @@ class FileManager extends AbstractManager
      */
     private $folderManager;
 
-    /** @var string */
-    private $userCode;
+     /**
+     * @var ItemManager
+     */
+    private $itemManager;
 
-    /** @var string */
-    private $parentCode;
-
-
-
-    public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager)
+    public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager , ItemManager $itemManager) 
     {
         parent::__construct($entityManager);
         $this->targetDirectory = $targetDirectory;
         $this->folderManager = $folderManager;
+        $this->itemManager=$itemManager;
+       
     }
+    
 
     public function init($settings = [])
     {
@@ -63,6 +72,20 @@ class FileManager extends AbstractManager
                 throw new \Exception('UNKNOWN_PARENT');
             }
         }
+
+        if ($this->getItemCode()) {
+
+            // find existing Item
+            $this->item = $this->apiEntityManager
+                ->getRepository(Item::class)
+                ->findOneBy(['code' => $this->getItemCode()]);
+
+            if (!$this->item instanceof Item) {
+                throw new \Exception('UNKNOWN_ITEM');
+            }
+        }
+
+
 
         return $this;
     }
@@ -171,6 +194,190 @@ class FileManager extends AbstractManager
         }
         return strval($size) . "Gb";
     }
+
+
+public function download($item_code){
+
+       /*
+       $fileExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
+       var_dump($fileExist);
+      
+       */
+        $file = $this->apiEntityManager
+        ->getRepository(Document::class)->findByCode($item_code);
+      
+        $targetDirectory= $this->getTargetDirectory();
+        
+        
+        if (!$file) {
+            return ' file not found!';
+         
+            } 
+
+      
+        $filename=$file->getCode();
+      
+        // This should return the file to the browser as response
+        $response = new BinaryFileResponse($targetDirectory.$filename);
+
+        // To generate a file download, you need the mimetype of the file
+        $mimeTypeGuesser = new FileinfoMimeTypeGuesser();
+        // Set the mimetype with the guesser or manually
+        if($mimeTypeGuesser->isSupported()){
+            // Guess the mimetype of the file according to the extension of the file
+            $response->headers->set('Content-Type', $mimeTypeGuesser->guess($targetDirectory.$filename));
+        }else{
+            // Set the mimetype of the file manually, in this case for a text file is text/plain
+            $response->headers->set('Content-Type', 'text/plain');
+        }
+
+       // $originalName= $file->getClientOriginalName();
+       
+
+        // Set content disposition inline of the file
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $filename
+        );
+
+        return $response;
+    }
+
+    
+    public function openBrowser($item_code){
+
+          /*
+       $fileExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
+       var_dump($fileExist);
+      
+       */
+      
+        $file = $this->apiEntityManager
+        ->getRepository(Document::class)->findByCode($item_code);
+        
+        $targetDirectory= $this->getTargetDirectory();
+        
+        if (!$file) {
+            return ' file not found!';
+         
+            } 
+
+        $filename=$file->getCode();
+      
+        $response = new BinaryFileResponse($targetDirectory.$filename);
+
+        $mimeTypeGuesser = new FileinfoMimeTypeGuesser();
+        if($mimeTypeGuesser->isSupported()){
+            $response->headers->set('Content-Type', $mimeTypeGuesser->guess($targetDirectory.$filename));
+        }else{
+            $response->headers->set('Content-Type', 'text/plain');
+        }
+
+       // $originalName= $filename->getClientOriginalName();
+        
+        // Set content disposition inline of the file
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_INLINE,
+            $filename
+        );
+
+        return $response;
+    }
+
+
+
+
+
+
+
+    public function LocationFile($item_code){
+
+          /*
+       $fileExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
+       var_dump($fileExist);
+      
+       */
+        
+        $file = $this->apiEntityManager
+        ->getRepository(Document::class)->findByCode($item_code);
+        
+      
+        if (!$file) {
+            return ' file not found!';
+         
+            } 
+
+       
+
+        return $file->getCode();
+    }
+
+
+
+
+
+   
+    public function readDoc($item_code){
+
+
+        $targetDirectory= $this->getTargetDirectory();
+        $filename=$targetDirectory.$item_code;
+    
+        $objReader = \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
+        $phpWord = $objReader->load($filename);
+        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
+       
+        /*
+        $fileName= explode(".", $item_code->getClientOriginalName());
+        $rest = $fileName[0];
+        */
+
+        
+        $rest = substr($item_code, 0, -4);
+        $docname=$rest."html";
+       
+        $filePath=$targetDirectory. $docname;
+      
+        $objWriter->save($filePath);
+      
+        return ['docname' => $docname];
+    
+    }
+
+
+   public function openDocument($item_code)
+   {
+
+
+      /*
+       $fileExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
+       var_dump($fileExist);
+      
+       */
+
+    $file = $this->apiEntityManager
+    ->getRepository(Document::class)->findByCode($item_code);
+     
+  
+
+    if($file->getExtension()=="docx") {
+        
+        return $this->readDoc($item_code);
+     
+         
+     } 
+     
+   /*  elseif ($file->getExtension()=="xls")
+     {
+  
+         return $this->ReadXsl($item_code);
+     }*/
+     
+     else
+      return ['docname' => $item_code];
+    }
+    
+
 
 
 }

@@ -65,6 +65,8 @@ class ItemRepository extends ServiceEntityRepository
 
         $parameters = $where = [];
         $select = [
+            // https://stackoverflow.com/questions/6292679/mysql-using-correct-syntax-for-the-over-clause
+            //over moch mawjouda f mysql sauf fl version 8
             'total' => 'count(*) OVER() ',
             'code' => 'i.code',
             'label' => "i.label",

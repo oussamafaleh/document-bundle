@@ -33,7 +33,8 @@ abstract class Item extends AbstractEntity
     private $label;
 
     /**
-     * @ORM\ManyToOne(targetEntity=folder::class)
+     * @ORM\ManyToOne(targetEntity=folder::class  )
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $parent;
 
@@ -69,6 +70,10 @@ abstract class Item extends AbstractEntity
     public function getCode(): ?string
     {
         return $this->code;
+    }
+
+    public function getType() {
+        return (new \ReflectionClass($this))->getShortName();
     }
 
     public function setCode(string $code): self

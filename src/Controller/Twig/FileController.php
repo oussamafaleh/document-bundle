@@ -55,6 +55,69 @@ class FileController extends AbstractController
 
 
 
+ 
+    /**
+     * @Route("/downloadFile/{item_code}", name="download_file_twig", methods={"GET"})
+     */
+    public function DownloadAction($item_code)
+    {
+
+        return $this->manager->download($item_code);   
+    }
+
+
+
+
+    
+    /**
+     * @Route("/openBrowser/{item_code}", name="open_file_browser_twig", methods={"GET"})
+     */
+
+   
+    public function openBrowserAction($item_code)
+{
+     
+     return $this->manager->openBrowser($item_code);
+
+}
+
+
+
+/**
+* @Route("/opendocs/{item_code}", name="open_docs_twig", methods={"GET"})
+*/
+
+public function readDocs($item_code){
+
+    $docname =  $this->manager->readDoc($item_code);
+    
+    
+    return $this->render('file/openfile.html.twig', $docname);
+
+
+}
+
+
+
+
+
+
+
+   /**
+     * @Route("/openDocument/{item_code}", name="open_any_document_twig", methods={"GET"})
+     */
+    public function OpenDocument($item_code){
+
+
+        $docname = $this->manager->openDocument($item_code) ;
+    
+     
+       return $this->render('file/openfile.html.twig', $docname);
+
+    
+    }
+    
+    
 
 
 }

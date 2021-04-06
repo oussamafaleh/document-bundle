@@ -10,7 +10,7 @@ parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads'
     env(MONGODB_URL): ''
     env(MONGODB_DB): ''
-    
+    Url_Bundle: 'talanDocBundle.com/'
 services:
     # default configuration for services in *this* file
     _defaults:

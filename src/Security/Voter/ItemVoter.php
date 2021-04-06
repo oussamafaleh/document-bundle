@@ -47,7 +47,7 @@ class ItemVoter extends Voter
             ->findOneBy(['user' => $user ]);
         $allUserRoles = $this->getAllRoles( $userItemProp->getRoles());
 
-        dd( $userItemProp);
+      //  dd( $userItemProp);
         return in_array($attribute,$allUserRoles);
     }
     protected function getAllRoles($roles)

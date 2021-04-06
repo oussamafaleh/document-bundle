@@ -1,0 +1,350 @@
+<td class="navbar-nav justify-content-end d-flex flex-row mr-4">
+
+
+    {% if item.type == 'folder' %}
+
+        <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
+           class="marine mr-4 ml-4"><i class="fas fa-folder-open"></i></a>
+    {% endif %}
+
+
+{#     ******************************** move *****************************************  #}
+    <li class="dropdown  mr-4 ml-4">
+        <a hrep="#" class="warning" data-toggle="dropdown" onclick="folderListFucntion('{{ item.code }}','{{ current.code }}')"><i
+                    class="fas fa-angle-double-right"></i></a>
+        {#     ******************************** move  Modal *****************************************  #}
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right scrollable-menu"
+             style="height: 200px;max-height: 200px;  overflow-x: scroll;" id="move_list">
+
+        </div>
+    </li>
+
+{#        ************************** end move **********************************************#}
+
+
+
+    {#     ******************************** other Actions  *****************************************  #}
+    <li class="nav-item dropdown">
+        <a class="nav-link mr-3 " data-toggle="dropdown" href="#">
+            <i class="fas fa-ellipsis-v"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            {% if item.type == 'folder' %}
+                <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"  class="dropdown-item" > <button type="button" class="btn"> open </button> </a>
+                <div class="dropdown-divider"></div>
+
+            {% else %}
+
+
+
+                <a href="{{ path('download_file_twig', {'item_code': item.code}) }}" class="dropdown-item " > <button type="button" class="btn">download </button></a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('open_file_browser_twig', {'item_code': item.code}) }}"class="dropdown-item" > <button type="button" class="btn">view </button> </a>
+                <div class="dropdown-divider"></div>
+                <a href="{{ path('open_any_document_twig', {'item_code': item.code} )}}" class="dropdown-item">
+                <button type="button" class="btn" data-target="#display_file" > open </button> </a>
+                <div class="dropdown-divider"></div>
+
+            {% endif %}
+            <a href="{{ path('delete_item_twig', {'item_code': item.code ,'parent_code': current.code} ) }}"  class="dropdown-item danger">
+                <button type="button" class="btn"  data-toggle="modal" data-target="#confirm-delete" class="btn btn-sm btn-danger">remove </button>
+                <div class="dropdown-divider"></div>
+            </a>
+
+            <button type="button" onclick="CancelShareLink('{{ item.code }}')" id="cancel_btn" class="dropdown-item">cancel share </button>
+            <div class="dropdown-divider"></div>
+            <button type="button" onclick="Rename('{{ item.code }}' , '{{ current.code }}')" class="btn dropdown-item" data-toggle="modal" data-target="#RenameItemModal">
+                Rename
+            </button>
+            </a>
+
+
+            <button type="button" onclick="ShareLink('{{ item.code }}')" class="btn-shareLink dropdown-item" data-toggle="modal" data-target="#shareLink">  share </button>
+            <div class="dropdown-divider"></div>
+            <button  type="button" class="btn dropdown-item" onclick="ShareByEMail('{{ item.code }}')"  data-toggle="modal" data-target="#sharefile"> sharefile </button>
+
+
+{#            </button>#}
+{#            <a href="#" class="dropdown-item">#}
+{#                <i class="fas fa-envelope mr-2"></i> 4 new messages#}
+{#                <span class="float-right text-muted text-sm">3 mins</span>#}
+{#            </a>#}
+{#            <div class="dropdown-divider"></div>#}
+{#            <a href="#" class="dropdown-item">#}
+{#                <i class="fas fa-users mr-2"></i> 8 friend requests#}
+{#                <span class="float-right text-muted text-sm">12 hours</span>#}
+{#            </a>#}
+{#            <div class="dropdown-divider"></div>#}
+{#            <a href="#" class="dropdown-item">#}
+{#                <i class="fas fa-file mr-2"></i> 3 new reports#}
+{#                <span class="float-right text-muted text-sm">2 days</span>#}
+{#            </a>#}
+{#            <div class="dropdown-divider"></div>#}
+{#            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>#}
+        </div>
+    </li>
+</td>
+    </tr>
+    <!--  ****************************************************************************************************************  -->
+    <!-- modal for share with others use mail-->
+    <div class="modal" id="sharefile">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Partager avec des personnes et des groupes</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+
+                            <input type="text" placeholder="Ajouter des personnes" class="form-control"
+                                   id="share_email">
+                            <label for="message-text" class="col-form-label">Username </label>
+                            <label for="message-text" class="col-form-label">email </label>
+
+                        </div>
+
+                        <div id="find-table">
+                            <input type="checkbox" value="Read">Read</input><br>
+                            <input type="checkbox" value="Delete">Delete</input><br>
+                            <input type="checkbox" value="Download">Download</input><br>
+                        </div>
+
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="merge_button"  data-dismiss="modal">Terminer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--End modal for share with others use mail-->
+
+
+    <!--  ****************************************************************************************************************  -->
+
+
+    <div class="modal" id="RenameItemModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Renommer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+
+                            <input type="text" placeholder="tapper nom" id="label">
+
+                        </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="rename_btn"  data-dismiss="modal">Terminer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--  ****************************************************************************************************************  -->
+
+
+    <!--  ****************************************************************************************************************  -->
+
+
+    <!-- modal for share with Link-->
+    <div class="modal" id="shareLink" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Partager avec des personnes et des groupes</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="form-group">
+
+                        <div id="find-tablelink">
+                            <input type="checkbox" value="Read">Read</input><br>
+                            <input type="checkbox" value="Delete">Delete</input><br>
+                            <input type="checkbox" value="Download">Download</input><br>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="shareLink_btn" data-dismiss="modal" >Terminer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- End modal for share with Link-->
+
+
+    <!-- ***********************-->
+
+
+    <!--  ****************************************************************************************************************  -->
+
+    <div class="modal fade" id="display_file">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">display file</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal modal-danger fade" id="confirm-delete">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Vous etes sur?</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Supprimer une donne supprimera également tous les donnes liées</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Terminer</button>
+                    <button type="button" class="btn btn-secondary">Close</button>
+                    <!--
+
+                      <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">annuler</button>
+                     <button type="button" class="btn btn-outline btn-delete">supprimer</button>
+                    -->
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <script type="text/javascript">
+
+
+        function Rename(item_code , parent_code) {
+           
+            $('button#rename_btn').on('click', function () {
+                var label = $('input#label').val()
+                $.ajax({
+                    method: "PATCH",
+                    url: "/item/renameItem/" + item_code ,
+                    data: JSON.stringify({label: label}),
+                }).done(function (res) {
+                    console.log(res)
+
+                }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.responseText)
+                })
+            })
+        }
+
+        //-------------------
+
+        function ShareByEMail(item_code) {
+            console.log(item_code);
+
+            $("#merge_button").click(function (event) {
+                event.preventDefault();
+                var email = $('input#share_email').val()
+                console.log(email)
+                var roles = [];
+                $("#find-table input:checkbox:checked").map(function () {
+                    roles.push($(this).val());
+                });
+                console.log(roles);
+
+                $.ajax({
+                    method: "POST",
+                    url: "/api/item/shareWithOthers/" + item_code,
+                    data: JSON.stringify({email: email, roles: roles}),
+                }).done(function (res) {
+                    console.log(res)
+
+                }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.responseText)
+                })
+            });
+
+
+        }
+
+
+        function ShareLink(item_code) {
+            console.log(item_code);
+            $("#shareLink_btn").click(function (event) {
+                event.preventDefault();
+                var roles = Array();
+
+                $("#find-tablelink input:checkbox:checked").map(function (item) {
+                    roles.push($(this).val());
+                });
+
+                console.log(typeof (roles))
+                $.ajax({
+                    method: "POST",
+                    url: "/api/item/shareLinks/" + item_code,
+                    data: JSON.stringify({roles: roles}),
+                }).done(function (res) {
+                    console.log(res)
+
+                }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.responseText)
+                })
+            });
+
+
+        }
+
+
+        function CancelShareLink(item_code) {
+           
+           $('button#cancel_btn').on('click', function () {
+               $.ajax({
+                   method: "DELETE",
+                   url: "/api/item/CancelshareLink/" + item_code ,
+               }).done(function (res) {
+                   console.log(res)
+
+               }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                   console.log(XMLHttpRequest.responseText)
+               })
+           })
+       }
+
+    </script>
