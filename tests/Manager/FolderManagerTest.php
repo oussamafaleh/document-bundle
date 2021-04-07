@@ -42,8 +42,8 @@ class FolderManagerTest extends AbstractTestCase
             ->setCreatedAt(new \DateTime());
 
         $userItemProp = new UserItemProperty();
-        $userItemProp->setIdUser($user1)
-            ->setIdItem($folder1)
+        $userItemProp->setUser($user1)
+            ->setItem($folder1)
             ->setIsTagged(false)
             ->setRoles(array("OWNER" => "ROLE_OWNER"));
 
