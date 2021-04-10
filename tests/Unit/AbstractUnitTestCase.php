@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Tests;
+namespace App\Tests\Unit;
 
 
-abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase
+abstract class AbstractUnitTestCase extends \PHPUnit\Framework\TestCase
 {
     protected $repository;
     protected $entityManager;
@@ -14,38 +14,38 @@ abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase
 
         $this->repository = $this
             ->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->setMethods(['findByFilters','findOneBy'])
             ->disableOriginalConstructor()
-            ->setMethods(array('findOneBy','findByFilters'))
             ->getMock();
 
         $this->entityManager = $this
             ->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->setMethods(array('getRepository','getConnection','persist','flush','commit'))
             ->disableOriginalConstructor()
             ->getMock();
     }
-    protected function getDoctrineEntityManager(string $emMethod, $i, $repMethod = null  , $mockResult = null): \PHPUnit\Framework\MockObject\Builder\InvocationMocker
+    protected function getDoctrineEntityManager(string $emMethod, $i, $repMethod = null  , $mockResult = null)
     {
 
         if($repMethod !== null){
             $this->repository
-                ->expects($this->any($i))
+                ->expects($this->at($i))
                 ->method($repMethod)
                 ->willReturn($mockResult);
 
-            return $this->entityManager
-                ->expects($this->any($i))
+            $this->entityManager
+                ->expects($this->at($i))
                 ->method($emMethod)
                 ->willReturn($this->repository);
         }
 
 
+        else{
+            $this->entityManager
+                ->expects($this->at($i))
+                ->method($emMethod)
+                ->willReturn(null);
 
-
-        return $this->entityManager
-            ->expects($this->any($i))
-            ->method($emMethod)
-            ->willReturn(null);
+        }
 
     }
 }

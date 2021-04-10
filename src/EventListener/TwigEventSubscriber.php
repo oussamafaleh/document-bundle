@@ -14,6 +14,7 @@ use Twig\Environment;
 
 class TwigEventSubscriber
 {
+    public const TWIG_ROUT = 'Twig';
     private $twig;
     /**
      * @var RequestStack
@@ -58,8 +59,12 @@ class TwigEventSubscriber
 
      public function onControllerEvent(ControllerEvent $event)
 {
-            $this->twig->addGlobal('tagged', $this->getGlobalData()['tagged']);
-            $this->twig->addGlobal('tag_form', $this->getGlobalData()['tag_form']);
+
+    if(str_contains ( $event->getRequest()->get('_controller'),self::TWIG_ROUT)){
+        $this->twig->addGlobal('tagged', $this->getGlobalData()['tagged']);
+        $this->twig->addGlobal('tag_form', $this->getGlobalData()['tag_form']);
+
+    }
 }
 
      public static function getSubscribedEvents(){}

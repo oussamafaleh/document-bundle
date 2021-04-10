@@ -26,9 +26,10 @@ class ViewListener
         $result = $event->getControllerResult();
 
         $messages = [];
-        if (isset($result['data']['messages'])) {
-            $messages['value'] = $this->translator->trans($result['data']['messages'], [], 'messages');
-            unset($result['data']['messages']);
+        if (isset($result['messages'])) {
+            $messages['code'] = 200 ;
+            $messages['value'] = $this->translator->trans($result['messages'], [], 'messages');
+            unset($result['messages']);
         }
 
 

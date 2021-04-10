@@ -1,15 +1,17 @@
 <?php
 
 
-namespace App\Tests\Unit\Manager;
+namespace App\Tests\Unit;
 
 use App\Entity\Folder;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
 use App\Manager\FolderManager;
-use App\Tests\AbstractTestCase;
+use App\Tests\Unit\AbstractUnitTestCase;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Security\Core\Security;
 
-class FolderManagerTest extends AbstractTestCase
+class FolderManagerTest extends AbstractUnitTestCase
 {
 
     public function getCreateAtributesTests()
@@ -69,14 +71,9 @@ class FolderManagerTest extends AbstractTestCase
 //                ['messages'=> 'not_fond_exeption']
 //            ],
             [
-                ['parent_code'  =>  "84150eb1-336a-4193-ba8d-6237bb7e374e"  ,  'user_code'  =>  "0970229e-4867-4ada-b0ac-a199446cbc21"  ,  'label'  =>  "folder_test1"],
-                ['parent'  =>  $folder1  ,  'user'  =>  $user1  ],
+                ['parentCode'  =>  "84150eSb1-336a-4193-ba8d-6237bb7e374e"  ,  'userCode'  =>  "0970229e-4867-4ada-b0ac-a199446cbc21" ],  [ 'label'  =>  "folder_test1"],
+                ['parent'  =>  $folder1  ,  'user'  =>  $user1 , 'list' =>[$subFolder1, $subFolder2]  ],
                 ['messages'=> 'create_success']
-            ],
-            [
-                ['parent_code'  =>  "84150eb1-336a-4193-ba8d-6237bb7e374e"  ,  'user_code'  =>  "0970229e-4867-4ada-b0ac-a199446cbc21"  ,  'label'  =>  "folder_test1"],
-                ['parent'  =>  $folder1  ,  'user'  =>  $user1  ],
-                ['messages'=> 'fond_exeption']
             ]
         ];
     }
@@ -84,22 +81,27 @@ class FolderManagerTest extends AbstractTestCase
     /**
      * @dataProvider getCreateAtributesTests
      */
-    public function testCreate(array $attr ,array $mockResult ,array $methodResult ){
+ //   public function testCreate(array $initAttr ,array $createAttr ,array $mockResult ){
+//        $i =0;
+//        $this->getDoctrineEntityManager('getRepository',$i++,'findOneBy',$mockResult['user']);
+//        $this->getDoctrineEntityManager('getRepository',$i++,'findOneBy',$mockResult['parent']);
+//        $this->getDoctrineEntityManager('getRepository',$i++,'findByFilters',$mockResult['list']);
+//
+//        $this->getDoctrineEntityManager('getRepository',$i++,'findOneBy',$mockResult['parent']);
+//        $this->getDoctrineEntityManager('getConnection',$i++);
+//        $this->getDoctrineEntityManager('persist',$i++);
+//        $this->getDoctrineEntityManager('persist',$i++);
+//        $this->getDoctrineEntityManager('flush',$i++);
+//        $this->getDoctrineEntityManager('commit',$i++);
+//
+//        $security = $this->createMock(Security::class);
+//        $form = $this->createMock(FormFactory::class);
+//        $folderManager = new FolderManager($this->entityManager,$security ,$form);
+//        $init = $folderManager->init($initAttr);
+//        $this->assertEquals($init->getParentCode() , $initAttr['parentCode']);
+//        $this->assertEquals($init->getUserCode() , $initAttr['userCode']);
+//
+//        $init->create($createAttr);
 
-        $this->entityManager =$this->getDoctrineEntityManager('getRepository',0,'findOneBy',$mockResult['user']);
-        $this->entityManager =$this->getDoctrineEntityManager('getRepository',1,'findOneBy',$mockResult['parent']);
-        $this->entityManager =$this->getDoctrineEntityManager('getConnection',2);
-        $this->entityManager =$this->getDoctrineEntityManager('persist',3);
-        $this->entityManager =$this->getDoctrineEntityManager('persist',4);
-        $this->entityManager =$this->getDoctrineEntityManager('flush',5);
-        $this->entityManager =$this->getDoctrineEntityManager('commit',6);
-
-
-        $folderManager = new FolderManager($this->entityManager );
-        $content = $folderManager->create($attr);
-        $this->assertArrayHasKey('data', $content);
-        $this->assertArrayHasKey('messages', $content['data']);
-        $this->assertEquals($content['data']['messages'] , $methodResult['messages']);
-        $this->assertEquals($content['data']['messages'] , $methodResult['messages']);
-    }
+ //   }
 }

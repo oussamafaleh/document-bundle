@@ -55,7 +55,7 @@ class FolderManager extends AbstractManager
                 ->findOneBy(['code' => $this->getUserCode()]);
 
             if (!$this->user instanceof User) {
-                throw new \Exception('UNKNOWN_USER');
+                throw new \Exception('UNKNOWN_USER', 404);
             }
         }
         if ($this->getParentCode()) {
@@ -65,7 +65,7 @@ class FolderManager extends AbstractManager
                 ->findOneBy(['code' => $this->getParentCode()]);
 
             if (!$this->parent instanceof Folder) {
-                throw new \Exception('UNKNOWN_PARENT');
+                throw new \Exception('UNKNOWN_PARENT',404);
             }
         }
         if ($this->getItemCode()) {
@@ -76,7 +76,7 @@ class FolderManager extends AbstractManager
                 ->findOneBy(['code' => $this->getItemCode()]);
 
             if (!$this->item instanceof Item) {
-                throw new \Exception('UNKNOWN_ITEM');
+                throw new \Exception('UNKNOWN_ITEM',404);
             }
         }
 
@@ -159,18 +159,19 @@ class FolderManager extends AbstractManager
         $user_item_property->setItem($folder)
             ->setUser($this->user)
             ->setIsTagged(false)
-            ->setRoles(array("OWNER" => "ROLE_OWNER"));
+            ->setRoles(array("ROLE_OWNER"));
         $this->apiEntityManager->persist($user_item_property);
         $this->parent->setUpdatedAt(new DateTime());
         $this->apiEntityManager->persist($this->parent);
 
         $this->apiEntityManager->flush();
         $connection->commit();
-        return ['data' => [
-            'messages' => 'create_success',
+        return [
+            'data' => [
             'code' => $folder->getCode()
-        ]];
-
+            ],
+            'messages' => 'create_success'
+        ];
     }
 
     /**
@@ -192,7 +193,9 @@ class FolderManager extends AbstractManager
                 ->findOneBy(['item' => $this->parent, 'user' => $this->user])
                 ->getRoles();
 
-        return ['data' => MyTools::paginator($data, $filters['index'], $filters['size']),
+        return [
+            'messages' => 'list-item-success',
+            'data' => MyTools::paginator($data, $filters['index'], $filters['size']),
             'parent_folder' => $this->parent->getLabel(),
             'parent_code' => $this->parent->getCode(),
             'parent_roles' =>$parentRole ];
