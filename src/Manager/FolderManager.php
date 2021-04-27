@@ -6,6 +6,7 @@ use App\Entity\Folder;
 use App\Entity\Item;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
+use App\Event\RuleEvent\FileEvent;
 use App\Form\DocumentType;
 use App\Form\FolderType;
 use App\Utils\MyTools;
@@ -35,7 +36,7 @@ class FolderManager extends AbstractManager
     private $security;
 
 
-    public function __construct(EntityManager $entityManager, Security $security ,FormFactory $formFactory)
+    public function __construct(EntityManager $entityManager, Security $security ,FormFactory $formFactory )
     {
         parent::__construct($entityManager);
 
@@ -153,7 +154,6 @@ class FolderManager extends AbstractManager
         $folder->setLabel($folderParam['label'])
             ->setParent($this->parent);
         $this->apiEntityManager->persist($folder);
-
 
         $user_item_property = new UserItemProperty();
         $user_item_property->setItem($folder)

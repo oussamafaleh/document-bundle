@@ -4,7 +4,9 @@ namespace App\Manager;
 
 
 
-use App\Repository\ItemRepository;
+use App\Entity\Rule;
+use App\Event\RuleEvent\FileEvent;
+use App\ExpressionLanguage\RuleExpressionLanguage;
 use App\Entity\Demo;
 use App\Entity\Document;
 use App\Entity\Folder;
@@ -13,9 +15,7 @@ use App\Entity\User;
 use App\Entity\UserItemProperty;
 use App\Utils\MyTools;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-
 use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class FileManager extends AbstractManager
 {
+    const classifyFileRule = 'classify_file';
 
     /** @var string */
     private $itemCode;
@@ -43,13 +44,17 @@ class FileManager extends AbstractManager
      * @var ItemManager
      */
     private $itemManager;
+//
+    private $expressionLanguage;
 
-    public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager , ItemManager $itemManager) 
+    public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager , ItemManager $itemManager)
     {
         parent::__construct($entityManager);
         $this->targetDirectory = $targetDirectory;
         $this->folderManager = $folderManager;
         $this->itemManager=$itemManager;
+
+        $this->expressionLanguage = new RuleExpressionLanguage();
        
     }
     
@@ -158,9 +163,9 @@ class FileManager extends AbstractManager
 
         $fileUniquness =$this->folderManager->init(['parentCode'=> $this->getParentCode(),'userCode' => $this->getUserCode()])
             ->checkSubItemsLabelUniqueness($RequestFile->getClientOriginalName());
-        if(!$fileUniquness){
-            throw new \Exception('FOUND_ITEM');
-        }
+//        if(!$fileUniquness){
+//            throw new \Exception('FOUND_ITEM');
+//        }
         $file =$this->upload($RequestFile);
 
         $connection = $this->apiEntityManager->getConnection();
@@ -174,12 +179,14 @@ class FileManager extends AbstractManager
             ->setParent($this->parent);
         $this->apiEntityManager->persist($this->document);
 
+//        $fileClass = $this->evaluateRule($this->document, self::classifyFileRule);
+//        $this->document->setClassification($fileClass);
 
         $this->user_item_property = new UserItemProperty();
         $this->user_item_property->setItem($this->document)
             ->setUser($this->user)
             ->setIsTagged(false)
-            ->setRoles(array("OWNER" => "ROLE_OWNER"));
+            ->setRoles(array("ROLE_OWNER"));
         $this->apiEntityManager->persist($this->user_item_property);
         $this->parent->setUpdatedAt(new \DateTime());
         $this->apiEntityManager->persist($this->parent);
@@ -187,11 +194,13 @@ class FileManager extends AbstractManager
         $connection->commit();
 
 
-        return ['data' => [
-        'messages' => 'create_success',
-        'code' => $this->document->getCode(),
-        'label' => $this->document->getLabel(),
-    ]];
+        return [
+                'messages' => 'create_success',
+                'data' => [
+                    'code' => $this->document->getCode(),
+                    'label' => $this->document->getLabel(),
+                    'class' => $this->document->getClassification()
+            ]];
     }
     public function upload( $file)
     {
@@ -263,7 +272,6 @@ public function download($item_code){
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $filename
         );
-
         return $response;
     }
 
@@ -352,8 +360,8 @@ public function download($item_code){
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
        
         /*
-        $fileName= explode(".", $item_code->getClientOriginalName());
-        $rest = $fileName[0];
+            $fileName= explode(".", $item_code->getClientOriginalName());
+            $rest = $fileName[0];
         */
 
         
@@ -400,7 +408,8 @@ public function download($item_code){
      else
       return ['docname' => $item_code];
     }
-    
+
+
 
 
 

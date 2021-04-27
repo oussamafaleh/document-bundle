@@ -9,12 +9,12 @@ abstract class AbstractUnitTestCase extends \PHPUnit\Framework\TestCase
     protected $repository;
     protected $entityManager;
 
-    public function setUp():void
+    public function setUp(): void
     {
 
         $this->repository = $this
             ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->setMethods(['findByFilters','findOneBy'])
+            ->setMethods(['findByFilters', 'findOneBy'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -22,30 +22,56 @@ abstract class AbstractUnitTestCase extends \PHPUnit\Framework\TestCase
             ->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->connection = $this
+            ->getMockBuilder('Doctrine\DBAL\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
-    protected function getDoctrineEntityManager(string $emMethod, $i, $repMethod = null  , $mockResult = null)
+
+    protected function getDoctrineEntityMock(string $emMethod, $i, $repMethod = null, $mockResult = null)
     {
 
-        if($repMethod !== null){
+
+        if ($repMethod !== null) {
             $this->repository
                 ->expects($this->at($i))
                 ->method($repMethod)
                 ->willReturn($mockResult);
 
-            $this->entityManager
+            return $this->entityManager
                 ->expects($this->at($i))
                 ->method($emMethod)
                 ->willReturn($this->repository);
-        }
-
-
-        else{
-            $this->entityManager
+        } else {
+            return $this->entityManager
                 ->expects($this->at($i))
                 ->method($emMethod)
                 ->willReturn(null);
 
         }
+
+    }
+
+    protected function getConnectionMock(string $emMethod, $i, $cnxMethod = null)
+    {
+
+        return $this->entityManager
+            ->expects($this->at($i))
+            ->method($emMethod)
+            ->willReturn($this->connection);
+    }
+
+    protected function getCommitMock($cnxMethod = null, $i)
+    {
+
+        $this->connection
+            ->expects($this->at($i))
+            ->method($cnxMethod)
+            ->willReturn(true);
+        return $this->entityManager
+            ->expects($this->at($i))
+            ->method('getConnection')
+            ->willReturn($this->connection);
 
     }
 }

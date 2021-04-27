@@ -47,7 +47,30 @@ class FolderManagerTest extends AbstractUnitTestCase
         $userItemProp->setUser($user1)
             ->setItem($folder1)
             ->setIsTagged(false)
-            ->setRoles(array("OWNER" => "ROLE_OWNER"));
+            ->setRoles(array("ROLE_OWNER"));
+        $list = array(
+            [
+            "total" => "2",
+            "code" => "3776d01e-a994-433b-ba95-a7720ed65fe9",
+            "label" => "sub_folder_2",
+            "type" => "folder",
+            "roles" => '"["ROLE_OWNER"]"',
+            "is_tagged" => "0",
+            "updated_at" => null,
+            "created_at" => "2021-04-14 10:40:53",
+          ],
+        [
+            "total" => "2",
+            "code" => "b9c4c548-058c-48cf-8caa-c086d5a030be",
+            "label" => "sub_folder_1",
+            "type" => "folder",
+            "roles" => '"["ROLE_OWNER"]"',
+            "is_tagged" => "0",
+            "updated_at" => null,
+            "created_at" => "2021-04-14 10:40:53",
+        ]);
+
+
 
         return [
 //            [
@@ -72,7 +95,7 @@ class FolderManagerTest extends AbstractUnitTestCase
 //            ],
             [
                 ['parentCode'  =>  "84150eSb1-336a-4193-ba8d-6237bb7e374e"  ,  'userCode'  =>  "0970229e-4867-4ada-b0ac-a199446cbc21" ],  [ 'label'  =>  "folder_test1"],
-                ['parent'  =>  $folder1  ,  'user'  =>  $user1 , 'list' =>[$subFolder1, $subFolder2]  ],
+                ['parent'  =>  $folder1  ,  'user'  =>  $user1 , 'list' => $list , 'property' => $userItemProp ],
                 ['messages'=> 'create_success']
             ]
         ];
@@ -81,27 +104,28 @@ class FolderManagerTest extends AbstractUnitTestCase
     /**
      * @dataProvider getCreateAtributesTests
      */
- //   public function testCreate(array $initAttr ,array $createAttr ,array $mockResult ){
-//        $i =0;
-//        $this->getDoctrineEntityManager('getRepository',$i++,'findOneBy',$mockResult['user']);
-//        $this->getDoctrineEntityManager('getRepository',$i++,'findOneBy',$mockResult['parent']);
-//        $this->getDoctrineEntityManager('getRepository',$i++,'findByFilters',$mockResult['list']);
-//
-//        $this->getDoctrineEntityManager('getRepository',$i++,'findOneBy',$mockResult['parent']);
-//        $this->getDoctrineEntityManager('getConnection',$i++);
-//        $this->getDoctrineEntityManager('persist',$i++);
-//        $this->getDoctrineEntityManager('persist',$i++);
-//        $this->getDoctrineEntityManager('flush',$i++);
-//        $this->getDoctrineEntityManager('commit',$i++);
-//
-//        $security = $this->createMock(Security::class);
-//        $form = $this->createMock(FormFactory::class);
-//        $folderManager = new FolderManager($this->entityManager,$security ,$form);
-//        $init = $folderManager->init($initAttr);
-//        $this->assertEquals($init->getParentCode() , $initAttr['parentCode']);
-//        $this->assertEquals($init->getUserCode() , $initAttr['userCode']);
-//
-//        $init->create($createAttr);
+    public function testCreate(array $initAttr ,array $createAttr ,array $mockResult ){
+        $i =0;
+        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['user']);
+        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['parent']);
+        $this->getDoctrineEntityMock('getRepository',$i++,'findByFilters',$mockResult['list']);
 
- //   }
+        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['property']);
+        $this->getConnectionMock('getConnection',$i++);
+        $this->getCommitMock('beginTransaction',$i++);
+        $this->getDoctrineEntityMock('persist',$i++);
+        $this->getDoctrineEntityMock('persist',$i++);
+        $this->getDoctrineEntityMock('flush',$i++);
+        $this->getCommitMock('commit',$i);
+
+        $security = $this->createMock(Security::class);
+        $form = $this->createMock(FormFactory::class);
+        $folderManager = new FolderManager($this->entityManager,$security ,$form);
+        $init = $folderManager->init($initAttr);
+        $this->assertEquals($init->getParentCode() , $initAttr['parentCode']);
+        $this->assertEquals($init->getUserCode() , $initAttr['userCode']);
+
+        $init->create($createAttr);
+
+    }
 }

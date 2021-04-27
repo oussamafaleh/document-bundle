@@ -17,6 +17,12 @@ class Document extends Item
      * @ORM\Column(type="string", length=255)
      */
     private $extension;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $classification;
+
+
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -50,25 +56,20 @@ class Document extends Item
         return $this;
     }
 
-//    public function getItem(): ?Item
-//    {
-//        return $this->item;
-//    }
-//
-//    public function setItem(?Item $item): self
-//    {
-//        // unset the owning side of the relation if necessary
-//        if ($item === null && $this->item !== null) {
-//            $this->item->setDocument(null);
-//        }
-//
-//        // set the owning side of the relation if necessary
-//        if ($item !== null && $item->getDocument() !== $this) {
-//            $item->setDocument($this);
-//        }
-//
-//        $this->item = $item;
-//
-//        return $this;
-//    }
+    /**
+     * @return mixed
+     */
+    public function getClassification(): ?string
+    {
+        return $this->classification;
+    }
+
+    /**
+     * @param mixed $classification
+     */
+    public function setClassification( $classification): self
+    {
+        $this->classification = $classification;
+        return $this;
+    }
 }

@@ -11,10 +11,10 @@
 {#     ******************************** move *****************************************  #}
     {% if is_granted('ROLE_EDIT', item.code ) %}
     <li class="dropdown  mr-4 ml-4">
-        <a hrep="#" class="warning" data-toggle="dropdown" onclick="folderListFucntion('{{ item.code }}','{{ current.code }}')"><i
+        <a hrep="#" class="warning" data-toggle="dropdown" data-action="click->folder#folderListFucntion" data-folder-to-move ="{{ item.code }}" data-folder-moving-in="{{ current.code }}" data-path="{{ path('move_item_twig', {'item_code':'itemC','parent_code': current.code,'new_parent_code':'newParentC','user_code':'userC' }) }}"><i
                     class="fas fa-angle-double-right"></i></a>
         {#     ******************************** move  Modal *****************************************  #}
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right scrollable-menu"
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right scrollable-menu" data-action="click->folder#stopPropagation"
              style="height: 200px;max-height: 200px;  overflow-x: scroll;" id="move_list">
 
         </div>

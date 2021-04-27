@@ -65,7 +65,30 @@ class FileChunkController extends AbstractController
     }
 
     /**
-     * @Route("/download/{id}", name="upload_show")
+     * @Route("/download/{id}", name="download-file-chunks", methods={"GET"})
+     * @Operation(
+     *     tags={"File"},
+     *     summary="download file chunks",
+     *     @SWG\Parameter(
+     *         name="file",
+     *         in="formData",
+     *         type="file",
+     *         description="file",
+     *         required=true
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful"
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="Returned when the ws-file is not authorized"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Returned when the file is not found"
+     *     )
+     * )
      */
     public function downloadChunks($id)
     {

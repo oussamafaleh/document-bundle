@@ -28,9 +28,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onControllerEvent }
 
+#    listener.rule_listener:
+#        class: App\EventListener\RuleListener
+#        tags:
+#            - { name: kernel.event_subscriber }
+#        arguments: ['@doctrine.orm.entity_manager','@App\Manager\RuleEventManager']
+
     manager.logger:
         class: App\Manager\LoggerManager
-        arguments: ['@doctrine.orm.entity_manager','@request_stack', 'true','@security.helper' ]
+        arguments: ['@doctrine.orm.default_entity_manager','@request_stack', 'true','@security.helper' ]
         public: false
 
     listener.exception:
@@ -41,7 +47,7 @@ services:
     App\Manager\FileManager:
         public: true
         class: App\Manager\FileManager
-        arguments: [ '@doctrine.orm.entity_manager', '%uploads_directory%' , '@App\Manager\FolderManager' , '@App\Manager\ItemManager']
+        arguments: [ '@doctrine.orm.entity_manager', '%uploads_directory%' , '@App\Manager\FolderManager' , '@App\Manager\ItemManager', '@event_dispatcher']
         
     App\Manager\FolderManager:
         public: true
@@ -53,7 +59,6 @@ services:
         class: App\Manager\DashboardManager
         arguments: [ '@doctrine.orm.entity_manager' ]
 
-
     App\Manager\FileChunksManager:
         public: true
         class: App\Manager\FileChunksManager
@@ -63,3 +68,7 @@ services:
         public: true
         class: App\Manager\ItemManager
         arguments: [ '@doctrine.orm.entity_manager' , '%uploads_directory%' ,'@form.factory' ]  
+
+    App\Manager\RuleManager:
+        public: true
+        class: App\Manager\RuleManager

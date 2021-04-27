@@ -89,11 +89,12 @@ class LoggerManager extends AbstractManager
             $item = $this->apiEntityManager
                 ->getRepository(Item::class)
                 ->findOneBy(['code' =>$this->request->get('parent_code')]);
-            $message = $user->getCode()." ".$service->getMessage()." ".$item->getLabel();
+            $username = isset($user) ? $user->getUsername() : 'Unknown user';
+            $message = $username." ".$service->getMessage()." ".$item->getLabel();
             $historyField = new History();
             $historyField->setIp( $this->request->getClientIp())
                 ->setRouteName($this->request->get('_route'))
-                ->setUser($user->getCode())
+                ->setUser($username)
                 ->setUserAgent($this->request->server->get('HTTP_USER_AGENT'))
                 ->setMessage($message)
                 ->setMicrotime(microtime(true))
