@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class FileManager extends AbstractManager
 {
-    const classifyFileRule = 'classify_file';
 
     /** @var string */
     private $itemCode;

@@ -35,8 +35,11 @@ export default class extends Controller {
             'punctuation':{
                 pattern : /[(){};:,]/
             },
+            'string':{
+                pattern : /\\"[0-9a-zA-Z-_]+\\"/
+            },
             'operator':{
-                pattern : /[A-Z]+/,
+                pattern : /\b[A-Z_]+\b/,
             }
         }
         let rule = document.getElementById("rule");

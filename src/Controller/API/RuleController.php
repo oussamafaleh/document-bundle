@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Security;
 /**
  * Class RuleController
  * @package App\Controller\Twig
- * @Route("/api")
+ * @Route("/api/rule")
  *
  */
 class RuleController extends AbstractController
