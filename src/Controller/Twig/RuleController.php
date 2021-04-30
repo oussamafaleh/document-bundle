@@ -5,6 +5,7 @@ namespace App\Controller\Twig;
 use App\Entity\Folder;
 use App\Annotations\Mapping;
 use App\Form\DocumentType;
+use App\Form\RuleType;
 use App\Manager\RuleManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,9 +42,28 @@ class RuleController extends AbstractController
     public function index(Request $request)
     {
 
-        return $this->render('rule/rule.html.twig');
+        $data = $this->manager->getTwigData();
+        return $this->render('rule/rule.html.twig',$data);
     }
 
+    /**
+     * @Route("/create-rule", name="create_rule_twig", methods={"POST"})
+     */
+    public function createTag(Request $request): Response
+    {
+        $form = $this->createForm(RuleType::class );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $form->getData();
+            $this->manager
+                ->createRule($form->getData() );
+        }
+        return $this->redirectToRoute('index_rule_twig');
+
+
+
+    }
     /**
      * @Route("/evaluate", name="evaluate_rule_twig", methods={"POST"})
      */

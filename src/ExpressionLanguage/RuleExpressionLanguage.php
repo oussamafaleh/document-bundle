@@ -15,4 +15,7 @@ class RuleExpressionLanguage extends ExpressionLanguage
         array_unshift($operatorProviders, new FileOpExpressionLanguageProvider());
         parent::__construct($cache, $functionProviders, $operatorProviders);
     }
+    public function getOperators(){
+        return $this->operators;
+    }
 }

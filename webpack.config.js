@@ -50,6 +50,9 @@ Encore
 
     .configureBabel((config) => {
         config.plugins.push('@babel/plugin-proposal-class-properties');
+        {
+            exclude: /node_modules\/(?!tributejs)/
+        }
     })
 
     // enables @babel/preset-env polyfills

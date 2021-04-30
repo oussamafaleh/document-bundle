@@ -18,9 +18,9 @@
         <!-- IonIcons -->
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
+        <link rel="stylesheet" sizes="76x76" href="{{ asset('assets/css/style.css') }}">
         <link rel="stylesheet" sizes="76x76" href="{{ asset('assets/css/adminlte.css') }}">
         <link rel="icon" type="image/png" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}">
-        <link rel=" stylesheet"  href="{{ asset('assets/file-icons-js/style.css') }}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewer.js/0.11.1/crocodoc.viewer.css"/>
         {{ encore_entry_link_tags('app') }}
 
@@ -133,7 +133,6 @@
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle ">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
                                     Nora Silvester
@@ -158,7 +157,6 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="index3.html" class="brand-link">
-            <img src="dist/src="{{ asset('assets/style="opacity: .8') }}">
             <span class="brand-text font-weight-light">Talan Doc Bundle</span>
         </a>
 
@@ -258,7 +256,16 @@
                             </a>
                         </li>
                     {% endfor %}
-
+                    <li class="nav-header"> CLASSIFICATION RULES</li>
+                    <li class="nav-item">
+                        <a href="{{ path('index_rule_twig') }}"
+                           class="nav-link {{ app.request.get('_route') == 'index_rule_twig' ? 'active' }}">
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>
+                                Rules
+                            </p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

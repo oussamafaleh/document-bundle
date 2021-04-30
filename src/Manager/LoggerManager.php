@@ -102,10 +102,10 @@ class LoggerManager extends AbstractManager
                 ->setItem($item);
             $this->apiEntityManager->persist($historyField);
 
+            $this->apiEntityManager->flush();
         }
 
 
-        $this->apiEntityManager->flush();
 
     }
 

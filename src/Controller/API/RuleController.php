@@ -87,7 +87,14 @@ class RuleController extends AbstractController
             ->evaluateRule($expression , $expr_arg );
     }
 
+    /**
+     * @Route("/", name="index_rule", methods={"GET"})
+     */
+    public function index(Request $request)
+    {
 
+        return $this->manager->getOperators();
+    }
 
 
 }

@@ -72,3 +72,4 @@ services:
     App\Manager\RuleManager:
         public: true
         class: App\Manager\RuleManager
+        arguments: [ '@doctrine.orm.entity_manager','@security.helper','@form.factory']

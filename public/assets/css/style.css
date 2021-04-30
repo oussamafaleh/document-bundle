@@ -1,0 +1,233 @@
+#editing, #highlighting {
+    /* Both elements need the same text and space styling so they are directly on top of each other */
+    border-radius: 0px 10px 10px 0px;
+    margin: 10px;
+    padding: 10px;
+    border: 0px;
+    border-left: 4px solid #336c8f;
+    width: calc(100% - 32px);
+    height: 150px;
+    resize:none;
+}
+#editing, #highlighting, #highlighting * {
+    /* Also add text styles to highlighing tokens */
+    font-size: 15pt;
+    font-family: monospace;
+    line-height: 20pt;
+}
+
+#editing {
+    position: relative;
+    top: 0px;
+    left: 0;
+}
+ #highlighting {
+    /* In the same place */
+    position: relative;
+     margin-top: -160px;
+    left: 0;
+}
+
+
+/* Move the textarea in front of the result */
+
+#editing {
+    z-index: 1;
+}
+#highlighting {
+    z-index: 0;
+}
+
+
+/* Make textarea almost completely transparent */
+
+#editing {
+    color: transparent;
+    background: transparent;
+    caret-color: black; /* Or choose your favourite color */
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 1em;
+    /*text-align: left;
+    /*word-spacing: normal;*/
+    /*word-break: normal;*/
+    /*word-wrap: normal;*/
+    /*line-height: 1.5;*/
+    /*overflow: auto;*/
+    /*-moz-tab-size: 4;*/
+    /*-o-tab-size: 4;*/
+    /*tab-size: 4;*/
+
+    /*resize: both;*/
+    /*-webkit-hyphens: none;*/
+    /*-moz-hyphens: none;*/
+    /*-ms-hyphens: none;*/
+    /*hyphens: none;*/
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #f5f2f0;
+}
+
+/*!* Inline code *!*/
+/*:not(pre) > code[class*="language-"] {*/
+/*    padding: .1em;*/
+/*    border-radius: .3em;*/
+/*    white-space: normaqsdl;*/
+/*}*/
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color:  slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    /* This background color was intended by the author of this theme. */
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+.card-title{
+    color: #1659df;
+}
+.rule-list{
+    /* Both elements need the same text and space styling so they are directly on top of each other */
+    border-radius: 0px 10px 10px 0px;
+    margin: 10px;
+    padding: 10px;
+    border: 0px;
+    border-left: 4px solid #336c8f;
+    width: 100%;
+    resize:none;
+    background-color: white !important;
+}
+.w3-example {
+    padding: 8px 20px;
+    margin: 24px -20px;
+    box-shadow: none !important;
+}
+.w3-example {
+    background-color: #E7E9EB;
+    border-radius: 5px;
+    padding: 0.01em 16px;
+    margin: 20px 0;
+}
+.rule-card-header{
+    background-color: transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    padding: 1em 0 0 0.47em;
+}
+.rule-card-title{
+    padding-left: 10px;
+    margin: 0;
+}
+.submit-rule{
+    padding-right: 0.47rem
+}
+.rule-card-footer{
+    flex: 1 1 auto;
+    padding-right: 10px;
+    margin-right: 10px;
+}
+.pp-20{
+    margin: 10px 20px 10px 10px  !important;
+    width: calc(100% - 52px) !important;
+    border-radius: 10px !important;
+    background: #f5f2f0 !important;
+    border: 0 !important;
+}

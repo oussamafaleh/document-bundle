@@ -9,6 +9,7 @@
 import './styles/app.css';
 
 
+import 'tributejs';
 import 'bootstrap';
 import './bootstrap';
 

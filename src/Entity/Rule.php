@@ -29,19 +29,9 @@ class Rule
      */
     private $expression;
 
-    /**
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity=Action::class , mappedBy="rule",fetch="EAGER")
-     */
-    private $actions ;
 
-    /**
-     * rule constructor.
-     * @param ArrayCollection $actions
-     */
     public function __construct()
     {
-        $this->actions = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -68,20 +58,6 @@ class Rule
     public function setExpression(string $expression): self
     {
         $this->expression = $expression;
-
-        return $this;
-    }
-    /**
-     * @return Collection|Action[]
-     */
-    public function getActions(): Collection
-    {
-        return $this->actions;
-    }
-
-    public function setActions(array $actions): self
-    {
-        $this->actions = $actions;
 
         return $this;
     }

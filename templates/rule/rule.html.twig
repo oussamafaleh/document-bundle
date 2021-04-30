@@ -3,50 +3,80 @@
 {% block title %} rule {% endblock %}
 
 {% block body %}
-    <!-- Content Wrapper. Contains page content -->
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
+    <div class="folder-content-header content-header mb-5"><!-- schema of current file -->
+        <div class="container-fluid  p-4 ">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Text Editors</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Text Editors</li>
+                    <ol class="breadcrumb float-sm-left d-flex align-items-center">
+                        <li class="breadcrumb-item"><i class="fas fa-home"></i></li>
+                        <li class="breadcrumb-item active">Classification Rules</li>
                     </ol>
-                </div>
-            </div>
-        </div><!-- /.container-fluid -->
-    </section>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div>
+    </div>
+    <!-- /.content-header -->
+
 
     <!-- Main content -->
-    <section class="content p-5">
+    <section class="content p-4 pb-0 rule">
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-outline card-info">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            Rule
-                        </h3>
+                <div class="card">
+                    <div class="rule-card-header ">
+                        <h4 class="rule-card-title">
+                            Create Rule
+                        </h4>
                     </div>
 
                     <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <pre class="language-rule" data-controller="rule">
-                            <code contenteditable="true" id="rule" data-action="keyup->rule#highlight">
-                                INSERT your RULE here
-                            </code>
-                        </pre>
+                                            {{ form_start(rule_form, {'action': path('create_rule_twig',{'request': app.request }), 'method': 'POST'}) }}
+
+                    <div class="card-body p-0" data-controller="rule"  >
+
+                        <div class="input-group" >
+{#                            <textarea name="rule[expression]" data-action="input->rule#highlight" id="editing" spellcheck="false"   data-action="scroll->rule#sync_scroll" data-action="keydown->rule#check_tab"  ></textarea>#}
+                            {{ form_widget(rule_form.eventName, {'attr': { 'class':'form-control pp-20' , 'placeholder':'enter rule label'}}) }}
+                            {{ form_widget(rule_form.expression, { 'id':'editing','attr': { 'data-action':'input->rule#highlight keydown->rule#check_tab scroll->rule#sync_scroll' }}) }}
+
+                            <pre class="language-rule "  id="highlighting" aria-hidden="true"><code class="create" id="highlighting-content" >Enter RULE Expression</code></pre>
+                            <div class="d-flex justify-content-end rule-card-footer">
+                                <button type="submit" class="btn btn-success submit-rule">Submit Your Rule</button>
+                            </div>
+
+                        </div>
+                        {{ form_end(rule_form) }}
+
+
 
                     </div>
+
                 </div>
             </div>
             <!-- /.col-->
         </div>
         <!-- ./row -->
+    </section>
+    <section class="content-header pt-0 p-4 ">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Applied Rules</h1>
+                </div>
+            </div>
+            {% for rule in rules.rows %}
+                <div class="d-flex flex-column p-0 w3-example"   >
+                    <div class="rule-card-header">
+                        <h6  >{{ rule.eventName }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <pre class="language-rule rule-list " ><code>{{ rule.expression }}</code></pre>
+                    </div>
+                </div>
+            {% endfor %}
+        </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
     <!-- /.content-wrapper -->

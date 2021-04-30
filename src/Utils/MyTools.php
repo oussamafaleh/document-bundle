@@ -52,7 +52,7 @@ class MyTools
      * @param integer $total
      * @return array
      */
-    public static function paginator($list, $index , $size = 10 , $total = null)
+    public static function paginator($list, $index = 1 , $size = 10 , $total = null)
     {
         if (!$total) {
             $total = MyTools::getValueFromResultSet($list, 'total', 0);

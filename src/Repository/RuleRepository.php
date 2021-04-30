@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Rule;
+use App\Utils\MyTools;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,13 +50,15 @@ class RuleRepository extends ServiceEntityRepository
     }
     */
 
-    public function findByEvent($eventName)
+    public function findByFilters($filters = [])
     {
+        $eventName = MyTools::getOption($filters, 'event_name');
+        $page = MyTools::getOption($filters, 'index', 1);
+        $maxPerPage = MyTools::getOption($filters, 'size', 10);
         $parameters =[':eventName' => $eventName];
         $select = [
             'eventName' => 'r.event_name',
             'expression' => "r.expression",
-            'actions' => "a.id",
         ];
 
         $sql = '';
@@ -67,9 +70,10 @@ class RuleRepository extends ServiceEntityRepository
         }
         $sql = 'SELECT ' . substr($sql, 0, -2)
             . ' FROM  rule   AS r '
-            . ' INNER JOIN action AS a ON ( r.id = a.rule_id ) '
-            . 'WHERE r.event_name = :eventName'
         ;
+        if ($page > 0) {
+            $sql .= ' LIMIT ' . $maxPerPage . ' OFFSET ' . (($page - 1) * $maxPerPage);
+        }
         $cacheKey = sha1($sql . json_encode($parameters));
         return $this->getEntityManager()
             ->createNativeQuery($sql, $rsm)
