@@ -44,7 +44,7 @@ export default class extends Controller {
             },
         //    containerClass: "d-flex justify-content-between tribute-container",
             menuItemTemplate: function(item) {
-                return   '<div class="d-flex justify-content-between">'+item.string + '<i class="far fa-question-circle help"></i></div>';
+                return   '<div class="d-flex justify-content-between">'+item.string + '<i class="far fa-question-circle help" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2"></i></div>';
             },
             autocompleteMode: true
         });

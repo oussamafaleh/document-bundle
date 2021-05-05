@@ -2,8 +2,8 @@
 
 namespace App\ExpressionLanguage\FunctionsProvider;
 
-use Symfony\Component\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use App\ExpressionLanguage\ExpressionLanguage\ExpressionFunction;
+use App\ExpressionLanguage\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
 class FileFuncExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {

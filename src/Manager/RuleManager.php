@@ -34,25 +34,18 @@ class RuleManager extends AbstractManager
     }
     public function evaluateRule($expression, $exprArg )
     {
-        dd(array_keys($this->expressionLanguage->getOperators()));
-        //$rule = $this->apiEntityManager->getRepository(Rule::class)->findOneBy(['eventName' => $eventName]);
         $ast =  $this->expressionLanguage->evaluate($expression, $exprArg);
         return ['data' => $ast];
 
     }
     public function getTwigData($filters = null){
-        $operators = [];
-        foreach (array_keys($this->expressionLanguage->getOperators()) as $operator){
-            $operators[]= [
-                'key' => $operator,
-                'description' => "no discription yet"
-            ];
-        }
+
        // if ($this->security->isGranted("ROLE_CREATE_RULE" )) {
             $ruleForm = $this->form->create(RuleType::class );
       //  }
+        $operators = $this->getOperators();
         return [
-            'operators' => $operators,
+            'operators' => $operators['operators'],
             'rules' => $this->getRules($filters)['data'],
             'rule_form' => $ruleForm->createView()
         ] ;
@@ -68,10 +61,10 @@ class RuleManager extends AbstractManager
     }
     public function getOperators(){
         $operators = [];
-        foreach (array_keys($this->expressionLanguage->getOperators()) as $operator){
+        foreach ($this->expressionLanguage->getOperators() as $operatorName => $operatorDescription){
             $operators[]= [
-                'key' => $operator,
-                'description' => "no discription yet"
+                'key' => $operatorName,
+                'description' => $operatorDescription['description']
             ];
         }
         return [

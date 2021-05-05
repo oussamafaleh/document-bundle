@@ -4,7 +4,7 @@ namespace App\ExpressionLanguage;
 use App\ExpressionLanguage\FunctionsProvider\FileFuncExpressionLanguageProvider;
 use App\ExpressionLanguage\OperatorsProvider\FileOpExpressionLanguageProvider;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use App\ExpressionLanguage\ExpressionLanguage\ExpressionLanguage;
 
 class RuleExpressionLanguage extends ExpressionLanguage
 {

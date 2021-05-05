@@ -2,8 +2,8 @@
 
 
 namespace App\ExpressionLanguage\OperatorsProvider;
-use Symfony\Component\ExpressionLanguage\ExpressionOperator;
-use Symfony\Component\ExpressionLanguage\ExpressionOperatorProviderInterface;
+use App\ExpressionLanguage\ExpressionLanguage\ExpressionOperator;
+use App\ExpressionLanguage\ExpressionLanguage\ExpressionOperatorProviderInterface;
 
 class FileOpExpressionLanguageProvider implements ExpressionOperatorProviderInterface
 
@@ -18,7 +18,7 @@ class FileOpExpressionLanguageProvider implements ExpressionOperatorProviderInte
                     return true;
                 }
                 return false;
-            }, 15 , 1),
+            }, 15 , 1, "<span>Exp : [ text content] CONTAIN [text] </span><br> text content must contain text "),
 
             new ExpressionOperator('CLASSIFY', function ($right, $left) {
                 return sprintf('classify %1$s )', $right);
@@ -27,7 +27,7 @@ class FileOpExpressionLanguageProvider implements ExpressionOperatorProviderInte
                     return $left ;
                 }
                 return null;
-            }, 5 , 1),
+            }, 5 , 1,"<span>Exp : [True | False] CLASSIFY [label] </span><br> If right expression is true then classify as label"),
 
             new ExpressionOperator('IF_NULL', function ($right, $left) {
                 return sprintf('classify %1$s )', $right);
@@ -36,7 +36,7 @@ class FileOpExpressionLanguageProvider implements ExpressionOperatorProviderInte
                     return $left ;
                 }
                 return $right;
-            }, 1 , 1),
+            }, 1 , 1,"<span>Exp : [right classification statment] IF_NULL [left classification statment] </span><br> if [right classification statment] can't perform a classification then exectue [left classification statment] "),
         ];
     }
 }
