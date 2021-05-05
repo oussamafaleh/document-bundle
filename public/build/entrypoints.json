@@ -1,0 +1,40 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_slice_js-node_modules_core-js_modules_es_object-6f2024.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_bootstrap_dist_js_boo-9b26db.js",
+        "/build/app.js"
+      ],
+      "css": [
+        "/build/app.css"
+      ]
+    },
+    "adminlte": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_slice_js-node_modules_core-js_modules_es_object-6f2024.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-999bcf.js",
+        "/build/adminlte.js"
+      ]
+    },
+    "demo": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_slice_js-node_modules_core-js_modules_es_object-6f2024.js",
+        "/build/demo.js"
+      ]
+    },
+    "dashboard3": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/dashboard3.js"
+      ]
+    }
+  }
+}
