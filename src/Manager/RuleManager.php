@@ -8,7 +8,7 @@ use App\Entity\Rule;
 use App\Form\RuleType;
 use App\Utils\MyTools;
 use Doctrine\ORM\EntityManager;
-use App\ExpressionLanguage\RuleExpressionLanguage;
+use App\RuleExpressionLanguage\RuleExpressionLanguage;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Security\Core\Security;
 
