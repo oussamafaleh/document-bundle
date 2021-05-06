@@ -6,7 +6,7 @@ namespace App\Manager;
 
 use App\Entity\Rule;
 use App\Event\RuleEvent\FileEvent;
-use App\ExpressionLanguage\RuleExpressionLanguage;
+use App\RuleExpressionLanguage\RuleExpressionLanguage;
 use App\Entity\Demo;
 use App\Entity\Document;
 use App\Entity\Folder;
