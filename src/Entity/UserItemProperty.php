@@ -53,9 +53,11 @@ class UserItemProperty  implements UserInterface
         return $this->roles;
     }
 
-    public function setRoles(array $roles): self
+    public function addRole($role): self
     {
-        $this->roles = $roles;
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
 
         return $this;
     }

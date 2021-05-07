@@ -61,6 +61,7 @@ class ItemRepository extends ServiceEntityRepository
         $page = MyTools::getOption($filters, 'index', 1);
         $maxPerPage = MyTools::getOption($filters, 'size', 10);
         $dateFormat = MyTools::getOption($filters, 'date_format', 'YYYY-MM-DD');
+        $role = MyTools::getOption($filters, 'role');
 
 
         $parameters = $where = [];
@@ -108,9 +109,15 @@ class ItemRepository extends ServiceEntityRepository
             $parameters[':type'] = $type;
             $where [] = ' i.type = :type';
         }
+        if (!empty($role)) {
+            $parameters[':role'] = '"'.$role['name'].'"';
+            $parameters[':contain'] = $role['contain'];
+            $where [] = ' JSON_CONTAINS( p.roles , :role   ) = :contain';
+    }
         if (!empty($where)) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
+
         if (isset($select[$sortColumn])) {
             $sql .= ' ORDER BY ' . $select[$sortColumn] . '  ' . $sortOrder;
         }
@@ -118,9 +125,6 @@ class ItemRepository extends ServiceEntityRepository
         if ($page > 0) {
             $sql .= ' LIMIT ' . $maxPerPage . ' OFFSET ' . (($page - 1) * $maxPerPage);
         }
-
-
-
         $cacheKey = sha1($sql . json_encode($parameters));
         return $this->getEntityManager()
             ->createNativeQuery($sql, $rsm)

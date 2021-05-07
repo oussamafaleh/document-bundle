@@ -96,5 +96,47 @@ class RuleController extends AbstractController
         return $this->manager->getOperators();
     }
 
+    /**
+     * @Route("/compile", name="compile_rule", methods={"POST","GET"})
+     * @Operation(
+     *     tags={"Rule"},
+     *     summary="file for skeleton",
+     *     @SWG\Parameter(
+     *         name="expression",
+     *         in="query",
+     *         type="string",
+     *         description="parent folder",
+     *         required=true
+     *     ),
+     *     @SWG\Parameter(
+     *         name="user_code",
+     *         in="query",
+     *         type="string",
+     *         description="code of user",
+     *         required=true
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful"
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="Returned when the ws-file is not authorized"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Returned when the file is not found"
+     *     )
+     * )
+     */
+    public function compileRule(Request $request)
+    {
+
+        $expression = $request->get('expression');
+        $expr_arg = $request->get('expr_arg');
+        return $this->manager
+            ->compileRule($expression , $expr_arg );
+    }
+
 
 }

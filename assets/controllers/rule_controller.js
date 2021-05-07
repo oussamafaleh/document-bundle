@@ -21,7 +21,7 @@ export default class extends Controller {
                 pattern : /[(){};:,]/
             },
             'string':{
-                pattern : /\\"[0-9a-zA-Z-_]+\\"/
+                pattern : /"[0-9a-zA-Z-_]+"/
             },
             'operator':{
                 pattern : /\b[A-Z_]+\b/,
@@ -36,7 +36,6 @@ export default class extends Controller {
     }
     ruleAutocomplete(operators){
 
-        console.log(operators);
         var tribute = new Tribute({
             values: operators,
             selectTemplate: function(item) {
@@ -92,7 +91,6 @@ export default class extends Controller {
             var data = [];
             if(xhr.readyState === 4){
                 if (  xhr.status == 200) {
-                    console.log(xhr.responseText);
                     data = JSON.parse(xhr.responseText).results.operators;
 
                 } else if (xhr.status === 403) {
@@ -105,6 +103,44 @@ export default class extends Controller {
             };
         xhr.open("GET", URL , false);
         xhr.send();
+    }
+    compile( ) {
+        let text = document.getElementById("editing");
+        var url = 'http://localhost:8080/api/rule/compile';
+        var xhr = new XMLHttpRequest();
+        var body = {
+            expression : text.value ,
+            expr_arg : ["label","file_index"]
+        }
+        xhr.onreadystatechange = () =>  {
+            if(xhr.readyState === 4){
+                if (  xhr.status == 200) {
+                    let data = JSON.parse(xhr.responseText);
+                    this.showAlerts(data.results);
+                }
+            }
+
+
+            }
+
+        xhr.open("POST", url  );
+        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+        xhr.send(JSON.stringify(body));
+    }
+     showAlerts(results) {
+         document.getElementById('bootstrap-alert').className = "alert alert-"+ results.scope ;
+
+         document.getElementById('bootstrap-alert').innerHTML = results.alert ;
+        document.getElementById('bootstrap-alert').style.display = 'block';
+        setTimeout(function(){document.getElementById('bootstrap-alert').style.display = 'none'}, 17000);
+        if(results.scope == 'success'){
+            document.getElementById('submit-rule').removeAttribute("disabled") ;
+            console.log(results.scope+"hihi");
+        }if(results.scope == 'danger'){
+             document.getElementById('submit-rule').setAttribute("disabled","true") ;
+             console.log(results.scope);
+         }
+
     }
 
 }

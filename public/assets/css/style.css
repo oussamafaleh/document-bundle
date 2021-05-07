@@ -11,9 +11,10 @@
 }
 #editing, #highlighting, #highlighting * {
     /* Also add text styles to highlighing tokens */
-    font-size: 15pt;
+    font-size: 14pt;
     font-family: monospace;
     line-height: 20pt;
+    white-space: pre-wrap;
 }
 
 #editing {
@@ -216,9 +217,7 @@ pre[class*="language-"] {
     padding-left: 10px;
     margin: 0;
 }
-.submit-rule{
-    padding-right: 0.47rem
-}
+
 .rule-card-footer{
     flex: 1 1 auto;
     padding-right: 10px;
@@ -250,6 +249,7 @@ pre[class*="language-"] {
 #info-card-header{
     padding-left: 0px !important;
 }
+
 /*#multiCollapseExample2 {*/
 /*    display: inline-block;*/
 /*    overflow: hidden;*/
@@ -268,4 +268,17 @@ pre[class*="language-"] {
 .description > span {
     color: #0b8600;
 
+}
+#bootstrap-alert {
+    max-width: 50%;
+    position: fixed;
+    right: 20px;
+    bottom: 30px;
+}
+#submit-rule{
+    padding-right: 0.47rem;
+    
+}
+.rule-btn{
+    margin: 0.47rem
 }

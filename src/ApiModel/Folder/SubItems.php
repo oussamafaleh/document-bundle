@@ -37,6 +37,11 @@ class SubItems extends CommonParameterBag
      */
     public $sort_column = 'created_at';
 
+    /**
+     * @var array
+     *
+     */
+    public $role;
 
 
 }

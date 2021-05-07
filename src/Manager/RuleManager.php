@@ -84,4 +84,25 @@ class RuleManager extends AbstractManager
             'code' => $rule->getEventName()
         ]];
     }
+
+    public function compileRule($expression , $exprArg)
+    {
+        try {
+            $ast =  $this->expressionLanguage->compile($expression, $exprArg);
+        } catch (\Exception $e) {
+            return [
+            //    'data' => [
+                'scope' => "danger",
+                'alert' => "Syntax error : ".  $e->getMessage()
+           //     ]
+            ];
+        }
+        return [
+         //   'data' => [
+            'scope' => "success",
+            'alert' => "compiled successfuly"
+          //  ]
+        ];
+
+    }
 }

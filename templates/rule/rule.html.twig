@@ -19,7 +19,9 @@
 
             <!-- Button trigger modal -->
             <div class="d-flex  flex-row justify-content-end ">
-                <button type="button" class="btn btn-warning icon-btn" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+                <button type="button" class="btn btn-warning icon-btn" data-toggle="collapse"
+                        data-target="#multiCollapseExample2" aria-expanded="false"
+                        aria-controls="multiCollapseExample2">
                     <i class="fas fa-info  icon-btn"></i>
                 </button>
             </div>
@@ -29,68 +31,74 @@
 
     <div class="row">
     <div class="col">
-    <!-- Main content -->
-    <section class="content p-2 pb-0 rule">
+        <!-- Main content -->
+        <section class="content p-2 pb-0 rule">
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="rule-card-header ">
-                        <h4 class="rule-card-title">
-                            Create Rule
-                        </h4>
-                    </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="rule-card-header ">
+                            <h4 class="rule-card-title">
+                                Create Rule
+                            </h4>
+                        </div>
 
-                    <!-- /.card-header -->
-                                            {{ form_start(rule_form, {'action': path('create_rule_twig',{'request': app.request }), 'method': 'POST'}) }}
+                        <!-- /.card-header -->
+                        {{ form_start(rule_form, {'action': path('create_rule_twig',{'request': app.request }), 'method': 'POST'}) }}
 
-                    <div class="card-body p-0" data-controller="rule"  >
+                        <div class="card-body p-0" data-controller="rule">
 
-                        <div class="input-group" >
-{#                            <textarea name="rule[expression]" data-action="input->rule#highlight" id="editing" spellcheck="false"   data-action="scroll->rule#sync_scroll" data-action="keydown->rule#check_tab"  ></textarea>#}
-                            {{ form_widget(rule_form.eventName, {'attr': { 'class':'form-control pp-20' , 'placeholder':'enter rule label', 'autocomplete':'off'}}) }}
-                            {{ form_widget(rule_form.expression, { 'id':'editing','attr': { 'data-action':'input->rule#highlight keyup->rule#check_tab scroll->rule#sync_scroll' ,'autocomplete':'off' }}) }}
+                            <div class="input-group">
+                                {# <textarea name="rule[expression]" data-action="input->rule#highlight" id="editing" spellcheck="false"   data-action="scroll->rule#sync_scroll" data-action="keydown->rule#check_tab"  ></textarea> #}
+                                {{ form_widget(rule_form.eventName, {'attr': { 'class':'form-control pp-20' , 'placeholder':'enter rule label', 'autocomplete':'off'}}) }}
+                                {{ form_widget(rule_form.expression, { 'id':'editing','attr': { 'data-action':'input->rule#highlight keyup->rule#check_tab scroll->rule#sync_scroll' ,'autocomplete':'off' }}) }}
 
-                            <pre class="language-rule "  id="highlighting" aria-hidden="true"><code class="create" id="highlighting-content" >Enter RULE Expression</code></pre>
-                            <div class="d-flex justify-content-end rule-card-footer">
-                                <button type="submit" class="btn btn-success submit-rule">Submit Your Rule</button>
+                                <pre class="language-rule " id="highlighting" aria-hidden="true"><code class="create"
+                                                                                                       id="highlighting-content">Enter RULE Expression</code></pre>
+                                <div class="d-flex justify-content-end rule-card-footer">
+                                    <div class="btn btn-secondary rule-btn" data-action="click->rule#compile">Compile
+                                        Your Rule
+                                    </div>
+                                    <button type="submit" id="submit-rule" class="btn btn-success rule-btn" disabled>
+                                        Submit Your Rule
+                                    </button>
+                                </div>
+
                             </div>
+                            {{ form_end(rule_form) }}
+
+
 
                         </div>
-                        {{ form_end(rule_form) }}
-
-
 
                     </div>
-
                 </div>
+                <!-- /.col-->
             </div>
-            <!-- /.col-->
-        </div>
-        <!-- ./row -->
-    </section>
-    <section class="content-header pt-0 p-2 ">
+            <!-- ./row -->
+        </section>
+        <section class="content-header pt-0 p-2 ">
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Applied Rules</h1>
                 </div>
             </div>
             {% for rule in rules.rows %}
-                <div class="d-flex flex-column p-0 w3-example"   >
+                <div class="d-flex flex-column p-0 w3-example">
                     <div class="rule-card-header">
-                        <h6  >{{ rule.eventName }}</h6>
+                        <h6>{{ rule.eventName }}</h6>
                     </div>
                     <div class="card-body">
-                        <pre class="language-rule rule-list " ><code>{{ rule.expression }}</code></pre>
+                        <pre class="language-rule rule-list "><code>{{ rule.expression }}</code></pre>
                     </div>
                 </div>
             {% endfor %}
-        <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-    <!-- /.content-wrapper -->
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+        <!-- /.content-wrapper -->
     </div>
-    <aside class="col-lg-4 pt-2 collapse " id="multiCollapseExample2">
+    <aside class="col-4 pt-2 collapse " id="multiCollapseExample2">
         <div class="card rule-info">
             <div class="card-header " id="info-card-header">
                 <h4 class="rule-card-title">
@@ -100,29 +108,34 @@
 
             <!-- /.card-header -->
 
-            <div  >
+            <div>
                 <div class="accordion" id="accordionExample">
                     <div class="card">
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     Operators
                                 </button>
                             </h5>
                         </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                             data-parent="#accordionExample">
                             <div class="operators-body">
                                 <p>Syntax : [right expression] OPERATOR [left expression] </p>
                                 {% for operator in operators %}
                                     <h5>{{ operator.key }}</h5>
-                                    <p class="description">{{ operator.description|striptags('<br>,<span>')|raw  }}</p>
+                                    <p class="description">{{ operator.description|striptags('<br>,<span>')|raw }}</p>
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
-            </div>
+                </div>
 
+            </div>
         </div>
     </aside>
+    <div class='alert' style='display:none' id='bootstrap-alert'>
+    </div>
 {% endblock %}

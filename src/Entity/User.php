@@ -28,6 +28,17 @@ class User extends AbstractEntity implements UserInterface
      */
     private $email;
 
+
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->roles = [];
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;
