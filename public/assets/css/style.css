@@ -193,7 +193,7 @@ pre[class*="language-"] {
     border: 0px;
     border-left: 4px solid #336c8f;
     width: 100%;
-    resize:none;
+    white-space: pre-wrap;
     background-color: white !important;
 }
 .w3-example {
