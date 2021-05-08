@@ -42,7 +42,13 @@ class UserItemProperty  implements UserInterface
      *@ORM\JoinColumn(onDelete="CASCADE")
      */
     private $item;
-
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->roles = [];
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -53,8 +59,9 @@ class UserItemProperty  implements UserInterface
         return $this->roles;
     }
 
-    public function addRole($role): self
+    public function addRole(string $role): self
     {
+
         if (!in_array($role, $this->roles, true)) {
             $this->roles[] = $role;
         }

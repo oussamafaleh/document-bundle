@@ -12,12 +12,15 @@
         {% for item in data.rows %}
 
             <tr>
-                <td>
+                <td class="row">
                     {% if item.type == 'folder' %}
-                        <i class="fas fa-folder mr-2 "></i>
+                        <i class="fas fa-folder mrl-3 "></i>
+
                         <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}">{{ item.label }}</a>
                     {% else %}
-                        <i class="far fa-file mr-2" id="{{ item.label }}"></i>
+{#                        <i class="far fa-file mr-2" id="{{ item.label }}"></i>#}
+                        <div data-controller="fileicon" id="{{ item.label }}" class="file-icons"> </div>
+
                         {{ item.label }}
                     {% endif %}
                 </td>

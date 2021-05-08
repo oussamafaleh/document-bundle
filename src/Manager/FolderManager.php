@@ -159,7 +159,7 @@ class FolderManager extends AbstractManager
         $user_item_property->setItem($folder)
             ->setUser($this->user)
             ->setIsTagged(false)
-            ->setRoles(array("ROLE_OWNER"));
+            ->addRole("ROLE_OWNER");
         $this->apiEntityManager->persist($user_item_property);
         $this->parent->setUpdatedAt(new DateTime());
         $this->apiEntityManager->persist($this->parent);
@@ -302,7 +302,7 @@ class FolderManager extends AbstractManager
         $user_item_property->setItem($folder)
             ->setUser($this->user)
             ->setIsTagged(true)
-            ->setRoles(array("OWNER" => "ROLE_OWNER"));
+            ->addRole("ROLE_OWNER");
         $this->apiEntityManager->persist($user_item_property);
         $this->apiEntityManager->flush();
         $connection->commit();

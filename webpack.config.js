@@ -1,5 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
+var path = require('path');
 
+var webpack = require('webpack');
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
@@ -24,7 +26,6 @@ Encore
     .addEntry('adminlte', './public/assets/js/adminlte.js')
     .addEntry('demo', './public/assets/js/demo.js')
     .addEntry('dashboard3', './public/assets/js/pages/dashboard3.js')
-
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
@@ -81,5 +82,11 @@ Encore
         'window.jQuery': 'jquery',
     })
 ;
+var config = Encore.getWebpackConfig();
 
-module.exports = Encore.getWebpackConfig();
+// other examples: add an alias or extension
+//config.resolve.alias.local = path.resolve(__dirname, 'process/browser');
+// config.resolve.extensions.push('json');
+
+// export the final config
+module.exports = config;
