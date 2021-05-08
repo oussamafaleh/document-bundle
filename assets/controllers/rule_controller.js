@@ -1,6 +1,7 @@
 import {Controller} from 'stimulus';
 import Prism from 'prismjs';
 import Tribute from "tributejs";
+import {ComponentChipInput} from 'chip-input';
 /*
  * This is an example Stimulus controller!
  *
@@ -106,11 +107,13 @@ export default class extends Controller {
     }
     compile( ) {
         let text = document.getElementById("editing");
+        let ruleVars = document.getElementById("rule-vars");
+
         var url = 'http://localhost:8080/api/rule/compile';
         var xhr = new XMLHttpRequest();
         var body = {
             expression : text.value ,
-            expr_arg : ["label","file_index"]
+            expr_arg : this.getRuleVars(ruleVars.chips)
         }
         xhr.onreadystatechange = () =>  {
             if(xhr.readyState === 4){
@@ -135,14 +138,21 @@ export default class extends Controller {
         setTimeout(function(){document.getElementById('bootstrap-alert').style.display = 'none'}, 17000);
         if(results.scope == 'success'){
             document.getElementById('submit-rule').removeAttribute("disabled") ;
-            console.log(results.scope+"hihi");
         }if(results.scope == 'danger'){
              document.getElementById('submit-rule').setAttribute("disabled","true") ;
-             console.log(results.scope);
          }
 
     }
 
+    getRuleVars(args) {
+
+        let expr_arg = [];
+        for (let arg of args) {
+            expr_arg.push(arg.label);
+        }
+        console.log(expr_arg);
+        return expr_arg;
+    }
 }
 
 

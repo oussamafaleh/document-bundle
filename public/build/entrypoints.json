@@ -5,7 +5,7 @@
         "/build/runtime.js",
         "/build/vendors-node_modules_jquery_dist_jquery_js.js",
         "/build/vendors-node_modules_core-js_modules_es_array_slice_js-node_modules_core-js_modules_es_object-6f2024.js",
-        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_bootstrap_dist_js_boo-4a5ecc.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_bootstrap_dist_js_boo-bcec70.js",
         "/build/app.js"
       ],
       "css": [

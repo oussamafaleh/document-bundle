@@ -46,15 +46,25 @@
                         <!-- /.card-header -->
                         {{ form_start(rule_form, {'action': path('create_rule_twig',{'request': app.request }), 'method': 'POST'}) }}
 
-                        <div class="card-body p-0" data-controller="rule">
+                        <div class="p-4" data-controller="rule">
 
-                            <div class="input-group">
                                 {# <textarea name="rule[expression]" data-action="input->rule#highlight" id="editing" spellcheck="false"   data-action="scroll->rule#sync_scroll" data-action="keydown->rule#check_tab"  ></textarea> #}
-                                {{ form_widget(rule_form.eventName, {'attr': { 'class':'form-control pp-20' , 'placeholder':'enter rule label', 'autocomplete':'off'}}) }}
-                                {{ form_widget(rule_form.expression, { 'id':'editing','attr': { 'data-action':'input->rule#highlight keyup->rule#check_tab scroll->rule#sync_scroll' ,'autocomplete':'off' }}) }}
+                                <div class="form-group">
+                                    {{ form_label(rule_form.eventName) }}
+                                    {{ form_widget(rule_form.eventName, {'attr': { 'class':'form-control' , 'placeholder':'enter rule label', 'autocomplete':'off'}}) }}
+                                </div>
+                                <div class="form-group">
 
-                                <pre class="language-rule " id="highlighting" aria-hidden="true"><code class="create"
-                                                                                                       id="highlighting-content">Enter RULE Expression</code></pre>
+                                    {{ form_label(rule_form.expression) }}
+                                    {{ form_widget(rule_form.expression, { 'id':'editing','attr': { 'data-action':'input->rule#highlight keyup->rule#check_tab scroll->rule#sync_scroll' ,'autocomplete':'off' }}) }}
+                                    <pre class="language-rule " id="highlighting" aria-hidden="true"><code class="create" id="highlighting-content">Enter RULE Expression</code></pre>
+
+                                </div>
+                            <div class="form-group">
+
+                            <label for="rule_eventName" class="required">Rule variables</label>
+                                <app-chip-input class="form-control" id="rule-vars"></app-chip-input>
+                            </div>
                                 <div class="d-flex justify-content-end rule-card-footer">
                                     <div class="btn btn-secondary rule-btn" data-action="click->rule#compile">Compile
                                         Your Rule
@@ -64,7 +74,6 @@
                                     </button>
                                 </div>
 
-                            </div>
                             {{ form_end(rule_form) }}
 
 
