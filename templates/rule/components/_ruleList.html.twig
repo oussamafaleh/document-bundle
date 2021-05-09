@@ -1,0 +1,15 @@
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h1>Applied Rules</h1>
+    </div>
+</div>
+{% for rule in rules.rows %}
+    <div class="d-flex flex-column p-0 w3-example">
+        <div class="rule-card-header">
+            <h6>{{ rule.eventName }}</h6>
+        </div>
+        <div class="card-body">
+            <pre class="language-rule rule-list "><code>{{ rule.expression }}</code></pre>
+        </div>
+    </div>
+{% endfor %}

@@ -5,14 +5,14 @@
             <th>Label</th>
             <th>Created at</th>
             <th>Last update</th>
-            <th>actions</th>
+            <th class="justify-content-end d-flex mr-5">actions</th>
         </tr>
         </thead>
         <tbody>
         {% for item in data.rows %}
 
             <tr>
-                <td class="row">
+                <td class="d-flex flex-row">
                     {% if item.type == 'folder' %}
                         <i class="fas fa-folder mrl-3 "></i>
 

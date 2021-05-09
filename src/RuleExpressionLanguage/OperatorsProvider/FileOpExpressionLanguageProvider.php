@@ -18,7 +18,7 @@ class FileOpExpressionLanguageProvider implements ExpressionOperatorProviderInte
                     return true;
                 }
                 return false;
-            }, 15 , 1, "<span>Exp : [ text content] CONTAIN [text] </span><br> text content must contain text "),
+            }, 15 , 1, " text content must contain text<br><span>Exp : [ text content] CONTAIN [text] </span> "),
 
             new ExpressionOperator('CLASSIFY', function ($right, $left) {
                 return sprintf('classify %1$s )', $right);
@@ -27,7 +27,7 @@ class FileOpExpressionLanguageProvider implements ExpressionOperatorProviderInte
                     return $left ;
                 }
                 return null;
-            }, 5 , 1,"<span>Exp : [True | False] CLASSIFY [label] </span><br> If right expression is true then classify as label"),
+            }, 5 , 1,"If right expression is true then classify as label<br> <span>Exp : [True | False] CLASSIFY [label] </span>"),
 
             new ExpressionOperator('IF_NULL', function ($right, $left) {
                 return sprintf('classify %1$s )', $right);
@@ -36,7 +36,7 @@ class FileOpExpressionLanguageProvider implements ExpressionOperatorProviderInte
                     return $left ;
                 }
                 return $right;
-            }, 1 , 1,"<span>Exp : [right classification statment] IF_NULL [left classification statment] </span><br> if [right classification statment] can't perform a classification then exectue [left classification statment] "),
+            }, 1 , 1,"if [right classification statment] can't perform a classification then exectue [left classification statment]<br> <span>Exp : [right classification statment] IF_NULL [left classification statment] </span>"),
         ];
     }
 }

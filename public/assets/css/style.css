@@ -233,14 +233,14 @@ pre[class*="language-"] {
 .rule-info{
     min-height: 100% !important;
 }
-.operators-body{
+.rule-info-body{
     padding : 10px 10px 10px 20px;
 }
-.operators-body > h5 {
+.rule-info-body > h5 {
     font-size: 1.0rem;
     font-weight: 800;
 }
-.operators-body > p {
+.rule-info-body > p {
     font-size: 0.8rem;
 }
 #headingOne{
@@ -350,4 +350,10 @@ pre[class*="language-"] {
 }
 .mrl-3{
     margin:0rem 0.75rem 0rem 0.75rem;
+}
+.table td {
+    border-top: 0px !important;
+}
+.table tr {
+    border-bottom: 1px solid #dee2e6 !important;
 }
