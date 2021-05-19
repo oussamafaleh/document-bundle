@@ -348,30 +348,46 @@ public function download($item_code){
 
 
    
-    public function readDoc($item_code){
+    public function readDoc($item_code)
+    {
 
 
-        $targetDirectory= $this->getTargetDirectory();
-        $filename=$targetDirectory.$item_code;
-    
+        $targetDirectory = $this->getTargetDirectory();
+        $filename = $targetDirectory . $item_code;
+
         $objReader = \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
+
         $phpWord = $objReader->load($filename);
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
-       
         /*
             $fileName= explode(".", $item_code->getClientOriginalName());
             $rest = $fileName[0];
         */
 
-        
+
         $rest = substr($item_code, 0, -4);
-        $docname=$rest."html";
-       
-        $filePath=$targetDirectory. $docname;
-      
+        $docname = $rest . "html";
+
+        $filePath = $targetDirectory . $docname;
+
         $objWriter->save($filePath);
-      
+
         return ['docname' => $docname];
+    }
+    public function DocToHTML($item_code){
+
+
+        $targetDirectory= $this->getTargetDirectory();
+        $filename=$targetDirectory.$item_code;
+
+        $objReader = \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
+
+        $phpWord = $objReader->load($filename);
+        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
+
+        $content = str_replace("<body>\n","", $objWriter->getWriterPart('Body')->write());
+        $content = str_replace("\n</body>\n","", $content);
+        return ['docContent' => $content];
     
     }
 

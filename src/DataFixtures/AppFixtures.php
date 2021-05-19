@@ -35,7 +35,7 @@ class AppFixtures extends Fixture
         $userItemProp->setUser($user1)
             ->setItem($folder1)
             ->setIsTagged(false)
-            ->setRoles(array('ROLE_OWNER'));
+            ->addRole('ROLE_OWNER');
 
         $manager->persist($userItemProp);
 
@@ -43,7 +43,7 @@ class AppFixtures extends Fixture
         $userItemProp1->setUser($user2)
             ->setItem($folder1)
             ->setIsTagged(false)
-            ->setRoles(array('ROLE_READ'));
+            ->addRole('ROLE_READ');
 
         $manager->persist($userItemProp1);
 
@@ -60,7 +60,7 @@ class AppFixtures extends Fixture
                 $userItemProp->setUser($user1)
                     ->setItem($subFolder1)
                     ->setIsTagged(false)
-                    ->setRoles(array($role));
+                    ->addRole($role);
                 $manager->persist($userItemProp);
             }
         }

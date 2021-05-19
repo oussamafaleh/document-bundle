@@ -4,11 +4,13 @@
       "js": [
         "/build/runtime.js",
         "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_slice_js-node_modules_core-js_modules_es_object-6f2024.js",
-        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_bootstrap_dist_js_boo-6d5ca5.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-6ea37d.js",
+        "/build/vendors-node_modules_core-js_internals_create-html_js-node_modules_core-js_internals_string-h-3e7116.js",
+        "/build/vendors-node_modules_ckeditor_ckeditor5-adapter-ckfinder_src_uploadadapter_js-node_modules_ck-1c8385.js",
         "/build/app.js"
       ],
       "css": [
+        "/build/vendors-node_modules_ckeditor_ckeditor5-adapter-ckfinder_src_uploadadapter_js-node_modules_ck-1c8385.css",
         "/build/app.css"
       ]
     },
@@ -16,8 +18,8 @@
       "js": [
         "/build/runtime.js",
         "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_slice_js-node_modules_core-js_modules_es_object-6f2024.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-999bcf.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-6ea37d.js",
+        "/build/vendors-node_modules_core-js_internals_create-html_js-node_modules_core-js_internals_string-h-3e7116.js",
         "/build/adminlte.js"
       ]
     },
@@ -25,7 +27,7 @@
       "js": [
         "/build/runtime.js",
         "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_slice_js-node_modules_core-js_modules_es_object-6f2024.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-6ea37d.js",
         "/build/demo.js"
       ]
     },

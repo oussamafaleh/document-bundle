@@ -21745,6 +21745,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 
 .mailbox-attachment-icon.has-img {
   padding: 0;
+  overflow: hidden;
 }
 
 .mailbox-attachment-icon.has-img > img {

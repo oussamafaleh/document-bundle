@@ -222,7 +222,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
    
     public function readDocs($item_code){
    
-        return $this->manager->readDoc($item_code);
+        return $this->manager->DocToHTML($item_code);
        
        
        }

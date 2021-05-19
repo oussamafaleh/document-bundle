@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
         <link rel="stylesheet" sizes="76x76" href="{{ asset('assets/css/style.css') }}">
+        <link rel="stylesheet" sizes="76x76" href="{{ asset('assets/css/editor.css') }}">
         <link rel="stylesheet" sizes="76x76" href="{{ asset('assets/css/adminlte.css') }}">
         <link rel="icon" type="image/png" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewer.js/0.11.1/crocodoc.viewer.css"/>
@@ -210,6 +211,15 @@
                             <p>
                                 My Documents
                                 <span class="right badge badge-danger">New</span>
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link {{ app.request.get('_route') == 'index_editor_twig' ? 'active' }}"
+                           href="{{ path('index_editor_twig', {'parent_code': code}) }}">
+                            <i class="nav-icon fas fa-file-alt"></i>
+                            <p>
+                                Documents Editor
                             </p>
                         </a>
                     </li>

@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Editor {% endblock %}
+
+{% block body %}
+    <!-- Content Header (Page header) -->
+    <div class="folder-content-header content-header mb-5"><!-- schema of current file -->
+        <div class="container-fluid  pt-4 pr-4  pb-0 ">
+            <div class="row mb-2">
+                <div class="col-sm-6 mb-3">
+                    <ol class="breadcrumb float-sm-left d-flex align-items-center">
+                        <li class="breadcrumb-item"><i class="fas fa-home"></i></li>
+                        <li class="breadcrumb-item active">Editor</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div>
+    </div>
+    <!-- /.content-header -->
+    <div class="document-editor m-5" data-controller="doceditor">
+        <div class="document-editor__toolbar"></div>
+        <div class="document-editor__editable-container">
+            <div class="document-editor__editable">
+
+                {% if docContent is defined %}
+                    {{ docContent |raw}}
+                {% endif %}
+            </div>
+        </div>
+        <button class="btn btn-secondary" data-action="click->doceditor#changeTemplateItem"></button>
+    </div>
+{% endblock %}
