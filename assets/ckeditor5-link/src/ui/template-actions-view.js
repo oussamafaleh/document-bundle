@@ -63,14 +63,14 @@ export default class TemplateActionsView extends View {
 		 *
 		 * @member {module:ui/button/buttonview~ButtonView}
 		 */
-		this.unlinkButtonView = this._createButton( t( 'Unlink' ), unlinkIcon, 'unlink' );
+		this.unlinkButtonView = this._createButton( t( 'Cancel Template Var' ), unlinkIcon, 'cancelTemplate' );
 
 		/**
 		 * The edit link button view.
 		 *
 		 * @member {module:ui/button/buttonview~ButtonView}
 		 */
-		this.editButtonView = this._createButton( t( 'Edit link' ), icons.pencil, 'edit' );
+		this.editButtonView = this._createButton( t( 'Edit Template Var' ), icons.pencil, 'edit' );
 
 		/**
 		 * The value of the "href" attribute of the link to use in the {@link #previewButtonView}.
@@ -78,7 +78,7 @@ export default class TemplateActionsView extends View {
 		 * @observable
 		 * @member {String}
 		 */
-		this.set( 'href' );
+		this.set( 'data-template-var' );
 
 		/**
 		 * A collection of views that can be focused in the view.
@@ -198,7 +198,7 @@ export default class TemplateActionsView extends View {
 
 		button.set( {
 			withText: true,
-			tooltip: t( 'Open link in new tab' )
+			tooltip: t( 'template valiable id' )
 		} );
 
 		button.extendTemplate( {
@@ -207,19 +207,19 @@ export default class TemplateActionsView extends View {
 					'ck',
 					'ck-link-actions__preview'
 				],
-				href: bind.to( 'href', href => href && ensureSafeUrl( href ) ),
+				id: bind.to( 'id', id => id  ) ,
 				target: '_blank',
 				rel: 'noopener noreferrer'
 			}
 		} );
 
-		button.bind( 'label' ).to( this, 'href', href => {
-			return href || t( 'This link has no URL' );
+		button.bind( 'label' ).to( this, 'data-template-var', id => {
+			return id || t( 'This variable has no id' );
 		} );
 
-		button.bind( 'isEnabled' ).to( this, 'href', href => !!href );
+		button.bind( 'isEnabled' ).to( this, 'data-template-var', id => !!id );
 
-		button.template.tag = 'a';
+		button.template.tag = 'span';
 		button.template.eventListeners = {};
 
 		return button;

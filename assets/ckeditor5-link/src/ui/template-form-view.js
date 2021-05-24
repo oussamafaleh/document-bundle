@@ -71,7 +71,7 @@ export default class TemplateFormView extends View {
 		 *
 		 * @member {module:ui/labeledfield/labeledfieldview~LabeledFieldView}
 		 */
-		this.labelInputView = this._createTextInput('Attached Label');/**
+		this.labelInputView = this._createTextInput('Set variable Id');/**
 		 * The URL input view.
 		 *
 		 * @member {module:ui/labeledfield/labeledfieldview~LabeledFieldView}

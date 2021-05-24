@@ -25,6 +25,7 @@
         "@ckeditor/ckeditor5-editor-decoupled": "^27.1.0",
         "@ckeditor/ckeditor5-export-pdf": "^27.1.0",
         "@ckeditor/ckeditor5-mention": "^27.1.0",
+        "@ckeditor/ckeditor5-page-break": "^27.1.0",
         "@ckeditor/ckeditor5-theme-lark": "^27.1.0",
         "bootstrap": "^4.6.0",
         "chip-input": "^0.2.13",

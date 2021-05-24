@@ -1,5 +1,5 @@
 import DecoupledEditorBase  from '@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor';
-import Input  from '@ckeditor/ckeditor5-typing/src/input';
+import PageBreak from '@ckeditor/ckeditor5-page-break/src/pagebreak';
 import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
 import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment';
 import FontSize from '@ckeditor/ckeditor5-font/src/fontsize';
@@ -68,6 +68,7 @@ DecoupledEditor.builtinPlugins = [
     Table,
     TableToolbar,
     Template,
+    PageBreak,
     CloudServices
 
 ];
@@ -77,8 +78,11 @@ DecoupledEditor.defaultConfig = {
     toolbar: {
         items: [
             'template',
+            'template-save',
             '|',
             'heading',
+            '|',
+            'pageBreak',
             '|',
             'fontfamily',
             'fontsize',

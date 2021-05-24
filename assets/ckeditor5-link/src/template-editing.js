@@ -17,9 +17,7 @@ import TemplateCommand from './template-command.js';
 import CancelTemplateCommand from './canceltemplatecommand';
 import ManualDecorator from './utils/manualdecorator';
 import {
-	createLinkElement,
 	createTemplateElement,
-	ensureSafeUrl,
 	getLocalizedDecorators,
 	normalizeDecorators
 } from './utils';
@@ -74,15 +72,40 @@ export default class TemplateEditing extends Plugin {
 		// Allow link attribute on all inline nodes.
 		editor.model.schema.extend( '$text', { allowAttributes: 'templateVar' } );
 
+		editor.model.schema.extend( '$text', { allowAttributes: 'templateVar-type' } );
 		editor.conversion.for( 'dataDowncast' )
 			.attributeToElement( { model: 'templateVar', view: createTemplateElement } );
 
 		editor.conversion.for( 'editingDowncast' )
 			.attributeToElement( { model: 'templateVar', view: ( id, conversionApi ) => {
-				console.log(id);
+
 				return createTemplateElement(  id , conversionApi );
 			} } );
 
+
+		editor.conversion.for( 'downcast' ).attributeToElement( {
+
+			model: 'templateVar-type',
+			view: ( type, { writer } ) => {
+
+					const element = writer.createAttributeElement( 'span', {'data-template-type':type}, { priority: 5 } );
+					writer.setCustomProperty( 'template', true, element );
+					return element;
+
+			} } );
+
+		editor.conversion.for( 'upcast' ).elementToAttribute( {
+			view: {
+				name: 'span',
+				attributes: ['data-template-type']
+
+
+			},
+			model: {
+				key: 'templateVar-type',
+				value: viewElement => viewElement.getAttribute( 'data-template-type' )
+			}
+		} );
 		editor.conversion.for( 'upcast' )
 			.elementToAttribute( {
 				view: {
@@ -93,7 +116,7 @@ export default class TemplateEditing extends Plugin {
 				},
 				model: {
 					key: 'templateVar',
-					value: viewElement => viewElement.getAttribute( 'id' )
+					value: viewElement => viewElement.getAttribute( 'data-template-var' )
 				}
 			} );
 
@@ -101,10 +124,10 @@ export default class TemplateEditing extends Plugin {
 		editor.commands.add( 'template', new TemplateCommand( editor ) );
 		editor.commands.add( 'canceltemplate', new CancelTemplateCommand( editor ) );
 
-		// const linkDecorators = getLocalizedDecorators( editor.t, normalizeDecorators( editor.config.get( 'link.decorators' ) ) );
+		 const linkDecorators = getLocalizedDecorators( editor.t, normalizeDecorators( editor.config.get( 'template.decorators' ) ) );
 		//
 		//
-		// this._enableManualDecorators( linkDecorators.filter( item => item.mode === DECORATOR_MANUAL ) );
+		 this._enableManualDecorators( linkDecorators.filter( item => item.mode === DECORATOR_MANUAL ) );
 
 		// Enable two-step caret movement for `templateVar` attribute.
 		const twoStepCaretMovementPlugin = editor.plugins.get( TwoStepCaretMovement );
@@ -153,7 +176,7 @@ export default class TemplateEditing extends Plugin {
 
 			// Keeps reference to manual decorator to decode its name to attributes during downcast.
 			manualDecorators.add( new ManualDecorator( decorator ) );
-
+			console.log(manualDecorators);
 			editor.conversion.for( 'downcast' ).attributeToElement( {
 
 				model: decorator.id,
@@ -162,7 +185,6 @@ export default class TemplateEditing extends Plugin {
 						const attributes = manualDecorators.get( decorator.id ).attributes;
 						const element = writer.createAttributeElement( 'span', attributes, { priority: 5 } );
 						writer.setCustomProperty( 'template', true, element );
-						console.log('id');
 						return element;
 					}
 				} } );

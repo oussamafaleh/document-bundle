@@ -11,7 +11,6 @@ import  Command  from '@ckeditor/ckeditor5-core/src/command';
 import  findAttributeRange  from '@ckeditor/ckeditor5-typing/src/utils/findattributerange';
 import { Collection, toMap, first } from '@ckeditor/ckeditor5-utils/src/';
 
-import AutomaticDecorators from './utils/automaticdecorators';
 import { isImageAllowed } from './utils';
 
 /**
@@ -50,7 +49,6 @@ export default class TemplateCommand extends Command {
 	 * Synchronizes the state of {@link #manualDecorators} with the currently present elements in the model.
 	 */
 	restoreManualDecoratorStates() {
-		console.log(this.manualDecorators );
 		for ( const manualDecorator of this.manualDecorators ) {
 			manualDecorator.value = this._getDecoratorStateFromModel( manualDecorator.id );
 		}
@@ -143,8 +141,7 @@ export default class TemplateCommand extends Command {
 	 * @param {Object} [manualDecoratorIds={}] The information about manual decorator attributes to be applied or removed upon execution.
 	 */
 	execute( templateVar, manualDecoratorIds = {} ) {
-		console.log(templateVar);
-		console.log(manualDecoratorIds);
+
 		const model = this.editor.model;
 		const selection = model.document.selection;
 		// Stores information about manual decorators to turn them on/off when command is applied.
@@ -158,7 +155,6 @@ export default class TemplateCommand extends Command {
 				falsyManualDecorators.push( name );
 			}
 		}
-
 		model.change( writer => {
 			// If selection is collapsed then update selected link or insert new one at the place of caret.
 			if ( selection.isCollapsed ) {
@@ -170,9 +166,8 @@ export default class TemplateCommand extends Command {
 					const varRange = findAttributeRange( position, 'templateVar', selection.getAttribute( 'templateVar' ), model );
 
 					writer.setAttribute( 'templateVar', templateVar.id, varRange );
-					model.schema.setAttributeProperties( 'templateVar', {
-						type: templateVar.type
-					} );
+					writer.setAttribute( 'templateVar-type', templateVar.type, varRange );
+
 
 
 					truthyManualDecorators.forEach( item => {
@@ -193,9 +188,8 @@ export default class TemplateCommand extends Command {
 					const attributes = toMap( selection.getAttributes() );
 
 					attributes.set( 'templateVar', templateVar.id );
-					model.schema.setAttributeProperties( 'templateVar', {
-						type: templateVar.type
-					} );
+
+					attributes.set( 'templateVar-type', templateVar.type );
 					truthyManualDecorators.forEach( item => {
 						attributes.set( item, true );
 					} );
@@ -209,7 +203,7 @@ export default class TemplateCommand extends Command {
 
 				// Remove the `linkHref` attribute and all link decorators from the selection.
 				// It stops adding a new content into the link element.
-				[ 'templateVar', ...truthyManualDecorators, ...falsyManualDecorators ].forEach( item => {
+				[ 'templateVar','templateVar-type', ...truthyManualDecorators, ...falsyManualDecorators ].forEach( item => {
 					writer.removeSelectionAttribute( item );
 				} );
 			} else {
@@ -239,9 +233,8 @@ export default class TemplateCommand extends Command {
 
 				for ( const range of rangesToUpdate ) {
 					writer.setAttribute( 'templateVar', templateVar.id, range );
-					model.schema.setAttributeProperties( 'templateVar', {
-						type: templateVar.type
-					} );
+					writer.setAttribute( 'templateVar-type', templateVar.type, range );
+
 
 					truthyManualDecorators.forEach( item => {
 						writer.setAttribute( item, true, range );

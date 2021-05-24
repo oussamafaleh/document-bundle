@@ -31,9 +31,9 @@ export default class CancelTemplateCommand extends Command {
 		// A check for the `LinkImage` plugin. If the selection contains an image element, get values from the element.
 		// Currently the selection reads attributes from text nodes only. See #7429 and #7465.
 		if ( isImageAllowed( selectedElement, model.schema ) ) {
-			this.isEnabled = model.schema.checkAttribute( selectedElement, 'linkHref' );
+			this.isEnabled = model.schema.checkAttribute( selectedElement, 'templateVar' );
 		} else {
-			this.isEnabled = model.schema.checkAttributeInSelection( doc.selection, 'linkHref' );
+			this.isEnabled = model.schema.checkAttributeInSelection( doc.selection, 'templateVar' );
 		}
 	}
 
@@ -54,22 +54,22 @@ export default class CancelTemplateCommand extends Command {
 		const editor = this.editor;
 		const model = this.editor.model;
 		const selection = model.document.selection;
-		const linkCommand = editor.commands.get( 'link' );
+		const linkCommand = editor.commands.get( 'template' );
 
 		model.change( writer => {
 			// Get ranges to unlink.
 			const rangesToUnlink = selection.isCollapsed ?
 				[ findAttributeRange(
 					selection.getFirstPosition(),
-					'linkHref',
-					selection.getAttribute( 'linkHref' ),
+					'templateVar',
+					selection.getAttribute( 'templateVar' ),
 					model
 				) ] :
-				model.schema.getValidRanges( selection.getRanges(), 'linkHref' );
+				model.schema.getValidRanges( selection.getRanges(), 'templateVar' );
 
 			// Remove `linkHref` attribute from specified ranges.
 			for ( const range of rangesToUnlink ) {
-				writer.removeAttribute( 'linkHref', range );
+				writer.removeAttribute( 'templateVar', range );
 				// If there are registered custom attributes, then remove them during unlink.
 				if ( linkCommand ) {
 					for ( const manualDecorator of linkCommand.manualDecorators ) {

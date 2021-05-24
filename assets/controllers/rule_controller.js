@@ -125,7 +125,6 @@ export default class extends Controller {
 
 
             }
-
         xhr.open("POST", url  );
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhr.send(JSON.stringify(body));
@@ -150,7 +149,6 @@ export default class extends Controller {
         for (let arg of args) {
             expr_arg.push(arg.label);
         }
-        console.log(expr_arg);
         return expr_arg;
     }
 }

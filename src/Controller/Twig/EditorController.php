@@ -43,7 +43,7 @@ class EditorController extends AbstractController
     }
 
     /**
-     * @Route("/editdocs/{item_code}", name="edit_docs_twig", methods={"GET"})
+     * @Route("/editdoc/{item_code}", name="edit_docs_twig", methods={"GET"})
      */
 
     public function readDocs($item_code)

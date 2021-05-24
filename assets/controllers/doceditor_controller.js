@@ -1,7 +1,6 @@
 import {Controller} from 'stimulus';
 import DecoupledEditor from '../DocDecoupledEditor';
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
-import TextTemplating from '../texttemplating';
 
 /*
  * This is an example Stimulus controller!
@@ -12,7 +11,6 @@ import TextTemplating from '../texttemplating';
  *
  * Delete this file or adapt it for your use!
  */
-//import ExportPdf from '@ckeditor/ckeditor5-export-pdf/src/exportpdf';
 export default class extends Controller {
     static targets = ["doc-variables"]
 
@@ -32,7 +30,7 @@ export default class extends Controller {
                             }
                         ],
                     }
-                }
+                },
 
             })
             .then(editor => {

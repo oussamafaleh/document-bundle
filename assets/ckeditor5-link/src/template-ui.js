@@ -9,14 +9,15 @@
 
 import  Plugin  from '@ckeditor/ckeditor5-core/src/plugin';
 import  ClickObserver  from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
-import { ButtonView, ContextualBalloon, clickOutsideHandler } from '@ckeditor/ckeditor5-ui/src';
+import { ButtonView, ContextualBalloon, clickOutsideHandler ,BalloonPanelView} from '@ckeditor/ckeditor5-ui/src';
 
 import TemplateFormView from './ui/template-form-view';
 import TemplateActionsView from './ui/template-actions-view';
-import {  isLinkElement, LINK_KEYSTROKE } from './utils';
+import TemplateSaveView from './ui/template-save-view';
+import {  isLinkElement, TEMPLATE_KEYSTROKE , SAVE_KEYSTROKE } from './utils';
 
 import TemlateIcon from '../theme/icons/temlateIcon.svg';
-
+import SaveTemplate from '../theme/icons/file-export-solid.svg';
 const VISUAL_SELECTION_MARKER_NAME = 'template-ui';
 
 /**
@@ -32,7 +33,7 @@ export default class TemplateUi extends Plugin {
 	 * @inheritDoc
 	 */
 	static get requires() {
-		return [ ContextualBalloon ];
+		return [ ContextualBalloon ,BalloonPanelView];
 	}
 
 	/**
@@ -56,6 +57,12 @@ export default class TemplateUi extends Plugin {
 		 * @member {module:link/ui/linkactionsview~TemplateActionsView}
 		 */
 		this.actionsView = this._createActionsView();
+		/**
+		 * The actions view displayed inside of the balloon.
+		 *
+		 * @member {module:link/ui/linkactionsview~TemplateActionsView}
+		 */
+		this.saveView = this._createSaveView();
 
 		/**
 		 * The form view displayed inside the balloon.
@@ -71,6 +78,7 @@ export default class TemplateUi extends Plugin {
 		 * @member {module:ui/panel/balloon/contextualballoon~ContextualBalloon}
 		 */
 		this._balloon = editor.plugins.get( ContextualBalloon );
+		this._panel = editor.plugins.get( BalloonPanelView );
 
 		// Create toolbar buttons.
 		this._createToolbarLinkButton();
@@ -140,10 +148,36 @@ export default class TemplateUi extends Plugin {
 		} );
 
 		// Open the form view on Ctrl+K when the **actions have focus**..
-		actionsView.keystrokes.set( LINK_KEYSTROKE, ( data, cancel ) => {
+		actionsView.keystrokes.set( TEMPLATE_KEYSTROKE, ( data, cancel ) => {
 			this._addFormView();
 			cancel();
 		} );
+
+		return actionsView;
+	}
+
+	_createSaveView() {
+		const editor = this.editor;
+		const actionsView = new TemplateSaveView( editor.locale );
+
+		// Execute unlink command after clicking on the "Edit" button.
+		this.listenTo( actionsView, 'save', () => {
+			this._addFormView();
+		} );
+
+		// Execute unlink command after clicking on the "Unlink" button.
+		this.listenTo( actionsView, 'canceltemplate', () => {
+			editor.execute( 'canceltemplate' );
+			this._hideUI();
+		} );
+
+		// Close the panel on esc key press when the **actions have focus**.
+		actionsView.keystrokes.set( 'Esc', ( data, cancel ) => {
+			this._hideUI();
+			cancel();
+		} );
+
+
 
 		return actionsView;
 	}
@@ -206,7 +240,7 @@ export default class TemplateUi extends Plugin {
 		const t = editor.t;
 
 		// Handle the `Ctrl+K` keystroke and show the panel.
-		editor.keystrokes.set( LINK_KEYSTROKE, ( keyEvtData, cancel ) => {
+		editor.keystrokes.set( TEMPLATE_KEYSTROKE, ( keyEvtData, cancel ) => {
 			// Prevent focusing the search bar in FF, Chrome and Edge. See https://github.com/ckeditor/ckeditor5/issues/4811.
 			cancel();
 
@@ -221,7 +255,7 @@ export default class TemplateUi extends Plugin {
 			button.isEnabled = true;
 			button.label = t( 'Var Define' );
 			button.icon = TemlateIcon;
-			button.keystroke = LINK_KEYSTROKE;
+			button.keystroke = TEMPLATE_KEYSTROKE;
 			button.tooltip = true;
 			button.isToggleable = true;
 
@@ -231,6 +265,24 @@ export default class TemplateUi extends Plugin {
 
 			// Show the panel on button click.
 			this.listenTo( button, 'execute', () => this._showUI( true ) );
+
+			return button;
+		} );
+		editor.ui.componentFactory.add( 'template-save', locale => {
+			const button = new ButtonView( locale );
+
+			button.isEnabled = true;
+			button.label = t( 'Save Template' );
+			button.icon = SaveTemplate;
+			button.tooltip = true;
+			button.isToggleable = true;
+
+			// Bind button to the command.
+			button.bind( 'isEnabled' ).to( templateCommand, 'isEnabled' );
+			button.bind( 'isOn' ).to( templateCommand, 'value', value => !!value );
+
+			// Show the panel on button click.
+			this.listenTo( button, 'execute', () => this._addSaveView( ) );
 
 			return button;
 		} );
@@ -299,6 +351,23 @@ export default class TemplateUi extends Plugin {
 		this._balloon.add( {
 			view: this.actionsView,
 			position: this._getBalloonPositionData()
+		} );
+	}
+	_addSaveView() {
+
+		const positions = BalloonPanelView.defaultPositions;
+		const target = document.body.querySelector( '.document-editor');
+		console.log(positions.northArrowSouth);
+		this._panel.content.add(this.saveView
+
+
+		);
+		this._panel.render();
+		this._panel.pin( {
+			target: target,
+			positions: [
+				positions.northArrowSouth,
+			]
 		} );
 	}
 

@@ -6,11 +6,11 @@
         "/build/vendors-node_modules_jquery_dist_jquery_js.js",
         "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-6ea37d.js",
         "/build/vendors-node_modules_core-js_internals_create-html_js-node_modules_core-js_internals_string-h-3e7116.js",
-        "/build/vendors-node_modules_ckeditor_ckeditor5-adapter-ckfinder_src_uploadadapter_js-node_modules_ck-1c8385.js",
+        "/build/vendors-node_modules_ckeditor_ckeditor5-adapter-ckfinder_src_uploadadapter_js-node_modules_ck-a55e36.js",
         "/build/app.js"
       ],
       "css": [
-        "/build/vendors-node_modules_ckeditor_ckeditor5-adapter-ckfinder_src_uploadadapter_js-node_modules_ck-1c8385.css",
+        "/build/vendors-node_modules_ckeditor_ckeditor5-adapter-ckfinder_src_uploadadapter_js-node_modules_ck-a55e36.css",
         "/build/app.css"
       ]
     },

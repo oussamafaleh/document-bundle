@@ -87,6 +87,7 @@ class RuleManager extends AbstractManager
 
     public function compileRule($expression , $exprArg)
     {
+
         try {
             $ast =  $this->expressionLanguage->compile($expression, $exprArg);
         } catch (\Exception $e) {
