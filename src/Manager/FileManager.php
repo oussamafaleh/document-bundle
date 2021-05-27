@@ -162,9 +162,9 @@ class FileManager extends AbstractManager
 
         $fileUniquness =$this->folderManager->init(['parentCode'=> $this->getParentCode(),'userCode' => $this->getUserCode()])
             ->checkSubItemsLabelUniqueness($RequestFile->getClientOriginalName());
-//        if(!$fileUniquness){
-//            throw new \Exception('FOUND_ITEM');
-//        }
+        if(!$fileUniquness){
+            throw new \Exception('FOUND_ITEM');
+        }
         $file =$this->upload($RequestFile);
 
         $connection = $this->apiEntityManager->getConnection();
@@ -177,9 +177,6 @@ class FileManager extends AbstractManager
                 $this->convetFileSize($file['size']) )
             ->setParent($this->parent);
         $this->apiEntityManager->persist($this->document);
-
-//        $fileClass = $this->evaluateRule($this->document, self::classifyFileRule);
-//        $this->document->setClassification($fileClass);
 
         $this->user_item_property = new UserItemProperty();
         $this->user_item_property->setItem($this->document)

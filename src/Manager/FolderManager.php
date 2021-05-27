@@ -150,28 +150,34 @@ class FolderManager extends AbstractManager
         }
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();
-        $folder = new Folder();
-        $folder->setLabel($folderParam['label'])
-            ->setParent($this->parent);
-        $this->apiEntityManager->persist($folder);
 
-        $user_item_property = new UserItemProperty();
-        $user_item_property->setItem($folder)
-            ->setUser($this->user)
-            ->setIsTagged(false)
-            ->addRole("ROLE_OWNER");
-        $this->apiEntityManager->persist($user_item_property);
-        $this->parent->setUpdatedAt(new DateTime());
-        $this->apiEntityManager->persist($this->parent);
+        try {
+            $folder = new Folder();
+            $folder->setLabel($folderParam['label'])
+                ->setParent($this->parent);
+            $this->apiEntityManager->persist($folder);
 
-        $this->apiEntityManager->flush();
-        $connection->commit();
-        return [
-            'data' => [
-            'code' => $folder->getCode()
-            ],
-            'messages' => 'create_success'
-        ];
+            $user_item_property = new UserItemProperty();
+            $user_item_property->setItem($folder)
+                ->setUser($this->user)
+                ->setIsTagged(false)
+                ->addRole("ROLE_OWNER");
+            $this->apiEntityManager->persist($user_item_property);
+            $this->parent->setUpdatedAt(new DateTime());
+            $this->apiEntityManager->persist($this->parent);
+
+            $this->apiEntityManager->flush();
+            $connection->commit();
+            return [
+                'data' => [
+                'code' => $folder->getCode()
+                ],
+                'messages' => 'create_success'
+            ];
+        } catch (\Exception $ex) {
+            $connection->rollback();
+            throw new \Exception($ex->getMessage());
+        }
     }
 
     /**

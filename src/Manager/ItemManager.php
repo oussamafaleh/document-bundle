@@ -288,7 +288,7 @@ public function generateLink($item_code)
 
         $connection->commit();
         return ['data' => [
-            'messages' => 'create_success',
+            'messages' => 'share_success',
            
         ]];
 
@@ -389,12 +389,6 @@ public function generateLink($item_code)
 
         public function CancelSharePerEmail($item_code,$email)
         {
-   
-            /*
-       $itemExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
-       var_dump($fileExist);
-      
-       */
             $item = $this->apiEntityManager
             ->getRepository(Item::class)->findOneBy(['code' => $item_code]);
 
