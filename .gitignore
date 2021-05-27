@@ -24,5 +24,5 @@ docker/mongodb/
 /node_modules/
 npm-debug.log
 yarn-error.log
-
+elk/elasticsearch-data/
 ###< symfony/webpack-encore-bundle ###
