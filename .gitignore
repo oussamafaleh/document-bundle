@@ -24,4 +24,5 @@ docker/mongodb/
 /node_modules/
 npm-debug.log
 yarn-error.log
+
 ###< symfony/webpack-encore-bundle ###
