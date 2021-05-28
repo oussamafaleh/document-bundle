@@ -12,6 +12,18 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use NcJoes\PopplerPhp\Config;
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use NcJoes\PopplerPhp\PdfToHtml;
+
+use PHPStamp\Templator;
+use PHPStamp\Document\WordDocument;
+use Dompdf\Dompdf;
+
+
+
+
 /**
  * Class FileController
  * @package App\Controller\Twig
@@ -118,6 +130,44 @@ public function readDocs($item_code){
     }
     
     
+
+
+/**
+     * @Route("/pdftohtml", name="pdf to html _twig", methods={"GET"})
+     */
+    public function PdfToHtml(){
+
+        $publicResourcesFolderPath =$this->getParameter('uploads_directory');   
+        $filename=$publicResourcesFolderPath.'test.pdf';
+
+
+
+Config::setBinDirectory('C:/poppler-0.54_x86/bin');
+
+// set output directory
+Config::setOutputDirectory($publicResourcesFolderPath);
+
+$pdfToHtml = new PdfToHtml($filename);
+$pdfToHtml->setZoomRatio(1.8);
+$pdfToHtml->exchangePdfLinks();
+$pdfToHtml->startFromPage(1)->stopAtPage(5);
+$pdfToHtml->generateSingleDocument();
+$pdfToHtml->noFrames();
+$pdfToHtml->oddPagesOnly();
+$pdfToHtml->outputToConsole();
+return "ok" . $pdfToHtml->generate();
+
+//solution autre 
+// nop limitation size https://github.com/ypio/php-microsoft-graph-file-converter
+
+// https://github.com/meshesha/PPTXjs
+
+}
+
+
+
+
+
 
 
 }

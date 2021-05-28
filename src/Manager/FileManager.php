@@ -21,6 +21,12 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 use Symfony\Component\HttpFoundation\File\File;
 
+use Symfony\Component\Security\Core\Security;
+use Elasticsearch\ClientBuilder;
+
+use thiagoalessio\TesseractOCR\TesseractOCR;
+
+
 
 class FileManager extends AbstractManager
 {
@@ -46,7 +52,13 @@ class FileManager extends AbstractManager
 //
     private $expressionLanguage;
 
-    public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager , ItemManager $itemManager)
+    private $indexName;
+    private $es_config;
+    private $attachment;
+    private $security;
+    private $es_port;
+    private $es_host;
+    public function __construct(EntityManager $entityManager, $targetDirectory ,FolderManager $folderManager , ItemManager $itemManager, $indexName, $es_port,$es_host,$attachment,Security $security )
     {
         parent::__construct($entityManager);
         $this->targetDirectory = $targetDirectory;
@@ -54,9 +66,33 @@ class FileManager extends AbstractManager
         $this->itemManager=$itemManager;
 
         $this->expressionLanguage = new RuleExpressionLanguage();
+        $this->indexName = $indexName;
+        $this->es_port= $es_port ;
+        $this->es_host= $es_host ;
+        $this->attachment=$attachment;
+        $this->security = $security;
+        
        
     }
     
+ 
+
+    public function getIndexName(){
+        return $this->indexName;
+    }
+
+    public function getAttachment(){
+        return $this->attachment;
+    }
+   
+
+    public function ConnectedUserCode(){
+        return $this->security->getUser()->getCode();
+
+    }
+
+  
+   
 
     public function init($settings = [])
     {
@@ -182,7 +218,7 @@ class FileManager extends AbstractManager
         $this->user_item_property->setItem($this->document)
             ->setUser($this->user)
             ->setIsTagged(false)
-            ->addRole("ROLE_OWNER");
+            ->addRoles(["ROLE_OWNER"]);
         $this->apiEntityManager->persist($this->user_item_property);
         $this->parent->setUpdatedAt(new \DateTime());
         $this->apiEntityManager->persist($this->parent);
@@ -205,6 +241,11 @@ class FileManager extends AbstractManager
         $file->move($this->getTargetDirectory(), $fileCode);
         
 
+        $extension=$fileName[1];
+        $label= $file->getClientOriginalName();
+        $this->IndexUploadDoc($fileCode,$extension,$label);
+
+       
         return [
             "name" => $file->getClientOriginalName(),
             "code" => $fileCode,
@@ -224,6 +265,85 @@ class FileManager extends AbstractManager
         return strval($size) . "Gb";
     }
 
+
+    public function IndexUploadDoc($fileCode,$extension,$label){
+
+        $user_code=$this->ConnectedUserCode();
+     
+        $array = [
+           $this->es_host.':'.$this->es_port
+       ];
+
+        $client = ClientBuilder::create()
+        ->setHosts((array)$array[0])
+        ->build(); 
+              
+   
+        $created_at=$date = date('d-m-y h:i:s');
+        $targetDirectory= $this->getTargetDirectory();
+        $filepath =  $targetDirectory.$fileCode;
+ 
+       
+        
+       if($extension==="png"||$extension==="PNG"){
+
+       
+        $content= $this->ocrImage($fileCode);
+         $params = [
+             'index' => $this->getIndexName(),
+             'id' => $fileCode,
+             
+           'body'  => [
+            'extension' =>$extension,
+            'label' => $label,
+             'content' =>  $content,
+             'created_at'=>$created_at,
+             'update_at'=>null ,
+             "extension" => $extension,
+             'type' => 'document',
+             'user_code'=> $user_code
+            ]
+      ];
+
+
+        }
+        else {
+         $params = [
+             'index' => $this->getIndexName(),
+             'id' => $fileCode,
+           
+             'pipeline' => $this->getAttachment(),  // <----- here
+             'body'  => [
+                     'data' => base64_encode(file_get_contents($filepath)),
+                     'label' => $label,
+                     'created_at'=>$created_at,
+                     'update_at'=>"",
+                     "extension" => $extension,
+                     'type' => 'document',
+                     'user_code'=> $user_code,
+             ]
+             
+             ];
+            
+            }
+                     /*
+                 'mappings' => [
+                    
+                 ]
+ 
+                 */
+             /*
+             ]                
+           ];
+          
+           
+        }
+       
+     
+       //   */
+      // $client->indices()->create($params);
+      $client->index($params);
+    }
 
 public function download($item_code){
 
@@ -315,6 +435,29 @@ public function download($item_code){
 
 
 
+    public function ocrImage($fileCode)
+    {
+     
+        $targetDirectory= $this->getTargetDirectory();
+        $filepath =  $targetDirectory.$fileCode;
+       
+       
+
+        if(!file_exists($filepath)){
+            return new Response("Warning: the providen file [".$filepath."] doesn't exists.");
+        }
+    
+        $tesseractInstance = new TesseractOCR($filepath);
+
+       
+       $executablePath = 'C:/Program Files/Tesseract-OCR/tesseract.exe';
+
+         $tesseractInstance->executable($executablePath);
+      //  $tesseractInstance->psm(1);
+      $tess=(new TesseractOCR($filepath))->lang('eng', 'jpn', 'spa')->run();
+      return $tess;
+  
+    }
 
 
 
@@ -345,13 +488,12 @@ public function download($item_code){
 
 
    
-    public function readDoc($item_code)
-    {
+    public function readDoc($item_code){
 
 
-        $targetDirectory = $this->getTargetDirectory();
-        $filename = $targetDirectory . $item_code;
-
+        $targetDirectory= $this->getTargetDirectory();
+        $filename=$targetDirectory.$item_code;
+    
         $objReader = \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
 
         $phpWord = $objReader->load($filename);
@@ -363,10 +505,10 @@ public function download($item_code){
 
 
         $rest = substr($item_code, 0, -4);
-        $docname = $rest . "html";
-
-        $filePath = $targetDirectory . $docname;
-
+        $docname=$rest."html";
+       
+        $filePath=$targetDirectory. $docname;
+      
         $objWriter->save($filePath);
 
         return ['docname' => $docname];
@@ -411,11 +553,7 @@ public function download($item_code){
          
      } 
      
-   /*  elseif ($file->getExtension()=="xls")
-     {
-  
-         return $this->ReadXsl($item_code);
-     }*/
+
      
      else
       return ['docname' => $item_code];

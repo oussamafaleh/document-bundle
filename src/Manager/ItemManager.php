@@ -19,6 +19,8 @@ use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\Form;
 use App\Form\ItemType;
 
+use Symfony\Component\Security\Core\Security;
+
 use App\Form\DocumentEditType;
 use App\Form\FolderEditType;
 
@@ -30,7 +32,7 @@ use App\Repository\ItemRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
-//use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Elasticsearch\ClientBuilder;
 
 // use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -43,14 +45,38 @@ class ItemManager extends AbstractManager
     private $form;
 
     private $uploads_directory;
-    public function __construct(EntityManager $entityManager, string $uploads_directory , FormFactory $formFactory)
+    private $indexName;
+    private $es_config;
+    private $attachment;
+    private $es_port ;
+    private $es_host ;
+    private $security;
+    public function __construct(EntityManager $entityManager, string $uploads_directory , FormFactory $formFactory, Security $security,string $indexName,  $es_port,$es_host ,string $attachment)
     {
         parent::__construct($entityManager);
         $this->uploads_directory=$uploads_directory;
         $this->form  = $formFactory ;
+        $this->security = $security;
+        $this->indexName = $indexName;
+        $this->es_port= $es_port ;
+        $this->es_host= $es_host ;
+        $this->es_config=$attachment;
+        
         
     }
 
+    public function getAttachment(){
+        return $this->attachment;
+    }
+
+
+
+    
+
+    public function getIndexName(){
+        return $this->indexName;
+    }
+   
 
     public function init($settings = [])
     {
@@ -167,6 +193,11 @@ class ItemManager extends AbstractManager
         }        
          $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();   
+
+       $this->deleteIndex($item_code);
+       
+        
+       
         if($item ->getType()=="Document")
     
     {         
@@ -192,6 +223,27 @@ class ItemManager extends AbstractManager
 }
      
      
+
+     public function deleteIndex($item_code){
+        $hosts=$this->getEsConf();
+    
+        $client = ClientBuilder::create()
+                ->setHosts($hosts['hosts'])
+                ->build();
+          
+        $index=$this->getIndexName();     
+        $params = [
+            'index' => $index,
+            'id'    => $item_code
+        ];
+
+        try {
+            $client->delete($params);
+        } catch (Missing404Exception $exception) {
+            // Already deleted..
+        }
+
+     }
 
 
 public function generateLink($item_code)
@@ -258,7 +310,7 @@ public function generateLink($item_code)
       //  $userItemProperty = $this->apiEntityManager
       //  ->getRepository(UserItemProperty::class)->findOneByRole($roles);
 
-
+/*
         $userItemProperty = $this->apiEntityManager
         ->getRepository(UserItemProperty::class)->findOneBy(array(
             'item' =>  $item->getId(),
@@ -268,14 +320,16 @@ public function generateLink($item_code)
         
         ));
 
+        */
        
 
         
-        
+        /*
         if(!empty($userItemProperty)){
             return "already shared";
         }
-       
+       */
+      
        
         $userItemProperty = new UserItemProperty();
 
@@ -287,10 +341,9 @@ public function generateLink($item_code)
         $this->apiEntityManager->flush();
 
         $connection->commit();
-        return ['data' => [
-            'messages' => 'share_success',
-           
-        ]];
+        return [
+            'link' => $link,
+           ];
 
     }
 
@@ -389,6 +442,12 @@ public function generateLink($item_code)
 
         public function CancelSharePerEmail($item_code,$email)
         {
+   
+            /*
+       $itemExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
+       var_dump($fileExist);
+      
+       */
             $item = $this->apiEntityManager
             ->getRepository(Item::class)->findOneBy(['code' => $item_code]);
 
@@ -508,6 +567,8 @@ public function generateLink($item_code)
        $params=json_decode($content,true);
        
         $item->setLabel($params['label']);
+
+         $this->updateIndex($params['label'],$item_code);
         
         $this->apiEntityManager->flush();
     
@@ -520,6 +581,395 @@ public function generateLink($item_code)
     }
 
 
+   
+
+    public function updateIndex($label,$item_code){
+        
+        // $user_code = $this->security->getUser()->getCode();  
+        $user_code= "0970229e-4867-4ada-b0ac-a199446cbc21";
+        $array = [
+            $this->es_host.':'.$this->es_port
+        ];
+ 
+         $client = ClientBuilder::create()
+         ->setHosts((array)$array[0])
+         ->build(); 
+        $updated_at=$date = date('d-m-y h:i:s');
+        $index=$this->getIndexName();   
+        $paramIndex = [
+            'index' => $index,
+            'id'    => $item_code ,
+           
+            'body'  => [
+
+                'doc' => [
+                    'label' =>  $label,
+                    'updated_at' => $updated_at,
+                //    'user_code' =>  $user_code ,
+                ]
+
+            ]
+        ];
+        
+        $response = $client->update($paramIndex);
+    }
+
+    public function searchLabel($label)
+        { 
+            
+            $user_code = $this->security->getUser()->getCode();  
+            $array = [
+                $this->es_host.':'.$this->es_port
+            ];
+     
+             $client = ClientBuilder::create()
+             ->setHosts((array)$array[0])
+             ->build(); 
+
+            $index=$this->getIndexName();   
+            
+           $params = [
+             'index' => $index,
+             'body'  => [
+                 'query' => [
+                     'match' => [
+                         'label' => $label,
+                         'user_code' => $user_code
+                     ]
+                 ]
+             ]
+         ];
+         $results = $client->search($params);
+         //  print_r(json_encode($params['body']));
+         return $results;
+         
+        
+          
+        }
   
+   
+
+        public function searchKeyWord($keyword){
+
+            $user_code = $this->security->getUser()->getCode();  
+            $array = [
+                $this->es_host.':'.$this->es_port
+            ];
+     
+             $client = ClientBuilder::create()
+             ->setHosts((array)$array[0])
+             ->build(); 
+
+            $index=$this->getIndexName();   
+        $params = [
+        'index' => $index,
+        'body'  => [
+            'query' => [
+                'query_string' => [
+                    'query' => $keyword,
+                    'user_code' => $user_code
+                ]
+            ]
+        ]
+        ];
+        
+        
+         return $response = $client->search($params);
+            
+        }
+    
+
+
+
+    public function searchFileContent($keyword){
+        
+        $user_code = $this->security->getUser()->getCode();  
+
+        $array = [
+            $this->es_host.':'.$this->es_port
+        ];
+ 
+         $client = ClientBuilder::create()
+         ->setHosts((array)$array[0])
+         ->build(); 
+      $params = [
+          'body' => [
+              
+              'query' => [
+                  'match' => [
+                      'attachment.content'=>
+                      [
+    
+                          "query"  => $keyword,
+                          'user_code' => $user_code
+                      ] 
+                  ],
+              ],
+          ],
+      ];
+    
+    
+      
+    return $response = $client->search($params);
+    
+    }
+   
+
+
+    public function searchExtension($search)
+        {
+
+            $user_code = $this->security->getUser()->getCode();  
+            $array = [
+                $this->es_host.':'.$this->es_port
+            ];
+     
+             $client = ClientBuilder::create()
+             ->setHosts((array)$array[0])
+             ->build(); 
+
+            $index=$this->getIndexName();   
+           $params = [
+             'index' => $index,
+             'body'  => [
+                 'query' => [
+                     'match' => [
+                         'extension' => $search,
+                         'user_code' => $user_code
+                     ]
+                 ]
+             ]
+         ];
+          return $results = $client->search($params);
+       
+        
+          
+        }
+
+
+ public function SearchTypeDoc($type)
+{
+    $user_code = $this->security->getUser()->getCode();   
+    $array = [
+        $this->es_host.':'.$this->es_port
+    ];
+
+     $client = ClientBuilder::create()
+     ->setHosts((array)$array[0])
+     ->build(); 
+
+    $index=$this->getIndexName();   
+   $params = [
+     'index' => $index,
+     'body'  => [
+         'query' => [
+             'match' => [
+                 'type' => $type,
+                 'user_code' => $user_code
+
+             ]
+         ]
+     ]
+ ];
+ $results = $client->search($params);
+ //  print_r(json_encode($params['body']));
+ return $results;
+}
+
+
+
+
+    public function SearchType($search,$searchType){
+        switch ($searchType) {
+            case "keyword":
+                return $this->searchKeyWord($search);
+                break;
+            case "label":
+                return $this->searchLabel($search);
+                break;
+            case "typeDoc":
+                return $this->SearchTypeDoc($search);
+                break;
+            case "content":
+                return $this->searchFileContent($search);
+                break;  
+            case "extension":
+                return $this->searchExtension($search);
+                break;            
+
+        }
+
+
+    
+    }
+
+
+    public function classifiyByExtension($search,$item_code){
+
+        $array = [
+            $this->es_host.':'.$this->es_port
+        ];
+ 
+         $client = ClientBuilder::create()
+         ->setHosts((array)$array[0])
+         ->build(); 
+                
+        $index=$this->getIndexName();   
+       $params = [
+         'index' => $index,
+         'body'  => [
+
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        [ 'match' => [ 'extension' => $search ] ],
+                        [ 'match' => [ '_id'=> $item_code ] ],
+                    ]
+                ]
+            ]      
+                 ]
+             
+         
+     ];
+      return $results = $client->search($params);
+
+    }
+
+    public function classifiyByFileContent()
+    {
+        $array = [
+            $this->es_host.':'.$this->es_port
+        ];
+ 
+         $client = ClientBuilder::create()
+         ->setHosts((array)$array[0])
+         ->build(); 
+
+        $index=$this->getIndexName();   
+       $params = [
+         'index' => $index,
+         'body'  => [
+
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        [ 'match' => [ 'extension' => $search ] ],
+                        [ 'match' => [ '_id'=> $item_code ] ],
+                    ]
+                ]
+            ]      
+                 ]
+             
+         
+     ];
+      return $results = $client->search($params);
+    }
+
+    public function classifiyByTypeDoc($search,$item_code){
+
+        $array = [
+            $this->es_host.':'.$this->es_port
+        ];
+ 
+         $client = ClientBuilder::create()
+         ->setHosts((array)$array[0])
+         ->build(); 
+        $index=$this->getIndexName();   
+        
+       $params = [
+         'index' => $index,
+         'body'  => [
+
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        [ 'match' => [ 'type' => $search ] ],
+                        [ 'match' => [ '_id'=> $item_code ] ],
+                    ]
+                ]
+            ]      
+                 ]
+             
+         
+     ];
+      return $results = $client->search($params);
+
+    }
+
+
+    public function classificationType($search,$searchType,$item_code)
+    {
+     
+        switch ($searchType) {
+            case "keyword":
+                return $this->classifiyByKeyWord($search,$item_code);
+                break;
+            case "name":
+                return $this->classifiyByLabel($search,$item_code);
+                break;
+            case "typeDoc":
+                return $this->classifiyByTypeDoc($search,$item_code);
+                break;
+            case "content":
+                return $this->classifiyByFileContent($search,$item_code);
+                break;  
+            case "extension":
+                return $this->classifiyByExtension($search,$item_code);
+                break;            
+
+        }
+        
+       
+
+
+        
+    }
+
+    public function createIndex(){
+        $array = [
+            $this->es_host.':'.$this->es_port
+        ];
+ 
+         $client = ClientBuilder::create()
+         ->setHosts((array)$array[0])
+         ->build(); 
+
+        $index=$this->getIndexName();   
+    $params = [
+    'index' => $index
+     ];
+
+    $response = $client->indices()->create($params);
+
+    }
+
+
+
+    public function ingest()
+    {
+        $array = [
+            $this->es_host.':'.$this->es_port
+        ];
+ 
+         $client = ClientBuilder::create()
+         ->setHosts((array)$array[0])
+         ->build(); 
+       $params = [
+        'id' => $this->getAttachment(),
+        'body' => [
+            'processors' => [
+                [
+                    $this->getAttachment() => [
+                        'field' => 'data',
+                        'indexed_chars' => -1
+                    ]
+                ]
+            ]
+        ]
+    ];
+    return $client->ingest()->putPipeline($params);
+    
+      }
+
 
 }

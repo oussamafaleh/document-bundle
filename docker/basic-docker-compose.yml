@@ -48,27 +48,40 @@ services:
         restart: unless-stopped
         networks:
           - backend
-#    elasticsearch:
-#      container_name: elasticsearch
-#      image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
-#      environment:
-#        discovery.type: "single-node"
-#      ports:
-#        - "9200:9200"
-#      networks:
-#        - backend
-#    kibana:
-#      container_name: kibana
-#      depends_on:
-#        - elasticsearch
-#      image: docker.elastic.co/kibana/kibana:7.4.2
-#      environment:
-#        SERVER_NAME: localhost
-#        ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-#      networks:
-#        - backend
-#      ports:
-#        - "81:5601"
+    elasticsearch:
+      container_name: elasticsearch
+      build: elk
+      environment:
+        xpack.security.enabled: 'false'
+        discovery.type: "single-node"
+      ports:
+        - "9200:9200"
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+        nofile:
+          soft: 65536
+          hard: 65536
+      cap_add:
+        - IPC_LOCK
+      volumes:
+        - ./elk/elasticsearch-data:/usr/share/elasticsearch/data
+      networks:
+        - backend
+    kibana:
+      container_name: kibana
+      depends_on:
+        - elasticsearch
+      image: docker.elastic.co/kibana/kibana:7.4.2
+      environment:
+        SERVER_NAME: localhost
+        ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      networks:
+        - backend
+      ports:
+        - "81:5601"
+
 
 networks:
   backend :

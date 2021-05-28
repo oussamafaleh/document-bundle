@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <!--Begin modal open file -->
+
+
+     <div class="card">
+            
+      <div id="example2" class="table table-hover">
+          <table class="table">
+              <thead class=" text-primary">
+              <tr>
+                  <th>Label</th>
+                  <th>Created at</th>
+                  <th>Last update</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% if not results %}
+                <h2>No results found </h2>
+               {% endif %}
+             
+
+               {% for data in  results %}
+                  <tr>
+                      <td > {% if data.type == 'folder' %}
+                       
+                        <i class="fas fa-folder mr-2 "> <a href=""> {{ data.Label }}</a>   </i>
+                             
+                    {% else %}
+                        <i class="image-icon"  ></i>
+                        {{ data.Label }}
+                    {% endif %}
+
+                           
+                        
+                      </td>
+                      <td>{{ data.created_at ? data.created_at|date('Y-m-d H:i:s') : '' }}</td>
+                      <td>{{ data.updated_at ? data.updated_at|date('Y-m-d H:i:s') : '' }}</td>
+                      
+              {% else %}
+                  <tr>
+                      <td colspan="6">no records found</td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+         
+      </div>
+
+      <!-- /.card-body -->
+  </div>
+  
+  <!-- /.card -->
+
+
+
+
+    </div>
+  </div>
+
+{% endblock %}

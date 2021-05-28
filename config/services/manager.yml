@@ -47,12 +47,12 @@ services:
     App\Manager\FileManager:
         public: true
         class: App\Manager\FileManager
-        arguments: [ '@doctrine.orm.entity_manager', '%uploads_directory%' , '@App\Manager\FolderManager' , '@App\Manager\ItemManager', '@event_dispatcher']
+        arguments: [ '@doctrine.orm.entity_manager', '%uploads_directory%' , '@App\Manager\FolderManager' , '@App\Manager\ItemManager','%indexName%' ,'%es_port%','%es_host%','%attachment%','@security.helper']
         
     App\Manager\FolderManager:
         public: true
         class: App\Manager\FolderManager
-        arguments: [ '@doctrine.orm.entity_manager','@security.helper','@form.factory' ]
+        arguments: [ '@doctrine.orm.entity_manager','@security.helper','@form.factory' ,'%indexName%' ,'%es_port%','%es_host%', ]
 
     App\Manager\DashboardManager:
         public: true
@@ -67,7 +67,7 @@ services:
     App\Manager\ItemManager:
         public: true
         class: App\Manager\ItemManager
-        arguments: [ '@doctrine.orm.entity_manager' , '%uploads_directory%' ,'@form.factory' ]  
+        arguments: [ '@doctrine.orm.entity_manager' , '%uploads_directory%' ,'@form.factory','@security.helper' ,'%indexName%' ,'%es_port%','%es_host%','%attachment%']  
 
     App\Manager\RuleManager:
         public: true

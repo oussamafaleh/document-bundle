@@ -313,4 +313,74 @@ use Symfony\Component\Form\FormInterface;
              ->init(['userCode' => $folderParam['user_code']])
              ->createTag($folderParam );
      }
+
+
+
+
+     
+     /**
+      * @Route("/list-item-sahred-With-Me", name="doc_bundle_list_sub_items_shared_with_me", methods={"GET"})
+      * @Mapping(object="App\ApiModel\Folder\SubItems", as="subItems")
+      * @Operation(
+      *     tags={"Folder"},
+      *     summary="list of sub items",
+      *     @SWG\Parameter(
+      *         name="user_code",
+      *         in="query",
+      *         type="string",
+      *         description="code of user",
+      *         required=true
+      *     ),
+      *     @SWG\Parameter(
+      *         name="index",
+      *         in="query",
+      *         type="string",
+      *         description="page number",
+      *         required=false
+      *     ),
+      *      @SWG\Parameter(
+      *         name="sort_column",
+      *         in="query",
+      *         description="sort column",
+      *         required=false,
+      *         type="string",
+      *         enum={"created_at", "code", "label"},
+      *     ),
+      *     @SWG\Parameter(
+      *         name="sort_order",
+      *         in="query",
+      *         description="sorting direction  default asc",
+      *         required=false,
+      *         type="string",
+      *         enum={"ASC", "DESC"},
+      *     ),
+      *     @SWG\Parameter(
+      *        name="size",
+      *         in="query",
+      *         type="string",
+      *         description=" max per page number",
+      *         required=false
+      *     ),
+      *     @SWG\Response(
+      *         response="200",
+      *         description="Returned when successful"
+      *     ),
+      *     @SWG\Response(
+      *         response="403",
+      *         description="Returned when the ws-folder is not authorized"
+      *     ),
+      *     @SWG\Response(
+      *         response="404",
+      *         description="Returned when the folder is not found"
+      *     )
+      * )
+      */
+      public function listSahredWithMe(Request $request )
+      {
+ 
+          $filters =  (Array) $request->get("subItems");
+          return $this->manager
+              ->init(['userCode' => $filters['user_code']])
+              ->listSharedItem($filters);
+      }
 }

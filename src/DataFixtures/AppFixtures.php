@@ -13,7 +13,8 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $roles = ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'];
+
+         $roles = ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'];
          $user1 = new User();
          $user1->setCode('0970229e-4867-4ada-b0ac-a199446cbc21')
          ->setEmail('oussamafaleh1998@gmail.com');
@@ -35,7 +36,7 @@ class AppFixtures extends Fixture
         $userItemProp->setUser($user1)
             ->setItem($folder1)
             ->setIsTagged(false)
-            ->addRole('ROLE_OWNER');
+            ->addRoles(['ROLE_OWNER']);
 
         $manager->persist($userItemProp);
 
@@ -43,7 +44,7 @@ class AppFixtures extends Fixture
         $userItemProp1->setUser($user2)
             ->setItem($folder1)
             ->setIsTagged(false)
-            ->addRole('ROLE_READ');
+            ->addRoles(['ROLE_READ']);
 
         $manager->persist($userItemProp1);
 
@@ -60,7 +61,7 @@ class AppFixtures extends Fixture
                 $userItemProp->setUser($user1)
                     ->setItem($subFolder1)
                     ->setIsTagged(false)
-                    ->addRole($role);
+                    ->addRoles([$role]);
                 $manager->persist($userItemProp);
             }
         }

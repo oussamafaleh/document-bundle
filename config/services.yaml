@@ -10,13 +10,26 @@ parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads/'
     env(MONGODB_URL): ''
     env(MONGODB_DB): ''
+    indexName: '%env(INDEX_NAME)%'
+    attachment : '%env(Attachment_Name)%'
+    prefixLink:  '%env(PrefixLink)%'
     Url_Bundle: 'talanDocBundle.com/'
+    es_port: '9200'
+    es_host: 'elasticsearch'
+   
+    
+    
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+       
+ 
+  #  App\Command\TalanCreateElasticsearchIndexCommand:
+  #      arguments: ['%index_name%']
+  #      tags:
+  #          -  { name: console.command , command: 'app:talan:create:elasticsearch:index' }
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

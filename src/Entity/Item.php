@@ -33,7 +33,7 @@ abstract class Item extends AbstractEntity
     private $label;
 
     /**
-     * @ORM\ManyToOne(targetEntity=folder::class  )
+     * @ORM\ManyToOne(targetEntity=folder::class)
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $parent;
@@ -53,6 +53,7 @@ abstract class Item extends AbstractEntity
      */
     private $histories;
 
+  
   
     public function __construct()
     {
@@ -162,6 +163,9 @@ abstract class Item extends AbstractEntity
         return $this;
     }
 
+
+    
+  
 
     
 }

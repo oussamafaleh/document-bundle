@@ -1,17 +1,50 @@
+
 <div id="example2" class="table table-hover">
+    <div class="input-group">
+        
+        <form class="form-group row" action="{{ path('search_keyWord_item_twig') }}">
+            <select name="search_type">
+                <option{% if app.request.get('search_type') == 'extension' %} selected="selected"{% endif %} value="extension">Extension</option>
+                <option{% if app.request.get('search_type') == 'label' %} selected="selected"{% endif %} value="label">Name</option>
+                <option{% if app.request.get('search_type') == 'type' %} selected="selected"{% endif %} value="typeDoc">Type</option>
+                <option{% if app.request.get('search_type') == 'keyword' %} selected="selected"{% endif %} value="keyword">keyword</option>
+                <option{% if app.request.get('search_type') == 'content' %} selected="selected"{% endif %} value="content">content</option>
+                
+            </select>
+
+          
+            <div class="form-outline">
+                <input type="text"  type="search" name="search" placeholder="search "id="form1" class="form-control" />
+              
+              </div>
+
+             
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-search"></i>
+                </button>
+           
+        </form>
+
+
     <table class="table">
         <thead class=" text-primary">
         <tr>
+            <th> <button type="button" data-action="click->folder#DownloadZip" id="btn_zip" class="btn btn-success icon-btn" >
+                <i class="fas fa-file-archive icon-btn"></i>
+            </button></th>
+            <th> </th>
             <th>Label</th>
             <th>Created at</th>
             <th>Last update</th>
-            <th class="justify-content-end d-flex mr-5">actions</th>
+            <th class="justify-content-end d-flex mr-5">Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for item in data.rows %}
-
+          
             <tr>
+
+               <td id="find-tableZip"><input type="checkbox" value="{{item.code}}"></input></td>
                 <td class="d-flex flex-row">
                     {% if item.type == 'folder' %}
                         <i class="fas fa-folder mrl-3 "></i>
@@ -51,3 +84,4 @@
 </div>
 
 <!-- /.card-body -->
+

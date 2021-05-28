@@ -203,7 +203,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
      * @Mapping(object="App\ApiModel\File\File", as="file")
      * @Operation(
      *     tags={"File"},
-     *     summary="file for skeleton",
+     *     summary="read file which has docx as type",
      *     @SWG\Response(
      *         response="200",
      *         description="Returned when successful"
@@ -233,7 +233,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
             * @Mapping(object="App\ApiModel\File\File", as="file")
             * @Operation(
             *     tags={"File"},
-            *     summary="file for skeleton",
+            *     summary="open document in browser",
             *     @SWG\Response(
             *         response="200",
             *         description="Returned when successful"
@@ -258,12 +258,15 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
        }
        
 
+
+
+
         /**
-     * @Route("/ReadXsl/{item_code}", name="read_xsl", methods={"GET"})
+     * @Route("/htmltoPdf", name="html_to_pdf_api", methods={"GET"})
      * @Mapping(object="App\ApiModel\File\File", as="file")
      * @Operation(
      *     tags={"File"},
-     *     summary="file for skeleton",
+     *     summary="read xls file",
      *     @SWG\Response(
      *         response="200",
      *         description="Returned when successful"
@@ -279,67 +282,16 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
      * )
      */
 
+public function htmlToPDF(Request $request){
+ 
+
+$html2pdf = new Html2Pdf();
+$html2pdf->writeHTML('<body><h1>teesssst</h1></body>');
+$html2pdf->output('example14.pdf');
+
+//https://www.codexworld.com/convert-html-to-ms-word-document-export-php/
+    }
   
-public function ReadXsl($item_code)
-{
-    $publicResourcesFolderPath =$this->getParameter('uploads_directory');   
-    $filename=$publicResourcesFolderPath.$item_code;
-    $inputFileType = 'Xlsx';
-    $spreadsheet = IOFactory::load( $filename);
-    $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true); 
-   return $sheetData;
-  
-}
-
-
-
-
-/**
-     * @Route("/ReadCaptureDocx/{item_code}", name="open_capture_doc", methods={"GET"})
-     * @Mapping(object="App\ApiModel\File\File", as="file")
-     * @Operation(
-     *     tags={"File"},
-     *     summary="file for skeleton",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Returned when successful"
-     *     ),
-     *     @SWG\Response(
-     *         response="403",
-     *         description="Returned when the ws-file is not authorized"
-     *     ),
-     *     @SWG\Response(
-     *         response="404",
-     *         description="Returned when the file is not found"
-     *     )
-     * )
-     */
-
-   
-    public function readCaptureDocx($item_code){
-
-    
-        $publicResourcesFolderPath =$this->getParameter('uploads_directory');   
-        $filename=$publicResourcesFolderPath.$item_code;
-    
-        $objReader = \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
-         $phpWord = $objReader->load($filename);
-    
-         $sections = $phpWord->getSections();
-         foreach ($sections as $key => $value) {
-             $sectionElement = $value->getElements();
-             foreach ($sectionElement as $elementKey => $elementValue) {
-                 if ($elementValue instanceof \PhpOffice\PhpWord\Element\TextRun) {
-                     $secondSectionElement = $elementValue->getElements();
-                     foreach ($secondSectionElement as $secondSectionElementKey => $secondSectionElementValue) {
-                         if ($secondSectionElementValue instanceof \PhpOffice\PhpWord\Element\Text) {
-                             echo $secondSectionElementValue->getText();
-                             echo "<br>";
-                         }
-                     }
-                 }
-             }
-         }
    
        
     

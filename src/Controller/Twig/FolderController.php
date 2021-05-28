@@ -116,4 +116,21 @@ class FolderController extends AbstractController
 
 
     }
+
+
+
+
+    /**
+     * @Route("/list-item-shared-withMe", name="list_shared_items_twig", methods={"GET"})
+     * @Mapping(object="App\ApiModel\Folder\SubItems", as="subItems")
+     */
+    public function list111111(Request $request): Response
+    {
+        $filters = (array)$request->get("subItems");
+        $rederedData = $this->manager
+           // ->init(['userCode' => $filters['user_code']])
+            ->listSubItemTwigData( $filters);
+        return $this->render('folder/index.html.twig',$rederedData);
+    }
+
 }

@@ -99,4 +99,137 @@ export default class extends Controller {
 
 
     };
+
+
+
+    Rename(event) {
+        
+           
+       // item_code , parent_code
+        $('button#rename_btn').on('click', function () {
+            var label = $('input#label').val()
+            $.ajax({
+                method: "PATCH",
+                url: "/item/renameItem/" + item_code ,
+                data: JSON.stringify({label: label}),
+            }).done(function (res) {
+                console.log(res)
+
+            }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.responseText)
+            })
+        })
+    }
+
+    //-------------------
+
+    ShareEMail() {
+        const arg = event.currentTarget.dataset;
+        let item_code = arg.sharedItemEmail;
+      
+        $("#btnShare").on('click', function (event) {
+            event.preventDefault();
+            var email = $('input#share_email').val()
+            console.log(email)
+            var roles = [];
+            $("#find-table input:checkbox:checked").map(function () {
+                roles.push($(this).val());
+            });
+            console.log(roles);
+
+            $.ajax({
+                method: "POST",
+                url: "/api/item/shareWithOthers/" + item_code,
+                data: JSON.stringify({email: email, roles: roles}),
+            }).done(function (res) {
+                console.log(res)
+
+            }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.responseText)
+            })
+        });
+
+
+    }
+
+    
+
+    ShareLink() {
+
+        const arg = event.currentTarget.dataset;
+        let item_code = arg.sharedItemLink;
+      
+        $("#shareLink_btn").on('click', function (event) {
+            event.preventDefault();
+            var roles = Array();
+
+            $("#find-tablelink input:checkbox:checked").map(function (item) {
+                roles.push($(this).val());
+            });
+
+            console.log(typeof (roles))
+            $.ajax({
+                method: "POST",
+                url: "/api/item/shareLinks/" + item_code,
+                data: JSON.stringify({roles: roles}),
+            }).done(function (res) {
+                var link = res.results.data.link;
+                $("#link-data").append(JSON.stringify(link));
+
+            }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.responseText)
+            })
+        });
+
+
+    }
+
+
+    CancelShareLink(item_code) {
+       
+       $('button#cancel_btn').on('click', function () {
+           $.ajax({
+               method: "DELETE",
+               url: "/api/item/CancelshareLink/" + item_code ,
+           }).done(function (res) {
+               console.log(res)
+
+           }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+               console.log(XMLHttpRequest.responseText)
+           })
+       })
+   };
+
+
+
+   DownloadZip() {
+        const arg = event.currentTarget.dataset;
+        console.log(arg)
+        $("#btn_zip").on('click', function (event) {
+            event.preventDefault();
+            var items = Array();
+
+          
+            $("#find-tableZip input:checkbox:checked").map(function (item) {
+                items.push($(this).val());
+            });
+          
+            $.ajax({
+                method: "GET",
+                url: "/api/item/downloadZip" ,
+                data: JSON.stringify({items: items}),
+            }).done(function (res) {
+                console.log(res)
+                console.log("ok")
+            }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.responseText)
+            })
+        });
+
+
+    };
+
+
+
+
 }

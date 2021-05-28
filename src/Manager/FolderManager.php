@@ -13,6 +13,7 @@ use App\Utils\MyTools;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormFactory;
+use Elasticsearch\ClientBuilder;
 use Symfony\Component\Security\Core\Security;
 
 class FolderManager extends AbstractManager
@@ -34,15 +35,30 @@ class FolderManager extends AbstractManager
 
 
     private $security;
+    private $indexName;
+    private $es_port ;
+    private $es_host ;
 
-
-    public function __construct(EntityManager $entityManager, Security $security ,FormFactory $formFactory )
+    public function __construct(EntityManager $entityManager, Security $security ,FormFactory $formFactory ,$indexName,  $es_port , $es_host)
     {
         parent::__construct($entityManager);
 
         $this->form  = $formFactory ;
         $this->security = $security;
+        $this->indexName = $indexName;
+        $this->es_port= $es_port ;
+        $this->es_host= $es_host ;
+
+     
     }
+
+
+
+    public function getIndexName(){
+        return $this->indexName;
+    }
+   
+
 
     public function init($settings = [])
     {
@@ -150,6 +166,10 @@ class FolderManager extends AbstractManager
         }
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();
+        $folder = new Folder();
+        $folder->setLabel($folderParam['label'])
+            ->setParent($this->parent);
+        $this->apiEntityManager->persist($folder);
 
         try {
             $folder = new Folder();
@@ -161,10 +181,12 @@ class FolderManager extends AbstractManager
             $user_item_property->setItem($folder)
                 ->setUser($this->user)
                 ->setIsTagged(false)
-                ->addRole("ROLE_OWNER");
+                ->addRoles(["ROLE_OWNER"]);
             $this->apiEntityManager->persist($user_item_property);
             $this->parent->setUpdatedAt(new DateTime());
             $this->apiEntityManager->persist($this->parent);
+        
+        $this->IndexCreateFolder($folderCode,$label);
 
             $this->apiEntityManager->flush();
             $connection->commit();
@@ -206,6 +228,28 @@ class FolderManager extends AbstractManager
             'parent_code' => $this->parent->getCode(),
             'parent_roles' =>$parentRole ];
     }
+
+
+
+
+ /**
+     * @return array
+     * list of subItems
+     */
+    public function listSharedItem($filters)
+    {
+
+       $data = $this->apiEntityManager
+            ->getRepository(Item::class)->findByFilters($filters);
+        return [
+            'messages' => 'list-item-success',
+            'data' => MyTools::paginator($data, $filters['index'], $filters['size']),
+         
+        
+        ];
+    }
+
+
 
 
     /**
@@ -275,6 +319,44 @@ class FolderManager extends AbstractManager
         ]];
     }
 
+
+
+    public function IndexCreateFolder($folderCode,$label){ 
+
+           
+      $user_code = $this->security->getUser()->getCode();   
+     
+      $array = [
+        $this->es_host.':'.$this->es_port
+    ];
+
+     $client = ClientBuilder::create()
+     ->setHosts((array)$array[0])
+     ->build(); 
+        
+         $created_at=$date = date('d-m-y h:i:s');
+       
+       
+        
+       
+          $params = [
+              'index' => $this->getIndexName(),
+              'id' => $folderCode,
+              'body'  => [
+                'label' => $label,
+                 'created_at'=>$created_at,
+                 'update_at'=>null ,
+                 'type' => 'folder',
+                 'user_code'=> $user_code
+                
+                 
+                ]
+          ];
+ 
+          $client->index($params);
+  
+        }
+
     public function setTagged()
     {
 
@@ -308,7 +390,7 @@ class FolderManager extends AbstractManager
         $user_item_property->setItem($folder)
             ->setUser($this->user)
             ->setIsTagged(true)
-            ->addRole("ROLE_OWNER");
+            ->addRoles(["ROLE_OWNER"]);
         $this->apiEntityManager->persist($user_item_property);
         $this->apiEntityManager->flush();
         $connection->commit();
