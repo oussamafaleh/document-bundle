@@ -105,26 +105,27 @@ class FolderManagerTest extends AbstractUnitTestCase
      * @dataProvider getCreateAtributesTests
      */
     public function testCreate(array $initAttr ,array $createAttr ,array $mockResult ){
-        $i =0;
-        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['user']);
-        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['parent']);
-        $this->getDoctrineEntityMock('getRepository',$i++,'findByFilters',$mockResult['list']);
+//        $i =0;
+//        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['user']);
+//        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['parent']);
+//        $this->getDoctrineEntityMock('getRepository',$i++,'findByFilters',$mockResult['list']);
+//
+//        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['property']);
+//        $this->getConnectionMock('getConnection',$i++);
+//        $this->getCommitMock('beginTransaction',$i++);
+//        $this->getDoctrineEntityMock('persist',$i++);
+//        $this->getDoctrineEntityMock('persist',$i++);
+//        $this->getDoctrineEntityMock('flush',$i++);
+//        $this->getCommitMock('commit',$i);
 
-        $this->getDoctrineEntityMock('getRepository',$i++,'findOneBy',$mockResult['property']);
-        $this->getConnectionMock('getConnection',$i++);
-        $this->getCommitMock('beginTransaction',$i++);
-        $this->getDoctrineEntityMock('persist',$i++);
-        $this->getDoctrineEntityMock('persist',$i++);
-        $this->getDoctrineEntityMock('flush',$i++);
-        $this->getCommitMock('commit',$i);
-
-        $security = $this->createMock(Security::class);
+        $folder = $this->createMock(FolderManager::class);
         $form = $this->createMock(FormFactory::class);
         $folderManager = new FolderManager($this->entityManager,$security ,$form);
         $init = $folderManager->init($initAttr);
         $this->assertEquals($init->getParentCode() , $initAttr['parentCode']);
         $this->assertEquals($init->getUserCode() , $initAttr['userCode']);
-
+//creaate manager mock
+        //test function
         $init->create($createAttr);
 
     }

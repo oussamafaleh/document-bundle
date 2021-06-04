@@ -10,6 +10,9 @@
 
             <!-- Button trigger modal -->
             <div class="d-flex  flex-row justify-content-end ">
+                <button type="button" data-action="click->folder#DownloadZip" class="btn btn-success icon-btn" >
+                    <i class="fas fa-file-archive icon-btn"></i>
+                </button>
                 {% if folder_form is defined %}
 
                     {{ include('folder/components/_folderForm.html.twig' , {'folder_form': folder_form ,'current': current  } ) }}
@@ -18,6 +21,9 @@
                     {{ include('folder/components/_fileForm.html.twig' , {'file_form': file_form ,'current': current  } ) }}
                 {% endif %}
 
+            </div>
+        </div>
+    </div>
                 <div class="modal" id="sharefile">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -186,9 +192,6 @@
                     <!-- /.modal-dialog -->
                 </div>
 
-            </div>
-        </div>
-    </div>
     <!-- /.content-header -->
 
     <section class="content" data-controller="folder">

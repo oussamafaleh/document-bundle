@@ -35,19 +35,19 @@ services:
             - ./logs/nginx/:/var/log/nginx:cached 
         networks:
           - backend
-    mongodb:
-        image: mongo
-        container_name: mongodb
-        environment:
-          - PUID=1000
-          - PGID=1000
-        volumes:
-          - ~/mongodb/database:/data/db
-        ports:
-          - 27017:27017
-        restart: unless-stopped
-        networks:
-          - backend
+#    mongodb:
+#        image: mongo
+#        container_name: mongodb
+#        environment:
+#          - PUID=1000
+#          - PGID=1000
+#        volumes:
+#          - ~/mongodb/database:/data/db
+#        ports:
+#          - 27017:27017
+#        restart: unless-stopped
+#        networks:
+#          - backend
     elasticsearch:
       container_name: elasticsearch
       build: elk
