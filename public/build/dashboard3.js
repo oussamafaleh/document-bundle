@@ -6,7 +6,7 @@
   \**********************************************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
-/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "../../../../../../node_modules/jquery/dist/jquery.js");
 /* global Chart:false */
 $(function () {
   'use strict';

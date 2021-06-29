@@ -4,28 +4,98 @@
 
 {% block body %}
     <!-- Content Header (Page header) -->
-    <div class="folder-content-header content-header mb-5"><!-- schema of current file -->
-        <div class="container-fluid  pt-4 pr-4  pb-0 ">
-            <div class="row mb-2">
-                <div class="col-sm-6 mb-3">
-                    <ol class="breadcrumb float-sm-left d-flex align-items-center">
-                        <li class="breadcrumb-item"><i class="fas fa-home"></i></li>
-                        <li class="breadcrumb-item active">Editor</li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div>
-    </div>
-    <!-- /.content-header -->
-    <div class="document-editor m-5" data-controller="doceditor">
-        <div class="document-editor__toolbar"></div>
-        <div class="document-editor__editable-container">
-            <div class="document-editor__editable">
+    <div data-controller="doceditor">
+        <div class="folder-content-header content-header mb-5"><!-- schema of current file -->
+            <div class="container-fluid  pt-4 pr-4  pb-0 ">
+                <div class="row mb-2">
+                    <div class="col-sm-6 mb-3">
+                        <ol class="breadcrumb float-sm-left d-flex align-items-center">
+                            <li class="breadcrumb-item"><i class="fas fa-home"></i></li>
+                            <li class="breadcrumb-item active">Editor</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div>
+            <div class="d-flex flex-column">
 
-                {% if docContent is defined %}
-                    {{ docContent |raw}}
-                {% endif %}
+                <!-- Button trigger modal -->
+                <div class="d-flex  flex-row justify-content-end ">
+                    <button type="button" data-action="click->folder#DownloadZip" class="btn btn-success icon-btn">
+                        <i class="fas fa-file-word icon-btn"></i>
+                    </button>
+                    <button type="button" class="btn btn-blue  icon-btn" data-toggle="modal"
+                            data-target="#addFolderModal">
+                        <i class=" fas fa-file-pdf icon-btn"></i>
+                    </button>
+                    <button type="button" class="btn btn-warning icon-btn" data-toggle="modal"
+                            data-target="#template-upload">
+                        <i class="far fa-file-code  icon-btn"></i>
+                    </button>
+
+                </div>
             </div>
         </div>
+        <div class="modal fade" id="template-upload" tabindex="-1" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Save Template</h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="card-body">
+                        <form>
+
+                            <div class="form-group">
+                                <input type="text" id="template_label" required="required" class="form-control">
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" type="button" data-action="click->doceditor#saveTemplate">Save
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+        <div class="row">
+            <div class="document-editor m-4 {{ app.request.get('_route') == 'edit_template_twig' ? 'col-lg-7' }}">
+                <div class="document-editor__toolbar"></div>
+                <div class="document-editor__editable-container">
+                    <div class="document-editor__editable">
+
+                        {% if docContent is defined %}
+                            {{ docContent |raw }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if app.request.get('_route') == 'edit_template_twig' %}
+            <div class="card card-warning col-lg-4  mt-4">
+                <div class="card-header">
+                    <h3 class="card-title">Complete Document</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <form id="template-form">
+
+
+                    </form>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-info" data-action="click->doceditor#format">Format Document</button>
+                </div>
+                <!-- /.card-footer -->
+                <!-- /.card-body -->
+            </div>
+            {% endif %}
+        </div>
     </div>
+    </div>
+    <!-- general form elements disabled -->
 {% endblock %}

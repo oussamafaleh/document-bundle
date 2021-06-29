@@ -25,7 +25,7 @@ class RuleFixtures extends Fixture
 // set the expression to evaluate when the rule is executed.
 // if the user has loved more than 20 items and the price of the product is more than 50 dollars.
 // the expression string will be evaluated by the Symfony expression language.
-        $rule->setExpression('contain( file.getLabel() ,"stage") ? "stage"');
+        $rule->setExpression('file HAS_LABEL_AS "architec" CLASSIFY "dev department"' );
 
 // set the action events to dispatch when the expression evaluates to true.
 

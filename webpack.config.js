@@ -1,6 +1,6 @@
 const Encore = require('@symfony/webpack-encore');
 var path = require('path');
-
+var dotenv = require('dotenv');
 var webpack = require('webpack');
 
 
@@ -109,6 +109,9 @@ Encore
             }
         } )
     } )
+    .configureDefinePlugin(options => {
+        options['process.env'].url = JSON.stringify('http://localhost:8080');
+    });
 ;
 var config = Encore.getWebpackConfig();
 

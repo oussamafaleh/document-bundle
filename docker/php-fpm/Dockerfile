@@ -19,7 +19,9 @@ RUN "date"
 
 RUN 	pecl install mongodb\
           && docker-php-ext-enable mongodb
-
+#RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository -y ppa:alex-p/tesseract-ocr
+#RUN apt-get update && apt-get install -y tesseract-ocr-eng
+RUN apt install -y tesseract-ocr tesseract-ocr-eng tesseract-ocr-osd
 # RUN php bin/console doctrine:mapping:import "App\Entity" annotation --path=src/Entity
 # RUN php bin/console make:entity --regenerate App
 

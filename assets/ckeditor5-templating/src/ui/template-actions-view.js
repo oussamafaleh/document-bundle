@@ -207,7 +207,7 @@ export default class TemplateActionsView extends View {
 					'ck',
 					'ck-link-actions__preview'
 				],
-				id: bind.to( 'id', id => id  ) ,
+				id: bind.to( 'data-template-var', id => id  ) ,
 				target: '_blank',
 				rel: 'noopener noreferrer'
 			}

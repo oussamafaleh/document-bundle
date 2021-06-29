@@ -17,10 +17,6 @@ class Document extends Item
      * @ORM\Column(type="string", length=255)
      */
     private $extension;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $classification;
 
 
 
@@ -59,17 +55,6 @@ class Document extends Item
     /**
      * @return mixed
      */
-    public function getClassification(): ?string
-    {
-        return $this->classification;
-    }
 
-    /**
-     * @param mixed $classification
-     */
-    public function setClassification( $classification): self
-    {
-        $this->classification = $classification;
-        return $this;
-    }
+
 }

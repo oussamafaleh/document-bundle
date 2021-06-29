@@ -111,7 +111,32 @@ export default class TemplateEditing extends Plugin {
 				view: {
 					name: 'span',
 					attributes: {
-						id: true
+						'data-template-type': true
+					}
+				},
+				model: {
+					key: 'templateVar-type',
+					value: viewElement => viewElement.getAttribute( 'data-template-type' )
+				}
+			} );
+		editor.conversion.for( 'upcast' ).elementToAttribute( {
+			view: {
+				name: 'span',
+				attributes: ['data-template-var']
+
+
+			},
+			model: {
+				key: 'templateVar',
+				value: viewElement => viewElement.getAttribute( 'data-template-var' )
+			}
+		} );
+		editor.conversion.for( 'upcast' )
+			.elementToAttribute( {
+				view: {
+					name: 'span',
+					attributes: {
+						'data-template-var': true
 					}
 				},
 				model: {

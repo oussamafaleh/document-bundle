@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ current.label |capitalize  }}{% endblock %}
+{% block title %}{{ current.label |capitalize }}{% endblock %}
 
 {% block body %}
     <!-- Content Header (Page header) -->
     <div class="folder-content-header content-header mb-5"><!-- schema of current file -->
-       {{ include('folder/components/_schema.html.twig' , {'schema': schema ,'current': current } ) }}
+        {{ include('folder/components/_schema.html.twig' , {'schema': schema ,'current': current } ) }}
         <div class="d-flex flex-column">
 
             <!-- Button trigger modal -->
             <div class="d-flex  flex-row justify-content-end ">
-                <button type="button" data-action="click->folder#DownloadZip" class="btn btn-success icon-btn" >
+                <button type="button" data-action="click->folder#DownloadZip" class="btn btn-success icon-btn">
                     <i class="fas fa-file-archive icon-btn"></i>
                 </button>
                 {% if folder_form is defined %}
@@ -24,173 +24,175 @@
             </div>
         </div>
     </div>
-                <div class="modal" id="sharefile">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Partager avec des personnes et des groupes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="form-group">
-            
-                                        <input type="text" placeholder="Ajouter des personnes" class="form-control"
-                                               id="share_email">
-                                        <label for="message-text" class="col-form-label">Username </label>
-                                        <label for="message-text" class="col-form-label">email </label>
-            
-                                    </div>
-            
-                                    <div id="find-table">
-                                        <input type="checkbox" value="Read">Read</input><br>
-                                        <input type="checkbox" value="Delete">Delete</input><br>
-                                        <input type="checkbox" value="Download">Download</input><br>
-                                    </div>
-            
-            
-                                </form>
-                            </div>
-            
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="btnShare" >Terminer</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
+    <div class="modal" id="sharefile">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Partager avec des personnes et des groupes</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+
+                            <input type="text" placeholder="Ajouter des personnes" class="form-control"
+                                   id="share_email">
+                            <label for="message-text" class="col-form-label">Username </label>
+                            <label for="message-text" class="col-form-label">email </label>
+
+                        </div>
+
+                        <div id="find-table">
+                            <input type="checkbox" value="Read">Read</input><br>
+                            <input type="checkbox" value="Delete">Delete</input><br>
+                            <input type="checkbox" value="Download">Download</input><br>
+                        </div>
+
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnShare">Terminer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--End modal for share with others use mail-->
+
+
+    <!--  ****************************************************************************************************************  -->
+
+
+    <div class="modal" id="RenameItemModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Renommer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+
+                            <input type="text" placeholder="tapper nom" id="label">
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="rename_btn" data-dismiss="modal">Terminer
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--  ****************************************************************************************************************  -->
+
+
+    <!--  ****************************************************************************************************************  -->
+
+
+    <!-- modal for share with Link-->
+    <div class="modal" id="shareLink" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Partager avec des personnes et des groupes</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="form-group">
+
+                        <div id="find-tablelink">
+                            <input type="checkbox" value="Read">Read</input><br>
+                            <input type="checkbox" value="Delete">Delete</input><br>
+                            <input type="checkbox" value="Download">Download</input><br>
                         </div>
                     </div>
+
+
+                    <div id="link-data"></div>
                 </div>
-            
-            
-                <!--End modal for share with others use mail-->
-            
-            
-                <!--  ****************************************************************************************************************  -->
-            
-            
-                <div class="modal" id="RenameItemModal" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Renommer</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="form-group">
-            
-                                        <input type="text" placeholder="tapper nom" id="label">
-            
-                                    </div>
-            
-                            </div>
-            
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="rename_btn"  data-dismiss="modal">Terminer</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="shareLink_btn">Terminer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
-            
-            
-                <!--  ****************************************************************************************************************  -->
-            
-            
-                <!--  ****************************************************************************************************************  -->
-            
-            
-                <!-- modal for share with Link-->
-                <div class="modal" id="shareLink" tabindex="-1" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3 class="modal-title">Partager avec des personnes et des groupes</h3>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-            
-            
-                                <div class="form-group">
-            
-                                    <div id="find-tablelink">
-                                        <input type="checkbox" value="Read">Read</input><br>
-                                        <input type="checkbox" value="Delete">Delete</input><br>
-                                        <input type="checkbox" value="Download">Download</input><br>
-                                    </div>
-                                </div>
-            
-            
-                                <div id="link-data"></div>
-                            </div>
-            
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="shareLink_btn">Terminer</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- End modal for share with Link-->
+
+
+    <!-- ***********************-->
+
+
+    <!--  ****************************************************************************************************************  -->
+
+    <div class="modal fade" id="display_file">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">display file</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            
-            
-                <!-- End modal for share with Link-->
-            
-            
-                <!-- ***********************-->
-            
-            
-                <!--  ****************************************************************************************************************  -->
-            
-                <div class="modal fade" id="display_file">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">display file</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-            
-                            </div>
-                            <div class="modal-footer">
-            
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-            
-                        </div>
-                    </div>
+                <div class="modal-body">
+
                 </div>
-            
-            
-                <div class="modal modal-danger fade" id="confirm-delete">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">Vous etes sur?</h4>
-                            </div>
-                            <div class="modal-body">
-                                <p>Supprimer une donne supprimera également tous les donnes liées</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Terminer</button>
-                                <button type="button" class="btn btn-secondary">Close</button>
-                                <!--
-            
-                                  <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">annuler</button>
-                                 <button type="button" class="btn btn-outline btn-delete">supprimer</button>
-                                -->
-                            </div>
-                        </div>
-                        <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal modal-danger fade" id="confirm-delete">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Vous etes sur?</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Supprimer une donne supprimera également tous les donnes liées</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Terminer</button>
+                    <button type="button" class="btn btn-secondary">Close</button>
+                    <!--
+
+                      <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">annuler</button>
+                     <button type="button" class="btn btn-outline btn-delete">supprimer</button>
+                    -->
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 
     <!-- /.content-header -->
 

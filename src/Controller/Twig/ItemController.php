@@ -78,9 +78,7 @@ class ItemController extends AbstractController
       public function searchKeyWord(Request $request){
 
         $search = $request->query->get('search');
-        $searchType = $request->query->get('search_type');
-     
-        $response= $this->manager->SearchType($search,$searchType);
+        $response= $this->manager->searchType($search['content'],$search['type']);
      //  dump($response);exit;
 
      if($response['hits']['total']['value'] >=1){

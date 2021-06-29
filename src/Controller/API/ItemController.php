@@ -71,7 +71,7 @@ use PhpOffice\PhpWord\Shared\ZipArchive;
       * @Route("/shareLink/{item_code}", name="Share_link_item_api", methods={"GET"})
       * @Operation(
       *     tags={"Item"},
-      *     summary="delete item",
+      *     summary="generate link item",
       *     @SWG\Response(
       *         response="200",
       *         description="Returned when successful"
@@ -605,7 +605,7 @@ use PhpOffice\PhpWord\Shared\ZipArchive;
         $search = $request->query->get('search');
         $searchType = $request->query->get('search_type');
      
-        $response= $this->manager->SearchType($search,$searchType);
+        $response= $this->manager->searchType($search,$searchType);
       
 
      if($response['hits']['total']['value'] >=1){

@@ -47,6 +47,28 @@ class AppFixtures extends Fixture
             ->addRoles(['ROLE_READ']);
 
         $manager->persist($userItemProp1);
+        // cerate template folder
+
+        $templateFolder = new Folder();
+        $templateFolder->setLabel('template')
+            ->setCode('b7d39fc9-297e-489e-ae3e-59573b15b4f1')
+            ->setCreatedAt(new \DateTime());
+        $manager->persist($templateFolder);
+        $userItemProp2 = new UserItemProperty();
+        $userItemProp2->setUser($user1)
+            ->setItem($templateFolder)
+            ->setIsTagged(true)
+            ->addRoles(['ROLE_OWNER']);
+
+        $manager->persist($userItemProp2);
+
+        $userItemProp3 = new UserItemProperty();
+        $userItemProp3->setUser($user2)
+            ->setItem($templateFolder)
+            ->setIsTagged(true)
+            ->addRoles(['ROLE_OWNER']);
+
+        $manager->persist($userItemProp3);
 
         // cerate other folders under root
         foreach (range(0, 5) as $number) {

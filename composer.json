@@ -54,9 +54,7 @@
         "thiagoalessio/tesseract_ocr": "^2.11",
         "tonchik-tm/pdf-to-html": "~1",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "symfony/cache": "^3.4|^4.0|^5.0",
-        "symfony/service-contracts": "^1.1|^2"
+        "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",

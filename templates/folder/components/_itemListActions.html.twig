@@ -5,6 +5,8 @@
 
         <a href="{{ path('list_sub_items_twig', {'parent_code': item.code}) }}"
            class="marine mr-4 ml-4"><i class="fas fa-folder-open"></i></a>
+    {% elseif item.type == 'template'%}
+        <a href="{{ path('edit_template_twig', {'item_code': item.code}) }}"><i class="far fa-file-code mrl-3 "></i></a>
     {% endif %}
 
 
@@ -36,8 +38,6 @@
                 <div class="dropdown-divider"></div>
 
             {% else %}
-
-
 
                 <a href="{{ path('download_file_twig', {'item_code': item.code}) }}" class="dropdown-item " > <button type="button" class="btn">download </button></a>
                 <div class="dropdown-divider"></div>

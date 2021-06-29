@@ -1,0 +1,2 @@
+FROM elasticsearch:7.4.2
+RUN bin/elasticsearch-plugin install --batch ingest-attachment

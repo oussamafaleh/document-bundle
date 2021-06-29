@@ -6,6 +6,7 @@ namespace App\EventListener;
 
 use App\Form\FolderType;
 use App\Manager\DashboardManager;
+use App\Form\DocumentType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -51,8 +52,10 @@ class TwigEventSubscriber
             ->getTaggedFolders()['data'];
 
         $folderForm = $this->form->create(FolderType::class );
+        $fileForm = $this->form->create(DocumentType::class );
 
         $globalData['tag_form'] = $folderForm->createView();
+        $globalData['file_classify_form'] = $fileForm->createView();
         return $globalData;
 
     }
@@ -63,6 +66,7 @@ class TwigEventSubscriber
     if(str_contains ( $event->getRequest()->get('_controller'),self::TWIG_ROUT)){
         $this->twig->addGlobal('tagged', $this->getGlobalData()['tagged']);
         $this->twig->addGlobal('tag_form', $this->getGlobalData()['tag_form']);
+        $this->twig->addGlobal('file_classify_form', $this->getGlobalData()['file_classify_form']);
 
     }
 }

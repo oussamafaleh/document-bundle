@@ -154,6 +154,30 @@
         </ul>
     </nav>
     <!-- /.navbar -->
+    <div class="modal fade" id="importFileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-controller="file">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Upload File</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                {{ form_start(file_classify_form, {'action': path('upload_file_twig',{'request': app.request,'parent_code': "cc"  }), 'method': 'POST'}) }}
+
+                    <div class="d-flex flex-row">
+
+                        {{ form_widget(file_classify_form) }}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn" type="button" data-action="click->file#classify" data-user="{{ app.user.code }}" >classify</button>
+                        <button class="btn">{{ 'Create'|default('Save') }}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+
+                {{ form_end(file_classify_form) }}
+            </div>
+        </div>
+    </div>
 
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -177,17 +201,14 @@
 
             <!-- SidebarSearch Form -->
             <div class="form-inline">
-                <div class="input-group" data-widget="sidebar-search">
-                    <input class="form-control form-control-sidebar" type="search" placeholder="Search"
+                <div class="input-group" data-toggle="modal" data-target="#importFileModal">
+                    <button class="form-control form-control-sidebar"
                            aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-sidebar">
-                            <i class="fas fa-search fa-fw"></i>
-                        </button>
-                    </div>
+                        Import File
+                        <i class="fas fa-upload fa-fw"></i>
+                    </button>
                 </div>
             </div>
-
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"

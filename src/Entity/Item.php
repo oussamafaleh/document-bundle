@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=ItemRepository::class)
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"folder" = "Folder", "document" = "Document"})
+ * @ORM\DiscriminatorMap({"folder" = "Folder", "document" = "Document", "template" = "Template"})
  */
 abstract class Item extends AbstractEntity
 {

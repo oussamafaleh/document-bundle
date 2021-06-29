@@ -39,7 +39,7 @@ class CreateElasticsearchIndexCommand extends Command
         if ($index_name) {
             $io->note(sprintf('You passed an argument: %s', $index_name));
 
-            $hostQuestion = new Question("Enter the host : (127.0.0.1) ", "127.0.0.1");
+            $hostQuestion = new Question("Enter the host : (elasticsearch) ", "elasticsearch");
             $host = $helper->ask($input, $output, $hostQuestion);
             $output->writeln($host);
            
@@ -54,7 +54,47 @@ class CreateElasticsearchIndexCommand extends Command
             ->setHosts((array)$array[0])
             ->build(); 
              $params = [
-                'index' =>   $index_name
+                'index' =>   $index_name,
+                 'body' => [
+                     'settings' => [
+                         'number_of_shards' => 1,
+                         'number_of_replicas' => 0,
+//                         'analysis' => [
+//                             'filter' => [
+//                                 'shingle' => [
+//                                     'type' => 'shingle'
+//                                 ]
+//                             ],
+//                             'char_filter' => [
+//                                 'pre_negs' => [
+//                                     'type' => 'pattern_replace',
+//                                     'pattern' => '(\\w+)\\s+((?i:never|no|nothing|nowhere|noone|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint))\\b',
+//                                     'replacement' => '~$1 $2'
+//                                 ],
+//                                 'post_negs' => [
+//                                     'type' => 'pattern_replace',
+//                                     'pattern' => '\\b((?i:never|no|nothing|nowhere|noone|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint))\\s+(\\w+)',
+//                                     'replacement' => '$1 ~$2'
+//                                 ]
+//                             ],
+//                             'analyzer' => [
+//                                 'reuters' => [
+//                                     'type' => 'custom',
+//                                     'tokenizer' => 'standard',
+//                                     'filter' => ['lowercase', 'stop', 'kstem']
+//                                 ]
+//                             ]
+//                         ]
+                     ],
+                     'mappings' => [
+                         'properties' => [
+                             'label' => [
+                                 'type' => 'text',
+                                 'analyzer' => 'standard'
+                             ]
+                         ]
+                     ]
+                 ]
               ];
     
              $response = $client->indices()->create($params);

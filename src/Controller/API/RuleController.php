@@ -29,10 +29,9 @@ class RuleController extends AbstractController
     /**
      * ruleController constructor.
      */
-    public function __construct(RuleManager $ruleManager, Security $security )
+    public function __construct(RuleManager $ruleManager )
     {
         $this->manager = $ruleManager;
-        $this->security = $security;
     }
 
 
@@ -76,15 +75,16 @@ class RuleController extends AbstractController
      *     )
      * )
      */
-    public function rule(Request $request)
+    public function evaluate(Request $request)
     {
 
-        $expression = $request->get('expression');
-        $expr_arg = (array)$request->get('expr_arg');
 
+        $user_code = $request->get('user_code');
+        $file = $request->files->get('file');
 
         return $this->manager
-            ->evaluateRule($expression , $expr_arg );
+            ->init(['userCode' => $user_code])
+            ->evaluateRule( $file );
     }
 
     /**
@@ -133,9 +133,8 @@ class RuleController extends AbstractController
     {
 
         $expression = $request->get('expression');
-        $expr_arg = $request->get('expr_arg');
         return $this->manager
-            ->compileRule($expression , $expr_arg );
+            ->compileRule($expression);
     }
 
 

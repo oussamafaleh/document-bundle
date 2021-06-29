@@ -166,7 +166,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
      * @Mapping(object="App\ApiModel\File\File", as="file")
      * @Operation(
      *     tags={"File"},
-     *     summary="file for skeleton",
+     *     summary="location of file",
      *     @SWG\Response(
      *         response="200",
      *         description="Returned when successful"
@@ -291,10 +291,59 @@ $html2pdf->output('example14.pdf');
 
 //https://www.codexworld.com/convert-html-to-ms-word-document-export-php/
     }
-  
-   
-       
-    
+
+
+
+     /**
+      * @Route("/upload-template", name="upload_template", methods={"POST"})
+      * @Mapping(object="App\ApiModel\File\File", as="file")
+      * @Operation(
+      *     tags={"File"},
+      *     summary="upload template",
+      *     @SWG\Parameter(
+      *         name="file",
+      *         in="formData",
+      *         type="file",
+      *         description="file",
+      *         required=true
+      *     ),
+      *     @SWG\Parameter(
+      *         name="parent_code",
+      *         in="query",
+      *         type="string",
+      *         description="parent folder",
+      *         required=true
+      *     ),
+      *     @SWG\Parameter(
+      *         name="user_code",
+      *         in="query",
+      *         type="string",
+      *         description="code of user",
+      *         required=true
+      *     ),
+      *     @SWG\Response(
+      *         response="200",
+      *         description="Returned when successful"
+      *     ),
+      *     @SWG\Response(
+      *         response="403",
+      *         description="Returned when the ws-file is not authorized"
+      *     ),
+      *     @SWG\Response(
+      *         response="404",
+      *         description="Returned when the file is not found"
+      *     )
+      * )
+      */
+     public function saveTemplate(Request $request)
+     {
+
+         $file = $request->files->get('file');
+         $fileParam = (array)$request->get('file');
+         return $this->manager
+             ->init(['parentCode' => $fileParam['parent_code'] , 'userCode' => $fileParam['user_code']])
+             ->saveTemplate($file);
+     }
     
     
 

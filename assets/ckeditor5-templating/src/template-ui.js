@@ -126,7 +126,7 @@ export default class TemplateUi extends Plugin {
 		const templateCommand = editor.commands.get( 'template' );
 		const cancelTemplateCommand = editor.commands.get( 'canceltemplate' );
 
-		actionsView.bind( 'href' ).to( templateCommand, 'value' );
+		actionsView.bind( 'data-template-var' ).to( templateCommand, 'value' );
 		actionsView.editButtonView.bind( 'isEnabled' ).to( templateCommand );
 		actionsView.unlinkButtonView.bind( 'isEnabled' ).to( cancelTemplateCommand );
 

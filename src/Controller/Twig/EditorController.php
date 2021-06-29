@@ -55,5 +55,17 @@ class EditorController extends AbstractController
         return $this->render('editor/editor.html.twig', $docContent);
     }
 
+    /**
+     * @Route("/edithtml/{item_code}", name="edit_template_twig", methods={"GET"})
+     */
+
+    public function readHTML($item_code)
+    {
+
+        $HTMLContent = $this->manager->HTMLContent($item_code);
+
+
+        return $this->render('editor/editor.html.twig', $HTMLContent);
+    }
 
 }
