@@ -78,7 +78,6 @@ DecoupledEditor.defaultConfig = {
     toolbar: {
         items: [
             'template',
-            'template-save',
             '|',
             'heading',
             '|',

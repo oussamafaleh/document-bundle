@@ -15,14 +15,14 @@ const URL_BASE = process.env.url;
 export default class extends Controller {
     connect() {
         Prism.languages.rule = {
+            'string':{
+                pattern : /"[0-9a-zA-Z-_]+"/
+            },
             'number':{
                 pattern : /[0-9]+(?:\.[0-9]+)?([Ee][\+\-][0-9]+)?/
             },
             'punctuation':{
                 pattern : /[(){};:,]/
-            },
-            'string':{
-                pattern : /"[0-9a-zA-Z-_]+"/
             },
             'operator':{
                 pattern : /\b[A-Z_]+\b/,
