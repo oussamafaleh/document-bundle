@@ -2,14 +2,12 @@ version: '2'
 services:
     
     mysql:
-        image: mysql:8.0.17
-        environment:
-          MYSQL_ROOT_PASSWORD: docb_psw
-          MYSQL_USER : docb_user
-          MYSQL_PASSWORD: docb_psw
-          MYSQL_DATABASE: testdb
+        build: mysql
+        restart: always
         ports:
           - "3306:3306"
+        volumes:
+          - ./mysql/data:/docker-entrypoint-initdb.d
         networks:
           - backend
     php:

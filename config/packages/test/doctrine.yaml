@@ -5,3 +5,15 @@
 #        #
 #        # If you're using ParaTest, "TEST_TOKEN" is set by ParaTest otherwise nothing is appended to the database name.
 #        dbname: main_test%env(default::TEST_TOKEN)%
+
+doctrine:
+  dbal:
+    # configure these for your database server
+    driver: 'pdo_mysql'
+    server_version: '5.7'
+    charset: utf8mb4
+    default_table_options:
+      charset: utf8mb4
+      collate: utf8mb4_unicode_ci
+
+    url: '%env(resolve:DATABASE_URL)%'
