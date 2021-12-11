@@ -186,7 +186,7 @@ class FolderManager extends AbstractManager
             $this->parent->setUpdatedAt(new DateTime());
             $this->apiEntityManager->persist($this->parent);
         
-        $this->IndexCreateFolder($folderCode,$label);
+        $this->IndexCreateFolder($folder);
 
             $this->apiEntityManager->flush();
             $connection->commit();
@@ -321,7 +321,7 @@ class FolderManager extends AbstractManager
 
 
 
-    public function IndexCreateFolder($folderCode,$label){ 
+    public function IndexCreateFolder(Folder $folder){ 
 
            
       $user_code = $this->security->getUser()->getCode();   
@@ -341,9 +341,9 @@ class FolderManager extends AbstractManager
        
           $params = [
               'index' => $this->getIndexName(),
-              'id' => $folderCode,
+              'id' => $folder->getCode(),
               'body'  => [
-                'label' => $label,
+                'label' => $folder->getlabel(),
                  'created_at'=>$created_at,
                  'update_at'=>null ,
                  'type' => 'folder',

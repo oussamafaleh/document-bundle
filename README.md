@@ -37,3 +37,9 @@ docker_nginx                            "/docker-entrypoint.…"           Up 18
 docker_db                               "docker-entrypoint.s…"           Up 21 seconds       0.0.0.0:3306->5432/tcp          docker_db_1
 docker_php                              "docker-php-entrypoi…"           Up 21 seconds       0.0.0.0:9002->9000/tcp          docker_php_1
 
+
+```
+# elastic search 
+
+in vendor/elasticsearch/elasticsearch/src/Elasticsearch/Endpoints/Ingest/Pipeline/Put.php line 21 
+change setBody(string $body) ===> setBody(array $body)

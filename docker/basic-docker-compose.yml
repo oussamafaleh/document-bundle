@@ -1,6 +1,5 @@
 version: '2'
 services:
-    
     mysql:
         build: mysql
         restart: always
@@ -67,19 +66,17 @@ services:
         - ./elk/elasticsearch-data:/usr/share/elasticsearch/data
       networks:
         - backend
-#    kibana:
-#      container_name: kibana
-#      depends_on:
-#        - elasticsearch
-#      image: docker.elastic.co/kibana/kibana:7.4.2
-#      environment:
-#        SERVER_NAME: localhost
-#        ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-#      networks:
-#        - backend
-#      ports:
-#        - "81:5601"
-
-
+    kibana:
+      container_name: kibana
+      depends_on:
+        - elasticsearch
+      image: docker.elastic.co/kibana/kibana:7.4.2
+      environment:
+        SERVER_NAME: localhost
+        ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      networks:
+        - backend
+      ports:
+        - "81:5601"
 networks:
   backend :

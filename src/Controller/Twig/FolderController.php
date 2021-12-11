@@ -45,7 +45,6 @@ class FolderController extends AbstractController
         $folderParam= (array)$request->get('folder');
         $form = $this->createForm(FolderType::class );
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $form->getData();
             $folderParam['label']= $form->getData()['label'];

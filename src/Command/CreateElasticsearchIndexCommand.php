@@ -22,8 +22,8 @@ class CreateElasticsearchIndexCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addArgument('index_name', InputArgument::REQUIRED, 'index name of elasticsearch')
-            ->addArgument('attachment', InputArgument::REQUIRED, 'id attachment if you would index files pdf or docs for example')
+            ->addOption('index_name', 'i',InputOption::VALUE_OPTIONAL, 'index name of elasticsearch')
+            ->addOption('attachment', 'a', InputOption::VALUE_OPTIONAL, 'id attachment if you would index files pdf or docs for example')
           
         ;
     }
@@ -31,12 +31,12 @@ class CreateElasticsearchIndexCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $index_name = $input->getArgument('index_name');
-        $attachment = $input->getArgument('attachment');
+        $index_name = $input->getOption('index_name');
+        $attachment = $input->getOption('attachment');
         $helper = $this->getHelper('question');
-
-
+        $client = null;
         if ($index_name) {
+        dump($index_name);
             $io->note(sprintf('You passed an argument: %s', $index_name));
 
             $hostQuestion = new Question("Enter the host : (elasticsearch) ", "elasticsearch");
@@ -103,6 +103,18 @@ class CreateElasticsearchIndexCommand extends Command
 
         if($attachment){
 
+            if(!$client){
+
+                $array = [
+                    'elasticsearch:9200'
+                ];
+
+                $client = ClientBuilder::create()
+                ->setHosts($array)
+                ->build(); 
+            }
+
+            dump($attachment);
             
            $params = [
             'id' => $attachment,

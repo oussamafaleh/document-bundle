@@ -3,4 +3,5 @@ ENV MYSQL_ROOT_PASSWORD docb_psw
 ENV MYSQL_USER docb_user
 ENV MYSQL_PASSWORD docb_psw
 ENV MYSQL_DATABASE testdb
-COPY ./doc/01-init.sql /docker-entrypoint-initdb.d
+COPY ./data/01-init.sql /docker-entrypoint-initdb.d
+COPY ./data/100-fixtures.sql /docker-entrypoint-initdb.d
