@@ -11,7 +11,10 @@
 
 namespace App\RuleExpressionLanguage\ExpressionLanguage;
 
-class SyntaxError extends \LogicException
+use LogicException;
+use const INF;
+
+class SyntaxError extends LogicException
 {
     public function __construct(string $message, int $cursor = 0, string $expression = '', string $subject = null, array $proposals = null)
     {
@@ -22,7 +25,7 @@ class SyntaxError extends \LogicException
         $message .= '.';
 
         if (null !== $subject && null !== $proposals) {
-            $minScore = \INF;
+            $minScore = INF;
             foreach ($proposals as $proposal) {
                 $distance = levenshtein($subject, $proposal);
                 if ($distance < $minScore) {

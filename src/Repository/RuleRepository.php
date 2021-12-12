@@ -55,7 +55,7 @@ class RuleRepository extends ServiceEntityRepository
         $eventName = MyTools::getOption($filters, 'event_name');
         $page = MyTools::getOption($filters, 'index', 1);
         $maxPerPage = MyTools::getOption($filters, 'size', 10);
-        $parameters =[':eventName' => $eventName];
+        $parameters = [':eventName' => $eventName];
         $select = [
             'eventName' => 'r.event_name',
             'expression' => "r.expression",
@@ -69,8 +69,7 @@ class RuleRepository extends ServiceEntityRepository
             $rsm->addScalarResult($column, $column);
         }
         $sql = 'SELECT ' . substr($sql, 0, -2)
-            . ' FROM  rule   AS r '
-        ;
+            . ' FROM  rule   AS r ';
         if ($page > 0) {
             $sql .= ' LIMIT ' . $maxPerPage . ' OFFSET ' . (($page - 1) * $maxPerPage);
         }

@@ -2,30 +2,26 @@
 
 namespace App\Command;
 
+use Elasticsearch\ClientBuilder;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 use Symfony\Component\Console\Question\Question;
-use Elasticsearch\ClientBuilder;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CreateElasticsearchIndexCommand extends Command
 {
     protected static $defaultName = 'talan:create:elastic:index';
     protected static $defaultDescription = 'Add a short description for your command';
-    
+
 
     protected function configure()
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addOption('index_name', 'i',InputOption::VALUE_OPTIONAL, 'index name of elasticsearch')
-            ->addOption('attachment', 'a', InputOption::VALUE_OPTIONAL, 'id attachment if you would index files pdf or docs for example')
-          
-        ;
+            ->addOption('index_name', 'i', InputOption::VALUE_OPTIONAL, 'index name of elasticsearch')
+            ->addOption('attachment', 'a', InputOption::VALUE_OPTIONAL, 'id attachment if you would index files pdf or docs for example');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -36,29 +32,29 @@ class CreateElasticsearchIndexCommand extends Command
         $helper = $this->getHelper('question');
         $client = null;
         if ($index_name) {
-        dump($index_name);
+            dump($index_name);
             $io->note(sprintf('You passed an argument: %s', $index_name));
 
             $hostQuestion = new Question("Enter the host : (elasticsearch) ", "elasticsearch");
             $host = $helper->ask($input, $output, $hostQuestion);
             $output->writeln($host);
-           
+
             $portQuestion = new Question("Enter the port : (9200) ", "9200");
             $port = $helper->ask($input, $output, $portQuestion);
             $output->writeln($port);
             $array = [
-                $host.':'.$port
-           ];
+                $host . ':' . $port
+            ];
 
             $client = ClientBuilder::create()
-            ->setHosts((array)$array[0])
-            ->build(); 
-             $params = [
-                'index' =>   $index_name,
-                 'body' => [
-                     'settings' => [
-                         'number_of_shards' => 1,
-                         'number_of_replicas' => 0,
+                ->setHosts((array)$array[0])
+                ->build();
+            $params = [
+                'index' => $index_name,
+                'body' => [
+                    'settings' => [
+                        'number_of_shards' => 1,
+                        'number_of_replicas' => 0,
 //                         'analysis' => [
 //                             'filter' => [
 //                                 'shingle' => [
@@ -85,51 +81,51 @@ class CreateElasticsearchIndexCommand extends Command
 //                                 ]
 //                             ]
 //                         ]
-                     ],
-                     'mappings' => [
-                         'properties' => [
-                             'label' => [
-                                 'type' => 'text',
-                                 'analyzer' => 'standard'
-                             ]
-                         ]
-                     ]
-                 ]
-              ];
-    
-             $response = $client->indices()->create($params);
+                    ],
+                    'mappings' => [
+                        'properties' => [
+                            'label' => [
+                                'type' => 'text',
+                                'analyzer' => 'standard'
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+
+            $response = $client->indices()->create($params);
 
         }
 
-        if($attachment){
+        if ($attachment) {
 
-            if(!$client){
+            if (!$client) {
 
                 $array = [
                     'elasticsearch:9200'
                 ];
 
                 $client = ClientBuilder::create()
-                ->setHosts($array)
-                ->build(); 
+                    ->setHosts($array)
+                    ->build();
             }
 
             dump($attachment);
-            
-           $params = [
-            'id' => $attachment,
-            'body' => [
-                'processors' => [
-                    [
-                        $attachment => [
-                            'field' => 'data',
-                            'indexed_chars' => -1
+
+            $params = [
+                'id' => $attachment,
+                'body' => [
+                    'processors' => [
+                        [
+                            $attachment => [
+                                'field' => 'data',
+                                'indexed_chars' => -1
+                            ]
                         ]
                     ]
                 ]
-            ]
-        ];
-        $client->ingest()->putPipeline($params);
+            ];
+            $client->ingest()->putPipeline($params);
         }
         $io->success('You have created new Index And Attachement , Good Job ');
         return 0;

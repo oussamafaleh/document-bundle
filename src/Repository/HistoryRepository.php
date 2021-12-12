@@ -104,7 +104,6 @@ class HistoryRepository extends ServiceEntityRepository
         }
 
 
-
         $cacheKey = sha1($sql . json_encode($parameters));
         return $this->getEntityManager()
             ->createNativeQuery($sql, $rsm)

@@ -7,6 +7,8 @@ use App\Entity\History;
 use App\Entity\Item;
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Exception;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DashboardManager extends AbstractManager
 {
@@ -14,11 +16,6 @@ class DashboardManager extends AbstractManager
     /** @var string */
     private $userCode;
 
-
-    public function __construct(EntityManager $entityManager)
-    {
-        parent::__construct($entityManager);
-    }
 
     public function init($settings = [])
     {
@@ -32,7 +29,7 @@ class DashboardManager extends AbstractManager
                 ->findOneBy(['code' => $this->getUserCode()]);
 
             if (!$this->user instanceof User) {
-                throw new \Exception('UNKNOWN_USER');
+                throw new HttpException('UNKNOWN_USER');
             }
         }
 
@@ -47,7 +44,6 @@ class DashboardManager extends AbstractManager
     {
         return $this->userCode;
     }
-
 
 
     /**
@@ -66,11 +62,12 @@ class DashboardManager extends AbstractManager
             'user' => $this->user->getId()
         ];
 
-        $data =   $this->apiEntityManager
+        $data = $this->apiEntityManager
             ->getRepository(Document::class)->findByFilters($filters);
 
         return ['data' => $data];
     }
+
     function getTaggedFolders()
     {
 
@@ -78,10 +75,10 @@ class DashboardManager extends AbstractManager
         $filters = [
             'user' => $this->user->getId(),
             'is_tagged' => "1",
-            'type'=> "folder"
+            'type' => "folder"
         ];
 
-        $data =   $this->apiEntityManager
+        $data = $this->apiEntityManager
             ->getRepository(Item::class)->findByFilters($filters);
 
         return ['data' => $data];
@@ -90,11 +87,11 @@ class DashboardManager extends AbstractManager
     function getBreafHistory()
     {
         $filters = [
-            'index' => 1 ,
+            'index' => 1,
             'size' => 7
         ];
 
-        $data =   $this->apiEntityManager
+        $data = $this->apiEntityManager
             ->getRepository(History::class)->findByFilters($filters);
         return ['data' => $data];
     }

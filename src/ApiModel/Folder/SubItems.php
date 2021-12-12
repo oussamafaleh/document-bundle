@@ -2,10 +2,10 @@
 
 namespace App\ApiModel\Folder;
 
-use App\ApiModel\Traits\ApiUser;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\Request\CommonParameterBag;
 use App\ApiModel\Traits\ApiList;
+use App\ApiModel\Traits\ApiUser;
+use App\Request\CommonParameterBag;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Authentication

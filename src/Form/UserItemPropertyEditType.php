@@ -6,28 +6,25 @@ use App\Entity\UserItemProperty;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class UserItemPropertyEditType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-      /*  ->add('roles', CollectionType::class, [
-            'entry_type' => ChoiceType::class,
-            'entry_options' => [
-                'label' => false,
-                'choices' => [
-                    'User' => 'ROLE_USER',
-                    'Admin' => 'ROLE_ADMIN',
-                ],
-            ],
-        ])
-       
-        */
-        ->add('roles')
-        ;
+            /*  ->add('roles', CollectionType::class, [
+                  'entry_type' => ChoiceType::class,
+                  'entry_options' => [
+                      'label' => false,
+                      'choices' => [
+                          'User' => 'ROLE_USER',
+                          'Admin' => 'ROLE_ADMIN',
+                      ],
+                  ],
+              ])
+
+              */
+            ->add('roles');
     }
 
 
@@ -35,9 +32,9 @@ class UserItemPropertyEditType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            
+
             'data_class' => UserItemProperty::class,
-            
+
         ]);
     }
-  }
+}

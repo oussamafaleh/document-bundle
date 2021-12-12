@@ -41,13 +41,12 @@ class UnaryNode extends Node
             ->raw('(')
             ->raw(self::OPERATORS[$this->attributes['operator']])
             ->compile($this->nodes['node'])
-            ->raw(')')
-        ;
+            ->raw(')');
     }
 
-    public function evaluate($functions,$operators, $values)
+    public function evaluate($functions, $operators, $values)
     {
-        $value = $this->nodes['node']->evaluate($functions,$operators, $values);
+        $value = $this->nodes['node']->evaluate($functions, $operators, $values);
         switch ($this->attributes['operator']) {
             case 'not':
             case '!':
@@ -61,6 +60,6 @@ class UnaryNode extends Node
 
     public function toArray(): array
     {
-        return ['(', $this->attributes['operator'].' ', $this->nodes['node'], ')'];
+        return ['(', $this->attributes['operator'] . ' ', $this->nodes['node'], ')'];
     }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass=UserItemPropertyRepository::class)
  */
-class UserItemProperty  implements UserInterface
+class UserItemProperty implements UserInterface
 {
     /**
      * @ORM\Id
@@ -22,7 +22,7 @@ class UserItemProperty  implements UserInterface
      * @var json
      *
      * @ORM\Column(name="roles", type="json", nullable=false)
-     * 
+     *
      */
     private $roles;
 
@@ -39,9 +39,10 @@ class UserItemProperty  implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Item::class)
-     *@ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $item;
+
     /**
      * User constructor.
      */
@@ -49,6 +50,7 @@ class UserItemProperty  implements UserInterface
     {
         $this->roles = [];
     }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,7 +64,7 @@ class UserItemProperty  implements UserInterface
     public function addRoles(array $roles): self
     {
 
-        foreach ($roles as $role){
+        foreach ($roles as $role) {
             if (!in_array($role, $this->roles, true)) {
                 $this->roles[] = $role;
             }

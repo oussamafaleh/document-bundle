@@ -3,7 +3,6 @@
 namespace App\ApiModel\Dashboard;
 
 use App\ApiModel\Traits\ApiUser;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Request\CommonParameterBag;
 
 /**
@@ -14,7 +13,4 @@ class Dashboard extends CommonParameterBag
 {
 
     use ApiUser;
-
-
-
 }

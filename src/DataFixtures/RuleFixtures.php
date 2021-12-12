@@ -4,7 +4,6 @@
 namespace App\DataFixtures;
 
 
-use App\Entity\Action;
 use App\Entity\Rule;
 use App\Event\RuleEvent\FileEvent;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -25,10 +24,9 @@ class RuleFixtures extends Fixture
 // set the expression to evaluate when the rule is executed.
 // if the user has loved more than 20 items and the price of the product is more than 50 dollars.
 // the expression string will be evaluated by the Symfony expression language.
-        $rule->setExpression('file HAS_LABEL_AS "architec" CLASSIFY "dev department"' );
+        $rule->setExpression('file HAS_LABEL_AS "architec" CLASSIFY "dev department"');
 
 // set the action events to dispatch when the expression evaluates to true.
-
 
 
         $manager->persist($rule);

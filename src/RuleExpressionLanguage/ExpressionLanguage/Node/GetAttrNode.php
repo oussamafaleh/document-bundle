@@ -12,6 +12,12 @@
 namespace App\RuleExpressionLanguage\ExpressionLanguage\Node;
 
 use App\RuleExpressionLanguage\ExpressionLanguage\Compiler;
+use ArrayAccess;
+use RuntimeException;
+use function get_class;
+use function is_array;
+use function is_callable;
+use function is_object;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -39,8 +45,7 @@ class GetAttrNode extends Node
                 $compiler
                     ->compile($this->nodes['node'])
                     ->raw('->')
-                    ->raw($this->nodes['attribute']->attributes['value'])
-                ;
+                    ->raw($this->nodes['attribute']->attributes['value']);
                 break;
 
             case self::METHOD_CALL:
@@ -50,27 +55,25 @@ class GetAttrNode extends Node
                     ->raw($this->nodes['attribute']->attributes['value'])
                     ->raw('(')
                     ->compile($this->nodes['arguments'])
-                    ->raw(')')
-                ;
+                    ->raw(')');
                 break;
 
             case self::ARRAY_CALL:
                 $compiler
                     ->compile($this->nodes['node'])
                     ->raw('[')
-                    ->compile($this->nodes['attribute'])->raw(']')
-                ;
+                    ->compile($this->nodes['attribute'])->raw(']');
                 break;
         }
     }
 
-    public function evaluate($functions,$operators, $values)
+    public function evaluate($functions, $operators, $values)
     {
         switch ($this->attributes['type']) {
             case self::PROPERTY_CALL:
-                $obj = $this->nodes['node']->evaluate($functions,$operators, $values);
-                if (!\is_object($obj)) {
-                    throw new \RuntimeException('Unable to get a property on a non-object.');
+                $obj = $this->nodes['node']->evaluate($functions, $operators, $values);
+                if (!is_object($obj)) {
+                    throw new RuntimeException('Unable to get a property on a non-object.');
                 }
 
                 $property = $this->nodes['attribute']->attributes['value'];
@@ -78,23 +81,23 @@ class GetAttrNode extends Node
                 return $obj->$property;
 
             case self::METHOD_CALL:
-                $obj = $this->nodes['node']->evaluate($functions,$operators, $values);
-                if (!\is_object($obj)) {
-                    throw new \RuntimeException('Unable to get a property on a non-object.');
+                $obj = $this->nodes['node']->evaluate($functions, $operators, $values);
+                if (!is_object($obj)) {
+                    throw new RuntimeException('Unable to get a property on a non-object.');
                 }
-                if (!\is_callable($toCall = [$obj, $this->nodes['attribute']->attributes['value']])) {
-                    throw new \RuntimeException(sprintf('Unable to call method "%s" of object "%s".', $this->nodes['attribute']->attributes['value'], \get_class($obj)));
+                if (!is_callable($toCall = [$obj, $this->nodes['attribute']->attributes['value']])) {
+                    throw new RuntimeException(sprintf('Unable to call method "%s" of object "%s".', $this->nodes['attribute']->attributes['value'], get_class($obj)));
                 }
 
-                return $toCall(...array_values($this->nodes['arguments']->evaluate($functions,$operators, $values)));
+                return $toCall(...array_values($this->nodes['arguments']->evaluate($functions, $operators, $values)));
 
             case self::ARRAY_CALL:
-                $array = $this->nodes['node']->evaluate($functions,$operators, $values);
-                if (!\is_array($array) && !$array instanceof \ArrayAccess) {
-                    throw new \RuntimeException('Unable to get an item on a non-array.');
+                $array = $this->nodes['node']->evaluate($functions, $operators, $values);
+                if (!is_array($array) && !$array instanceof ArrayAccess) {
+                    throw new RuntimeException('Unable to get an item on a non-array.');
                 }
 
-                return $array[$this->nodes['attribute']->evaluate($functions,$operators, $values)];
+                return $array[$this->nodes['attribute']->evaluate($functions, $operators, $values)];
         }
     }
 

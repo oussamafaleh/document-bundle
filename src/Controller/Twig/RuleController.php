@@ -2,15 +2,12 @@
 
 namespace App\Controller\Twig;
 
-use App\Entity\Folder;
-use App\Annotations\Mapping;
-use App\Form\DocumentType;
 use App\Form\RuleType;
 use App\Manager\RuleManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -29,7 +26,7 @@ class RuleController extends AbstractController
     /**
      * ruleController constructor.
      */
-    public function __construct(RuleManager $ruleManager, Security $security )
+    public function __construct(RuleManager $ruleManager, Security $security)
     {
         $this->manager = $ruleManager;
         $this->security = $security;
@@ -43,7 +40,7 @@ class RuleController extends AbstractController
     {
 
         $data = $this->manager->getTwigData();
-        return $this->render('rule/rule.html.twig',$data);
+        return $this->render('rule/rule.html.twig', $data);
     }
 
     /**
@@ -51,19 +48,19 @@ class RuleController extends AbstractController
      */
     public function createTag(Request $request): Response
     {
-        $form = $this->createForm(RuleType::class );
+        $form = $this->createForm(RuleType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $form->getData();
             $this->manager
-                ->createRule($form->getData() );
+                ->createRule($form->getData());
         }
         return $this->redirectToRoute('index_rule_twig');
 
 
-
     }
+
     /**
      * @Route("/evaluate", name="evaluate_rule_twig", methods={"POST"})
      */
@@ -75,10 +72,8 @@ class RuleController extends AbstractController
 
 
         return $this->manager
-            ->evaluateRule($expression , $expr_arg );
+            ->evaluateRule($expression, $expr_arg);
     }
-
-
 
 
 }

@@ -12,6 +12,7 @@
 namespace App\RuleExpressionLanguage\ExpressionLanguage\Node;
 
 use App\RuleExpressionLanguage\ExpressionLanguage\Compiler;
+use function is_array;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -56,7 +57,7 @@ class ConstantNode extends Node
             $array[] = 'null';
         } elseif (is_numeric($value)) {
             $array[] = $value;
-        } elseif (!\is_array($value)) {
+        } elseif (!is_array($value)) {
             $array[] = $this->dumpString($value);
         } elseif ($this->isHash($value)) {
             foreach ($value as $k => $v) {

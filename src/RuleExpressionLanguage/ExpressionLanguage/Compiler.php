@@ -12,6 +12,11 @@
 namespace App\RuleExpressionLanguage\ExpressionLanguage;
 
 use Symfony\Contracts\Service\ResetInterface;
+use function is_array;
+use function is_bool;
+use function is_float;
+use function is_int;
+use const LC_NUMERIC;
 
 /**
  * Compiles a node to PHP code.
@@ -76,6 +81,49 @@ class Compiler implements ResetInterface
     }
 
     /**
+     * Returns a PHP representation of a given value.
+     *
+     * @param mixed $value The value to convert
+     *
+     * @return $this
+     */
+    public function repr($value)
+    {
+        if (is_int($value) || is_float($value)) {
+            if (false !== $locale = setlocale(LC_NUMERIC, 0)) {
+                setlocale(LC_NUMERIC, 'C');
+            }
+
+            $this->raw($value);
+
+            if (false !== $locale) {
+                setlocale(LC_NUMERIC, $locale);
+            }
+        } elseif (null === $value) {
+            $this->raw('null');
+        } elseif (is_bool($value)) {
+            $this->raw($value ? 'true' : 'false');
+        } elseif (is_array($value)) {
+            $this->raw('[');
+            $first = true;
+            foreach ($value as $key => $value) {
+                if (!$first) {
+                    $this->raw(', ');
+                }
+                $first = false;
+                $this->repr($key);
+                $this->raw(' => ');
+                $this->repr($value);
+            }
+            $this->raw(']');
+        } else {
+            $this->string($value);
+        }
+
+        return $this;
+    }
+
+    /**
      * Adds a raw string to the compiled code.
      *
      * @param string $string The string
@@ -99,49 +147,6 @@ class Compiler implements ResetInterface
     public function string($value)
     {
         $this->source .= sprintf('"%s"', addcslashes($value, "\0\t\"\$\\"));
-
-        return $this;
-    }
-
-    /**
-     * Returns a PHP representation of a given value.
-     *
-     * @param mixed $value The value to convert
-     *
-     * @return $this
-     */
-    public function repr($value)
-    {
-        if (\is_int($value) || \is_float($value)) {
-            if (false !== $locale = setlocale(\LC_NUMERIC, 0)) {
-                setlocale(\LC_NUMERIC, 'C');
-            }
-
-            $this->raw($value);
-
-            if (false !== $locale) {
-                setlocale(\LC_NUMERIC, $locale);
-            }
-        } elseif (null === $value) {
-            $this->raw('null');
-        } elseif (\is_bool($value)) {
-            $this->raw($value ? 'true' : 'false');
-        } elseif (\is_array($value)) {
-            $this->raw('[');
-            $first = true;
-            foreach ($value as $key => $value) {
-                if (!$first) {
-                    $this->raw(', ');
-                }
-                $first = false;
-                $this->repr($key);
-                $this->raw(' => ');
-                $this->repr($value);
-            }
-            $this->raw(']');
-        } else {
-            $this->string($value);
-        }
 
         return $this;
     }

@@ -12,6 +12,8 @@
 namespace App\RuleExpressionLanguage\ExpressionLanguage\Node;
 
 use App\RuleExpressionLanguage\ExpressionLanguage\Compiler;
+use DivisionByZeroError;
+use function in_array;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -51,8 +53,7 @@ class BinaryNode extends Node
                 ->compile($this->nodes['right'])
                 ->raw(', ')
                 ->compile($this->nodes['left'])
-                ->raw(')')
-            ;
+                ->raw(')');
 
             return;
         }
@@ -63,8 +64,7 @@ class BinaryNode extends Node
                 ->compile($this->nodes['left'])
                 ->raw(', ')
                 ->compile($this->nodes['right'])
-                ->raw(')')
-            ;
+                ->raw(')');
 
             return;
         }
@@ -80,20 +80,19 @@ class BinaryNode extends Node
             ->raw($operator)
             ->raw(' ')
             ->compile($this->nodes['right'])
-            ->raw(')')
-        ;
+            ->raw(')');
     }
 
-    public function evaluate($functions,$operators, $values)
+    public function evaluate($functions, $operators, $values)
     {
         $operator = $this->attributes['operator'];
-        $left = $this->nodes['left']->evaluate($functions,$operators, $values);
+        $left = $this->nodes['left']->evaluate($functions, $operators, $values);
 
         if (isset(self::FUNCTIONS[$operator])) {
-            $right = $this->nodes['right']->evaluate($functions,$operators, $values);
+            $right = $this->nodes['right']->evaluate($functions, $operators, $values);
 
             if ('not in' === $operator) {
-                return !\in_array($left, $right);
+                return !in_array($left, $right);
             }
             $f = self::FUNCTIONS[$operator];
 
@@ -103,16 +102,16 @@ class BinaryNode extends Node
         switch ($operator) {
             case 'or':
             case '||':
-                return $left || $this->nodes['right']->evaluate($functions,$operators, $values);
+                return $left || $this->nodes['right']->evaluate($functions, $operators, $values);
             case 'and':
             case '&&':
-                return $left && $this->nodes['right']->evaluate($functions,$operators, $values);
+                return $left && $this->nodes['right']->evaluate($functions, $operators, $values);
         }
 
-        $right = $this->nodes['right']->evaluate($functions,$operators, $values);
+        $right = $this->nodes['right']->evaluate($functions, $operators, $values);
 
-        if(isset($operators[$operator])){
-            return $operators[$this->attributes['operator']]['evaluator']($left,$right );
+        if (isset($operators[$operator])) {
+            return $operators[$this->attributes['operator']]['evaluator']($left, $right);
         }
         switch ($operator) {
             case '|':
@@ -138,26 +137,26 @@ class BinaryNode extends Node
             case '<=':
                 return $left <= $right;
             case 'not in':
-                return !\in_array($left, $right);
+                return !in_array($left, $right);
             case 'in':
-                return \in_array($left, $right);
+                return in_array($left, $right);
             case '+':
                 return $left + $right;
             case '-':
                 return $left - $right;
             case '~':
-                return $left.$right;
+                return $left . $right;
             case '*':
                 return $left * $right;
             case '/':
                 if (0 == $right) {
-                    throw new \DivisionByZeroError('Division by zero.');
+                    throw new DivisionByZeroError('Division by zero.');
                 }
 
                 return $left / $right;
             case '%':
                 if (0 == $right) {
-                    throw new \DivisionByZeroError('Modulo by zero.');
+                    throw new DivisionByZeroError('Modulo by zero.');
                 }
 
                 return $left % $right;
@@ -168,6 +167,6 @@ class BinaryNode extends Node
 
     public function toArray()
     {
-        return ['(', $this->nodes['left'], ' '.$this->attributes['operator'].' ', $this->nodes['right'], ')'];
+        return ['(', $this->nodes['left'], ' ' . $this->attributes['operator'] . ' ', $this->nodes['right'], ')'];
     }
 }

@@ -31,7 +31,7 @@ class FileChunksManager extends AbstractManager
     {
         $uploadOptions = new UploadOptions();
         $uploadOptions->metadata = new FileMetadata($data->getClientMimeType());
-        $document = $this->documentManager->getRepository(FileChunk::class)->uploadFromFile($data->getPathName(),$data->getClientOriginalName(), $uploadOptions);
+        $document = $this->documentManager->getRepository(FileChunk::class)->uploadFromFile($data->getPathName(), $data->getClientOriginalName(), $uploadOptions);
 
 
         return ['data' => [
@@ -40,17 +40,17 @@ class FileChunksManager extends AbstractManager
             'label' => $document->getFilename(),
         ]];
     }
+
     public function downloadChunks($id)
     {
 
         $repository = $this->documentManager->getRepository(FileChunk::class);
         $stream = $repository->openDownloadStream($id);
         $fileMetadata = $repository->find($id);
-        $response = new StreamedResponse(function()use ($stream) {
+        $response = new StreamedResponse(function () use ($stream) {
             try {
                 $outputStream = fopen('php://output', 'wb');
                 stream_copy_to_stream($stream, $outputStream);
-                // $file =$stream->getFileDocumentForStream($stream);
             } finally {
                 fclose($stream);
             }
@@ -63,12 +63,6 @@ class FileChunksManager extends AbstractManager
         $response->headers->set('Content-Disposition', $disposition);
         $response->headers->set('Content-Type', 'application/octet-stream'/*$fileMetadata->getMetadata()->getContentType()*/);
         return $response;
-//        return ['data' => [
-//            'messages' => 'create_success',
-//            'code' => $fileMetadata->getId(),
-//            'fileName' => $fileMetadata->getFilename(),
-//            'content' => $contents,
-//        ]];
 
     }
 

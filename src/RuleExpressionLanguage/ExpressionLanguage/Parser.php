@@ -11,6 +11,9 @@
 
 namespace App\RuleExpressionLanguage\ExpressionLanguage;
 
+use function in_array;
+use function is_int;
+
 /**
  * Parsers a token stream.
  *
@@ -33,7 +36,7 @@ class Parser
     private $names;
     private $operators;
 
-    public function __construct(array $functions , array $operators)
+    public function __construct(array $functions, array $operators)
     {
         $this->functions = $functions;
         $this->operators = $operators;
@@ -112,8 +115,8 @@ class Parser
         $token = $this->stream->current;
 
         while (
-        ($token->test(Token::OPERATOR_TYPE) && isset($this->binaryOperators[$token->value]) && $this->binaryOperators[$token->value]['precedence'] >= $precedence) ||
-        (isset($this->operators[$token->value]) && $this->operators[$token->value]['precedence'] >= $precedence) ) {
+            ($token->test(Token::OPERATOR_TYPE) && isset($this->binaryOperators[$token->value]) && $this->binaryOperators[$token->value]['precedence'] >= $precedence) ||
+            (isset($this->operators[$token->value]) && $this->operators[$token->value]['precedence'] >= $precedence)) {
             $op = isset($this->binaryOperators[$token->value]) ? $this->binaryOperators[$token->value] : $this->operators[$token->value];
             $this->stream->next();
             $expr1 = $this->parseExpression(self::OPERATOR_LEFT === $op['associativity'] ? $op['precedence'] + 1 : $op['precedence']);
@@ -152,28 +155,80 @@ class Parser
         return $this->parsePrimaryExpression();
     }
 
-    protected function parseConditionalExpression($expr)
+    public function parsePostfixExpression($node)
     {
-        while ($this->stream->current->test(Token::PUNCTUATION_TYPE, '?')) {
-            $this->stream->next();
-            if (!$this->stream->current->test(Token::PUNCTUATION_TYPE, ':')) {
-                $expr2 = $this->parseExpression();
-                if ($this->stream->current->test(Token::PUNCTUATION_TYPE, ':')) {
-                    $this->stream->next();
-                    $expr3 = $this->parseExpression();
-                } else {
-                    $expr3 = new Node\ConstantNode(null);
-                }
-            } else {
+        $token = $this->stream->current;
+        while (Token::PUNCTUATION_TYPE == $token->type) {
+            if ('.' === $token->value) {
                 $this->stream->next();
-                $expr2 = $expr;
-                $expr3 = $this->parseExpression();
+                $token = $this->stream->current;
+                $this->stream->next();
+
+                if (
+                    Token::NAME_TYPE !== $token->type
+                    &&
+                    // Operators like "not" and "matches" are valid method or property names,
+                    //
+                    // In other words, besides NAME_TYPE, OPERATOR_TYPE could also be parsed as a property or method.
+                    // This is because operators are processed by the lexer prior to names. So "not" in "foo.not()" or "matches" in "foo.matches" will be recognized as an operator first.
+                    // But in fact, "not" and "matches" in such expressions shall be parsed as method or property names.
+                    //
+                    // And this ONLY works if the operator consists of valid characters for a property or method name.
+                    //
+                    // Other types, such as STRING_TYPE and NUMBER_TYPE, can't be parsed as property nor method names.
+                    //
+                    // As a result, if $token is NOT an operator OR $token->value is NOT a valid property or method name, an exception shall be thrown.
+                    (Token::OPERATOR_TYPE !== $token->type || !preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/A', $token->value))
+                ) {
+                    throw new SyntaxError('Expected name.', $token->cursor, $this->stream->getExpression());
+                }
+
+                $arg = new Node\ConstantNode($token->value, true);
+
+                $arguments = new Node\ArgumentsNode();
+                if ($this->stream->current->test(Token::PUNCTUATION_TYPE, '(')) {
+                    $type = Node\GetAttrNode::METHOD_CALL;
+                    foreach ($this->parseArguments()->nodes as $n) {
+                        $arguments->addElement($n);
+                    }
+                } else {
+                    $type = Node\GetAttrNode::PROPERTY_CALL;
+                }
+
+                $node = new Node\GetAttrNode($node, $arg, $arguments, $type);
+            } elseif ('[' === $token->value) {
+                $this->stream->next();
+                $arg = $this->parseExpression();
+                $this->stream->expect(Token::PUNCTUATION_TYPE, ']');
+
+                $node = new Node\GetAttrNode($node, $arg, new Node\ArgumentsNode(), Node\GetAttrNode::ARRAY_CALL);
+            } else {
+                break;
             }
 
-            $expr = new Node\ConditionalNode($expr, $expr2, $expr3);
+            $token = $this->stream->current;
         }
 
-        return $expr;
+        return $node;
+    }
+
+    /**
+     * Parses arguments.
+     */
+    public function parseArguments()
+    {
+        $args = [];
+        $this->stream->expect(Token::PUNCTUATION_TYPE, '(', 'A list of arguments must begin with an opening parenthesis');
+        while (!$this->stream->current->test(Token::PUNCTUATION_TYPE, ')')) {
+            if (!empty($args)) {
+                $this->stream->expect(Token::PUNCTUATION_TYPE, ',', 'Arguments must be separated by a comma');
+            }
+
+            $args[] = $this->parseExpression();
+        }
+        $this->stream->expect(Token::PUNCTUATION_TYPE, ')', 'A list of arguments must be closed by a parenthesis');
+
+        return new Node\Node($args);
     }
 
     public function parsePrimaryExpression()
@@ -203,13 +258,13 @@ class Parser
 
                             $node = new Node\FunctionNode($token->value, $this->parseArguments());
                         } else {
-                            if (!\in_array($token->value, $this->names, true)) {
+                            if (!in_array($token->value, $this->names, true)) {
                                 throw new SyntaxError(sprintf('Variable "%s" is not valid.', $token->value), $token->cursor, $this->stream->getExpression(), $token->value, $this->names);
                             }
 
                             // is the name used in the compiled code different
                             // from the name used in the expression?
-                            if (\is_int($name = array_search($token->value, $this->names))) {
+                            if (is_int($name = array_search($token->value, $this->names))) {
                                 $name = $token->value;
                             }
 
@@ -305,79 +360,27 @@ class Parser
         return $node;
     }
 
-    public function parsePostfixExpression($node)
+    protected function parseConditionalExpression($expr)
     {
-        $token = $this->stream->current;
-        while (Token::PUNCTUATION_TYPE == $token->type) {
-            if ('.' === $token->value) {
-                $this->stream->next();
-                $token = $this->stream->current;
-                $this->stream->next();
-
-                if (
-                    Token::NAME_TYPE !== $token->type
-                    &&
-                    // Operators like "not" and "matches" are valid method or property names,
-                    //
-                    // In other words, besides NAME_TYPE, OPERATOR_TYPE could also be parsed as a property or method.
-                    // This is because operators are processed by the lexer prior to names. So "not" in "foo.not()" or "matches" in "foo.matches" will be recognized as an operator first.
-                    // But in fact, "not" and "matches" in such expressions shall be parsed as method or property names.
-                    //
-                    // And this ONLY works if the operator consists of valid characters for a property or method name.
-                    //
-                    // Other types, such as STRING_TYPE and NUMBER_TYPE, can't be parsed as property nor method names.
-                    //
-                    // As a result, if $token is NOT an operator OR $token->value is NOT a valid property or method name, an exception shall be thrown.
-                    (Token::OPERATOR_TYPE !== $token->type || !preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/A', $token->value))
-                ) {
-                    throw new SyntaxError('Expected name.', $token->cursor, $this->stream->getExpression());
-                }
-
-                $arg = new Node\ConstantNode($token->value, true);
-
-                $arguments = new Node\ArgumentsNode();
-                if ($this->stream->current->test(Token::PUNCTUATION_TYPE, '(')) {
-                    $type = Node\GetAttrNode::METHOD_CALL;
-                    foreach ($this->parseArguments()->nodes as $n) {
-                        $arguments->addElement($n);
-                    }
+        while ($this->stream->current->test(Token::PUNCTUATION_TYPE, '?')) {
+            $this->stream->next();
+            if (!$this->stream->current->test(Token::PUNCTUATION_TYPE, ':')) {
+                $expr2 = $this->parseExpression();
+                if ($this->stream->current->test(Token::PUNCTUATION_TYPE, ':')) {
+                    $this->stream->next();
+                    $expr3 = $this->parseExpression();
                 } else {
-                    $type = Node\GetAttrNode::PROPERTY_CALL;
+                    $expr3 = new Node\ConstantNode(null);
                 }
-
-                $node = new Node\GetAttrNode($node, $arg, $arguments, $type);
-            } elseif ('[' === $token->value) {
-                $this->stream->next();
-                $arg = $this->parseExpression();
-                $this->stream->expect(Token::PUNCTUATION_TYPE, ']');
-
-                $node = new Node\GetAttrNode($node, $arg, new Node\ArgumentsNode(), Node\GetAttrNode::ARRAY_CALL);
             } else {
-                break;
+                $this->stream->next();
+                $expr2 = $expr;
+                $expr3 = $this->parseExpression();
             }
 
-            $token = $this->stream->current;
+            $expr = new Node\ConditionalNode($expr, $expr2, $expr3);
         }
 
-        return $node;
-    }
-
-    /**
-     * Parses arguments.
-     */
-    public function parseArguments()
-    {
-        $args = [];
-        $this->stream->expect(Token::PUNCTUATION_TYPE, '(', 'A list of arguments must begin with an opening parenthesis');
-        while (!$this->stream->current->test(Token::PUNCTUATION_TYPE, ')')) {
-            if (!empty($args)) {
-                $this->stream->expect(Token::PUNCTUATION_TYPE, ',', 'Arguments must be separated by a comma');
-            }
-
-            $args[] = $this->parseExpression();
-        }
-        $this->stream->expect(Token::PUNCTUATION_TYPE, ')', 'A list of arguments must be closed by a parenthesis');
-
-        return new Node\Node($args);
+        return $expr;
     }
 }

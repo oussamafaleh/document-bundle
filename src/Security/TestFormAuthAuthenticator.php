@@ -30,7 +30,7 @@ class TestFormAuthAuthenticator extends AbstractFormLoginAuthenticator
     private $csrfTokenManager;
     private $router;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager,RouterInterface $router)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, RouterInterface $router)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
@@ -86,7 +86,7 @@ class TestFormAuthAuthenticator extends AbstractFormLoginAuthenticator
         return new RedirectResponse($this->router->generate('dashboard_twig'));
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-     //   return null;
+        //   return null;
     }
 
     protected function getLoginUrl()

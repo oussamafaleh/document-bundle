@@ -2,15 +2,12 @@
 
 namespace App\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Doctrine\Common\Annotations\Reader;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Annotations\Mapping;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Annotations\Reader;
+use ReflectionObject;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Description of ParameterValidatorListener
@@ -24,7 +21,7 @@ class ParameterValidatorListener
      */
     protected $registry;
 
-    
+
     /**
      * @var Reader
      */
@@ -98,15 +95,15 @@ class ParameterValidatorListener
 
 
         if (is_array($controller = $event->getController())) {
-            $object = new \ReflectionObject($controller[0]);
+            $object = new ReflectionObject($controller[0]);
             $method = $object->getMethod($controller[1]);
 
             foreach ($this->reader->getMethodAnnotations($method) as $configuration) {
 
                 if ($configuration instanceof Mapping) {
 
-                   $apiBagClass = $configuration->object;
-                   $apiBagName = $configuration->as;
+                    $apiBagClass = $configuration->object;
+                    $apiBagName = $configuration->as;
                 }
             }
         }
@@ -167,7 +164,6 @@ class ParameterValidatorListener
                 }
             }
         }
-
 
 
         if ($request->get('locale')) {

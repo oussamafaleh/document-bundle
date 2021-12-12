@@ -2,14 +2,12 @@
 
 namespace App\Controller\Twig;
 
-use App\Entity\Folder;
 use App\Annotations\Mapping;
-use App\Form\DocumentType;
 use App\Manager\DashboardManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -28,12 +26,11 @@ class DashboardController extends AbstractController
     /**
      * dashboardController constructor.
      */
-    public function __construct(DashboardManager $dashboardManager, Security $security )
+    public function __construct(DashboardManager $dashboardManager, Security $security)
     {
         $this->manager = $dashboardManager;
         $this->security = $security;
     }
-
 
 
     /**
@@ -42,7 +39,7 @@ class DashboardController extends AbstractController
      */
     public function list(Request $request): Response
     {
-        $user= (array)$request->get('dashboard');
+        $user = (array)$request->get('dashboard');
 
         $history = $this->manager->getBreafHistory();
         $TaggedFolders = $this->manager
@@ -59,8 +56,6 @@ class DashboardController extends AbstractController
 
         ]);
     }
-
-
 
 
 }

@@ -2,13 +2,11 @@
 
 namespace App\Manager;
 
-use App\Entity\User;
 use App\Entity\UserItemProperty;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
@@ -19,10 +17,11 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 class AuthenticationManager extends AbstractGuardAuthenticator
 {
 
+    private const TWIG_SCHEMA = "App\Controller\Twig";
     private $em;
     private $security;
 
-    public function __construct(EntityManager $em, Security $security )
+    public function __construct(EntityManager $em, Security $security)
     {
         $this->em = $em;
         $this->security = $security;
@@ -36,7 +35,7 @@ class AuthenticationManager extends AbstractGuardAuthenticator
     public function supports(Request $request)
     {
         $controller = $request->attributes->get('_controller');
-        return  str_starts_with($controller , "App\Controller\Twig") || str_starts_with($controller , "App\Controller\Twig");
+        return str_starts_with($controller, self::TWIG_SCHEMA) ;
     }
 
     /**
@@ -46,17 +45,21 @@ class AuthenticationManager extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         $controller = $request->attributes->get('_controller');
-        if(str_starts_with($controller , "App\Controller\API")){
+        if (str_starts_with($controller, "App\Controller\API")) {
             $credentials = $request->headers->get('authorization');
-        };
-        if(str_starts_with($controller , "App\Controller\Twig")){
+        }
+        if (str_starts_with($controller, "App\Controller\Twig")) {
             $credentials = $this->security->getUser();
 
-        };
-        //dd($credentials);
+        }
         return $credentials;
     }
 
+    /**
+     * @param $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
     public function checkCredentials($credentials, UserInterface $user)
     {
         // check credentials - e.g. make sure the password is valid
@@ -65,6 +68,11 @@ class AuthenticationManager extends AbstractGuardAuthenticator
         return true;
     }
 
+    /**
+     * @param $credentials
+     * @param UserProviderInterface $userProvider
+     * @return mixed|object|UserInterface|null
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         if (null === $credentials) {
@@ -78,23 +86,41 @@ class AuthenticationManager extends AbstractGuardAuthenticator
     }
 
 
-
+    /**
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return \Symfony\Component\HttpFoundation\Response|void
+     */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-
     }
 
+
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @throws Exception
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
-    {throw new \Exception($exception);
+    {
+        throw new HttpException($exception);
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param $providerKey
+     * @return \Symfony\Component\HttpFoundation\Response|void|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // TODO: Implement onAuthenticationSuccess() method.
     }
 
+    /**
+     * @return bool|void
+     */
     public function supportsRememberMe()
     {
-        // TODO: Implement supportsRememberMe() method.
     }
 }

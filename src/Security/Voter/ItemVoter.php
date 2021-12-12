@@ -5,13 +5,10 @@ namespace App\Security\Voter;
 use App\Entity\Item;
 use App\Entity\UserItemProperty;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\Self_;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Normalizer\DataUriNormalizer;
 
 class ItemVoter extends Voter
 {
@@ -19,12 +16,12 @@ class ItemVoter extends Voter
     private $security;
     private $ROLES_HIRARCHY = [
         'ROLE_READ' => ['ROLE_READ'],
-        'ROLE_CREATE' => ['ROLE_CREATE','ROLE_READ'],
-        'ROLE_REMOVE' => ['ROLE_REMOVE','ROLE_READ'],
-        'ROLE_EDIT' => ['ROLE_EDIT','ROLE_READ'],
-        'ROLE_OWNER' => ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'],
-];
-    private $item ;
+        'ROLE_CREATE' => ['ROLE_CREATE', 'ROLE_READ'],
+        'ROLE_REMOVE' => ['ROLE_REMOVE', 'ROLE_READ'],
+        'ROLE_EDIT' => ['ROLE_EDIT', 'ROLE_READ'],
+        'ROLE_OWNER' => ['ROLE_OWNER', 'ROLE_CREATE', 'ROLE_REMOVE', 'ROLE_READ', 'ROLE_EDIT'],
+    ];
+    private $item;
 
     public function __construct(EntityManagerInterface $em, Security $security)
     {
@@ -36,8 +33,8 @@ class ItemVoter extends Voter
     protected function supports($attribute, $subject)
     {
         $this->item = $this->em->getRepository(Item::class)
-            ->findOneBy(['code' => $subject ]);
-        return in_array($attribute, ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'])
+            ->findOneBy(['code' => $subject]);
+        return in_array($attribute, ['ROLE_OWNER', 'ROLE_CREATE', 'ROLE_REMOVE', 'ROLE_READ', 'ROLE_EDIT'])
             && $this->item instanceof Item;
     }
 
@@ -49,10 +46,11 @@ class ItemVoter extends Voter
             return false;
         }
         $userItemProp = $this->em->getRepository(UserItemProperty::class)
-            ->findOneBy(['user' => $user , 'item' => $this->item ]);
-        $allUserRoles = $this->getAllRoles( $userItemProp->getRoles());
-        return in_array($attribute,$allUserRoles);
+            ->findOneBy(['user' => $user, 'item' => $this->item]);
+        $allUserRoles = $this->getAllRoles($userItemProp->getRoles());
+        return in_array($attribute, $allUserRoles);
     }
+
     protected function getAllRoles($roles)
     {
         $allRoles = $roles;

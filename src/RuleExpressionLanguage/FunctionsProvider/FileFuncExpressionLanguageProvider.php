@@ -11,9 +11,9 @@ class FileFuncExpressionLanguageProvider implements ExpressionFunctionProviderIn
     {
         return [
             new ExpressionFunction('contain', function ($fileContent, $world) {
-                return sprintf('file contain '.$world.')' );
+                return sprintf('file contain ' . $world . ')');
             }, function ($arg, $fileContent, $world) {
-                if (str_contains ($fileContent, $world)) {
+                if (str_contains($fileContent, $world)) {
                     return true;
                 }
 

@@ -29,20 +29,21 @@ class MyTools
         }
 
         // Fallback (PHP 4.2+)
-        mt_srand((double) microtime() * 10000);
+        mt_srand((double)microtime() * 10000);
         $charid = strtolower(md5(uniqid(rand(), true)));
         $hyphen = chr(45);                  // "-"
         $lbrace = $trim ? "" : chr(123);    // "{"
         $rbrace = $trim ? "" : chr(125);    // "}"
         $guidv4 = $lbrace .
-                substr($charid, 0, 8) . $hyphen .
-                substr($charid, 8, 4) . $hyphen .
-                substr($charid, 12, 4) . $hyphen .
-                substr($charid, 16, 4) . $hyphen .
-                substr($charid, 20, 12) .
-                $rbrace;
+            substr($charid, 0, 8) . $hyphen .
+            substr($charid, 8, 4) . $hyphen .
+            substr($charid, 12, 4) . $hyphen .
+            substr($charid, 16, 4) . $hyphen .
+            substr($charid, 20, 12) .
+            $rbrace;
         return $guidv4;
     }
+
     /**
      * Pagination pour angualr
      *
@@ -52,7 +53,7 @@ class MyTools
      * @param integer $total
      * @return array
      */
-    public static function paginator($list, $index = 1 , $size = 10 , $total = null)
+    public static function paginator($list, $index = 1, $size = 10, $total = null)
     {
         if (!$total) {
             $total = MyTools::getValueFromResultSet($list, 'total', 0);
@@ -65,9 +66,9 @@ class MyTools
             }
             return $element;
         }, $list);
-        $total_indexs= intval($total  / intval($size));
-        if($total % intval($size) > 0 ){
-            $total_indexs ++;
+        $total_indexs = intval($total / intval($size));
+        if ($total % intval($size) > 0) {
+            $total_indexs++;
         }
         return [
             'Result' => 'OK',
@@ -79,6 +80,7 @@ class MyTools
             'rows' => $list,
         ];
     }
+
     public static function getValueFromResultSet($aResultSet, $sColumn, $default = null)
     {
         foreach ($aResultSet as $result) {
@@ -88,6 +90,7 @@ class MyTools
         }
         return $default;
     }
+
     public static function getOption(&$options, $option, $default = null, $unset = true)
     {
         $value = $default;
@@ -618,7 +621,6 @@ class MyTools
 //            'rows' => $list,
 //        ];
 //    }
-
 
 
 }

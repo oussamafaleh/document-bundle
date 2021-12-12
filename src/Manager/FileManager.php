@@ -3,31 +3,23 @@
 namespace App\Manager;
 
 
-use App\Entity\Rule;
-use App\Entity\Template;
-use App\Event\RuleEvent\FileEvent;
-use App\RuleExpressionLanguage\RuleExpressionLanguage;
 use App\Entity\Demo;
 use App\Entity\Document;
 use App\Entity\Folder;
 use App\Entity\Item;
+use App\Entity\Template;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
 use App\Utils\MyTools;
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Exception;
-use PhpOffice\PhpWord\IOFactory;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-
-use Symfony\Component\HttpFoundation\File\File;
-
-use Symfony\Component\Security\Core\Security;
 use Elasticsearch\ClientBuilder;
-
+use PhpOffice\PhpWord\IOFactory;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Security\Core\Security;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 
 
@@ -51,16 +43,25 @@ class FileManager extends AbstractManager
     /**
      * @var ItemManager
      */
-    private $itemManager;
+    private ItemManager $itemManager;
 
-    private $indexName;
-    private $es_config;
+
+    private String $indexName;
     private $attachment;
     private $security;
     private $es_port;
     private $es_host;
 
-    public function __construct(EntityManager $entityManager, $targetDirectory, FolderManager $folderManager, ItemManager $itemManager, $indexName, $es_port, $es_host, $attachment, Security $security)
+    public function __construct(
+        EntityManager $entityManager, 
+        String $targetDirectory, 
+        FolderManager $folderManager, 
+        ItemManager $itemManager, 
+        $indexName, 
+        $es_port, 
+        $es_host, 
+        $attachment, 
+        Security $security)
     {
         parent::__construct($entityManager);
         $this->targetDirectory = $targetDirectory;
@@ -76,18 +77,6 @@ class FileManager extends AbstractManager
 
     }
 
-
-    public function getIndexName()
-    {
-        return $this->indexName;
-    }
-
-    public function getAttachment()
-    {
-        return $this->attachment;
-    }
-
-
     public function init($settings = [])
     {
         parent::setSettings($settings);
@@ -100,7 +89,7 @@ class FileManager extends AbstractManager
                 ->findOneBy(['code' => $this->getUserCode()]);
 
             if (!$this->user instanceof User) {
-                throw new Exception('UNKNOWN_USER');
+                throw new HttpException('UNKNOWN_USER');
             }
         } elseif ($this->security->getUser()) {
             $this->user = $this->security->getUser();
@@ -113,7 +102,7 @@ class FileManager extends AbstractManager
                 ->findOneBy(['code' => $this->getParentCode()]);
 
             if (!$this->parent instanceof Folder) {
-                throw new Exception('UNKNOWN_PARENT');
+                throw new HttpException('UNKNOWN_PARENT');
             }
         }
 
@@ -125,14 +114,13 @@ class FileManager extends AbstractManager
                 ->findOneBy(['code' => $this->getItemCode()]);
 
             if (!$this->item instanceof Item) {
-                throw new Exception('UNKNOWN_ITEM');
+                throw new HttpException('UNKNOWN_ITEM');
             }
         }
 
 
         return $this;
     }
-
 
     /**
      * @return string
@@ -142,6 +130,13 @@ class FileManager extends AbstractManager
         return $this->userCode;
     }
 
+    /**
+     * @param string $userCode
+     */
+    public function setUserCode(string $userCode)
+    {
+        $this->userCode = $userCode;
+    }
 
     /**
      * @return string
@@ -149,6 +144,14 @@ class FileManager extends AbstractManager
     public function getParentCode()
     {
         return $this->parentCode;
+    }
+
+    /**
+     * @param string $parentCode
+     */
+    public function setParentCode(string $parentCode)
+    {
+        $this->parentCode = $parentCode;
     }
 
     /**
@@ -167,35 +170,13 @@ class FileManager extends AbstractManager
         $this->itemCode = $itemCode;
     }
 
-
-    /**
-     * @param string $userCode
-     */
-    public function setUserCode(string $userCode)
-    {
-        $this->userCode = $userCode;
-    }
-
-    /**
-     * @param string $parentCode
-     */
-    public function setParentCode(string $parentCode)
-    {
-        $this->parentCode = $parentCode;
-    }
-
-    public function getTargetDirectory()
-    {
-        return $this->targetDirectory;
-    }
-
     public function create($RequestFile)
     {
 
         $fileUniquness = $this->folderManager->init(['parentCode' => $this->getParentCode(), 'userCode' => $this->getUserCode()])
             ->checkSubItemsLabelUniqueness($RequestFile->getClientOriginalName());
         if (!$fileUniquness) {
-            throw new Exception('FOUND_ITEM');
+            throw new HttpException('FOUND_ITEM');
         }
 
         $file = $this->IndexUploadDoc($RequestFile);
@@ -232,36 +213,6 @@ class FileManager extends AbstractManager
                 'label' => $this->document->getLabel()
             ]];
     }
-
-    public function upload($file)
-    {
-        $fileName = explode(".", $file->getClientOriginalName());
-        $fileCode = $fileName[0] . MyTools::GUIDv4() . "." . $fileName[1];
-       // $size = $file->getSize();
-        $name = $file->getClientOriginalName();
-        $file->move($this->getTargetDirectory(), $fileCode);
-
-        return [
-            "name" => $name,
-            "code" => $fileCode,
-            "extention" => $fileName[1],
-            //"size" => $size
-        ];
-    }
-
-
-    public function convetFileSize(int $size)
-    {
-        $units = ["Byte", "Kb", "Mb"];
-        foreach ($units as $unit) {
-            if (($size / 1000) < 1) {
-                return strval($size) . $unit;
-            }
-            $size = $size / 1000;
-        }
-        return strval($size) . "Gb";
-    }
-
 
     public function IndexUploadDoc($file)
     {
@@ -338,6 +289,55 @@ class FileManager extends AbstractManager
         ];
     }
 
+    public function ocrImage($file)
+    {
+        return (new TesseractOCR($file))->lang('eng', 'jpn', 'spa')->run();
+
+    }
+
+    public function getIndexName()
+    {
+        return $this->indexName;
+    }
+
+    public function getAttachment()
+    {
+        return $this->attachment;
+    }
+
+    public function convetFileSize(int $size)
+    {
+        $units = ["Byte", "Kb", "Mb"];
+        foreach ($units as $unit) {
+            if (($size / 1000) < 1) {
+                return strval($size) . $unit;
+            }
+            $size = $size / 1000;
+        }
+        return strval($size) . "Gb";
+    }
+
+    public function upload($file)
+    {
+        $fileName = explode(".", $file->getClientOriginalName());
+        $fileCode = $fileName[0] . MyTools::GUIDv4() . "." . $fileName[1];
+        $size = $file->getSize();
+        $name = $file->getClientOriginalName();
+        $file->move($this->getTargetDirectory(), $fileCode);
+
+        return [
+            "name" => $name,
+            "code" => $fileCode,
+            "extention" => $fileName[1],
+            "size" => $size
+        ];
+    }
+
+    public function getTargetDirectory()
+    {
+        return $this->targetDirectory;
+    }
+
     public function download($item_code)
     {
 
@@ -347,8 +347,7 @@ class FileManager extends AbstractManager
         $targetDirectory = $this->getTargetDirectory();
 
         if (!$file) {
-            return ' file not found!';
-
+            throw new HttpException('NOT_FOUND_FILE');
         }
 
 
@@ -368,8 +367,6 @@ class FileManager extends AbstractManager
             $response->headers->set('Content-Type', 'text/plain');
         }
 
-        // $originalName= $file->getClientOriginalName();
-
 
         // Set content disposition inline of the file
         $response->setContentDisposition(
@@ -378,7 +375,6 @@ class FileManager extends AbstractManager
         );
         return $response;
     }
-
 
     public function openBrowser($item_code)
     {
@@ -389,7 +385,7 @@ class FileManager extends AbstractManager
         $targetDirectory = $this->getTargetDirectory();
 
         if (!$file) {
-            return ' file not found!';
+            throw new HttpException('NOT_FOUND_FILE');
 
         }
 
@@ -415,69 +411,19 @@ class FileManager extends AbstractManager
         return $response;
     }
 
-
-    public function ocrImage($file)
-    {
-
-
-
-
-
-
-        $tess = (new TesseractOCR($file))->lang('eng', 'jpn', 'spa')->run();
-        return $tess;
-
-    }
-
-
     public function LocationFile($item_code)
     {
-
-        /*
-     $fileExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
-     var_dump($fileExist);
-
-     */
-
         $file = $this->apiEntityManager
             ->getRepository(Document::class)->findOneBy(['code' => $item_code]);
 
 
         if (!$file) {
-            return ' file not found!';
+            throw new HttpException('NOT_FOUND_FILE');
 
         }
 
 
         return $file->getCode();
-    }
-
-
-    public function readDoc($item_code)
-    {
-
-
-        $targetDirectory = $this->getTargetDirectory();
-        $filename = $targetDirectory . $item_code;
-
-        $objReader = IOFactory::createReader("Word2007");
-
-        $phpWord = $objReader->load($filename);
-        $objWriter = IOFactory::createWriter($phpWord, 'HTML');
-        /*
-            $fileName= explode(".", $item_code->getClientOriginalName());
-            $rest = $fileName[0];
-        */
-
-
-        $rest = substr($item_code, 0, -4);
-        $docname = $rest . "html";
-
-        $filePath = $targetDirectory . $docname;
-
-        $objWriter->save($filePath);
-
-        return ['docname' => $docname];
     }
 
     public function DocToHTML($item_code)
@@ -498,17 +444,8 @@ class FileManager extends AbstractManager
 
     }
 
-
-
     public function openDocument($item_code)
     {
-
-
-        /*
-         $fileExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
-         var_dump($fileExist);
-
-         */
 
         $file = $this->apiEntityManager
             ->getRepository(Document::class)->findOneBy(['code' => $item_code]);
@@ -519,16 +456,40 @@ class FileManager extends AbstractManager
             return $this->readDoc($item_code);
 
 
-        } else
+        } else {
             return ['docname' => $item_code];
+        }
     }
+
+    public function readDoc($item_code)
+    {
+
+
+        $targetDirectory = $this->getTargetDirectory();
+        $filename = $targetDirectory . $item_code;
+
+        $objReader = IOFactory::createReader("Word2007");
+
+        $phpWord = $objReader->load($filename);
+        $objWriter = IOFactory::createWriter($phpWord, 'HTML');
+
+        $rest = substr($item_code, 0, -4);
+        $docname = $rest . "html";
+
+        $filePath = $targetDirectory . $docname;
+
+        $objWriter->save($filePath);
+
+        return ['docname' => $docname];
+    }
+
     public function saveTemplate($RequestFile)
     {
 
         $fileUniquness = $this->folderManager->init(['parentCode' => $this->getParentCode(), 'userCode' => $this->getUserCode()])
             ->checkSubItemsLabelUniqueness($RequestFile->getClientOriginalName());
         if (!$fileUniquness) {
-            throw new Exception('FOUND_ITEM');
+            throw new HttpException('FOUND_ITEM');
         }
         $file = $this->upload($RequestFile);
         $connection = $this->apiEntityManager->getConnection();
@@ -558,13 +519,13 @@ class FileManager extends AbstractManager
                 'label' => $this->document->getLabel(),
             ]];
     }
+
     public function HTMLContent($item_code)
     {
 
 
         $targetDirectory = $this->getTargetDirectory();
         $filename = $targetDirectory . $item_code;
-        //dd(file_get_contents($filename));
         return ['docContent' => file_get_contents($filename)];
 
     }

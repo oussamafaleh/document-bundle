@@ -3,15 +3,12 @@
 namespace App\Controller\API;
 
 
-use Swagger\Annotations as SWG;
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use App\Annotations\Mapping;
 use App\Manager\RuleManager;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class RuleController
@@ -29,7 +26,7 @@ class RuleController extends AbstractController
     /**
      * ruleController constructor.
      */
-    public function __construct(RuleManager $ruleManager )
+    public function __construct(RuleManager $ruleManager)
     {
         $this->manager = $ruleManager;
     }
@@ -84,7 +81,7 @@ class RuleController extends AbstractController
 
         return $this->manager
             ->init(['userCode' => $user_code])
-            ->evaluateRule( $file );
+            ->evaluateRule($file);
     }
 
     /**

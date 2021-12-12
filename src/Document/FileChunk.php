@@ -3,9 +3,10 @@
 
 namespace App\Document;
 //use App\Document\FileMetadata;
+use DateTimeInterface;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-/** @MongoDB\File(bucketName="filechunk") */
 
+/** @MongoDB\File(bucketName="filechunk") */
 class FileChunk
 {
     /** @MongoDB\Id */
@@ -51,10 +52,11 @@ class FileChunk
         return $this->length;
     }
 
-    public function getUploadDate(): \DateTimeInterface
+    public function getUploadDate(): DateTimeInterface
     {
         return $this->uploadDate;
     }
+
     public function getMetadata(): ?FileMetadata
     {
         return $this->metadata;

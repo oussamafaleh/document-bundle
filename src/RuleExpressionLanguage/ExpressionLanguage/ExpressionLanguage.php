@@ -11,8 +11,10 @@
 
 namespace App\RuleExpressionLanguage\ExpressionLanguage;
 
+use LogicException;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use function is_int;
 
 /**
  * Allows to compile and evaluate expressions written in your own DSL.
@@ -21,25 +23,25 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
  */
 class ExpressionLanguage
 {
+    protected $functions = [];
+    protected $operators = [];
     private $cache;
     private $lexer;
     private $parser;
     private $compiler;
 
-    protected $functions = [];
-    protected $operators = [];
-
     /**
      * @param ExpressionFunctionProviderInterface[] $functionProviders
      */
+
     /**
      * @param ExpressionOperatorProviderInterface[] $operatorProviders
      */
-    public function __construct(CacheItemPoolInterface $cache = null, array $functionProviders = [],array $operatorProviders = [])
+    public function __construct(CacheItemPoolInterface $cache = null, array $functionProviders = [], array $operatorProviders = [])
     {
         $this->cache = $cache ?: new ArrayAdapter();
         $this->registerFunctions();
-        foreach ($functionProviders as $functionProvider ) {
+        foreach ($functionProviders as $functionProvider) {
             $this->registerFunctionProvider($functionProvider);
         }
         $this->registerOperators();
@@ -48,11 +50,85 @@ class ExpressionLanguage
         }
     }
 
+    protected function registerFunctions()
+    {
+        $this->addFunction(ExpressionFunction::fromPhp('constant'));
+    }
+
+    public function addFunction(ExpressionFunction $function)
+    {
+        $this->register($function->getName(), $function->getCompiler(), $function->getEvaluator());
+    }
+
+    /**
+     * Registers a function.
+     *
+     * @param string $name The function name
+     * @param callable $compiler A callable able to compile the function
+     * @param callable $evaluator A callable able to evaluate the function
+     *
+     * @throws LogicException when registering a function after calling evaluate(), compile() or parse()
+     *
+     * @see ExpressionFunction
+     */
+    public function register($name, callable $compiler, callable $evaluator)
+    {
+        if (null !== $this->parser) {
+            throw new LogicException('Registering functions after calling evaluate(), compile() or parse() is not supported.');
+        }
+
+        $this->functions[$name] = ['compiler' => $compiler, 'evaluator' => $evaluator];
+    }
+
+    public function registerFunctionProvider(ExpressionFunctionProviderInterface $provider)
+    {
+        foreach ($provider->getFunctions() as $function) {
+            $this->addFunction($function);
+        }
+    }
+
+    protected function registerOperators()
+    {
+        $this->addOperator(ExpressionOperator::fromPhp('constant'));
+    }
+
+    public function addOperator(ExpressionOperator $operator)
+    {
+        $this->operationRegister($operator->getName(), $operator->getCompiler(), $operator->getEvaluator(), $operator->getPrecedence(), $operator->getAssociativity(), $operator->getDescription());
+    }
+
+    /**
+     * Registers a function.
+     *
+     * @param string $name The function name
+     * @param callable $compiler A callable able to compile the function
+     * @param callable $evaluator A callable able to evaluate the function
+     *
+     * @throws LogicException when registering a function after calling evaluate(), compile() or parse()
+     *
+     * @see ExpressionOperation
+     */
+    public function operationRegister($name, callable $compiler, callable $evaluator, int $precedence, int $associativity, string $description)
+    {
+        if (null !== $this->parser) {
+            throw new LogicException('Registering operators after calling evaluate(), compile() or parse() is not supported.');
+        }
+
+        $this->operators[$name] = ['description' => $description, 'precedence' => $precedence, 'associativity' => $associativity, 'compiler' => $compiler, 'evaluator' => $evaluator];
+    }
+
+    public function registerOperatorProvider(ExpressionOperatorProviderInterface $provider)
+    {
+        foreach ($provider->getOperators() as $function) {
+            $this->addOperator($function);
+        }
+    }
+
     /**
      * Compiles an expression source code.
      *
      * @param Expression|string $expression The expression to compile
-     * @param array             $names      An array of valid names
+     * @param array $names An array of valid names
      *
      * @return string The compiled PHP source code
      */
@@ -61,24 +137,20 @@ class ExpressionLanguage
         return $this->getCompiler()->compile($this->parse($expression, $names)->getNodes())->getSource();
     }
 
-    /**
-     * Evaluate an expression.
-     *
-     * @param Expression|string $expression The expression to compile
-     * @param array             $values     An array of values
-     *
-     * @return mixed The result of the evaluation of the expression
-     */
-    public function evaluate($expression, $values = [])
+    private function getCompiler(): Compiler
     {
-        return $this->parse($expression, array_keys($values))->getNodes()->evaluate($this->functions,$this->operators, $values);
+        if (null === $this->compiler) {
+            $this->compiler = new Compiler($this->functions);
+        }
+
+        return $this->compiler->reset();
     }
 
     /**
      * Parses an expression.
      *
      * @param Expression|string $expression The expression to parse
-     * @param array             $names      An array of valid names
+     * @param array $names An array of valid names
      *
      * @return ParsedExpression A ParsedExpression instance
      */
@@ -92,15 +164,15 @@ class ExpressionLanguage
         $cacheKeyItems = [];
 
         foreach ($names as $nameKey => $name) {
-            $cacheKeyItems[] = \is_int($nameKey) ? $name : $nameKey.':'.$name;
+            $cacheKeyItems[] = is_int($nameKey) ? $name : $nameKey . ':' . $name;
         }
 
-        $cacheItem = $this->cache->getItem(rawurlencode($expression.'//'.implode('|', $cacheKeyItems)));
+        $cacheItem = $this->cache->getItem(rawurlencode($expression . '//' . implode('|', $cacheKeyItems)));
 
         if (null === $parsedExpression = $cacheItem->get()) {
-            $nodes = $this->getParser()->parse($this->getLexer()->tokenize((string) $expression), $names);
+            $nodes = $this->getParser()->parse($this->getLexer()->tokenize((string)$expression), $names);
 
-            $parsedExpression = new ParsedExpression((string) $expression, $nodes);
+            $parsedExpression = new ParsedExpression((string)$expression, $nodes);
 
             $cacheItem->set($parsedExpression);
             $this->cache->save($cacheItem);
@@ -108,77 +180,13 @@ class ExpressionLanguage
         return $parsedExpression;
     }
 
-    /**
-     * Registers a function.
-     *
-     * @param string   $name      The function name
-     * @param callable $compiler  A callable able to compile the function
-     * @param callable $evaluator A callable able to evaluate the function
-     *
-     * @throws \LogicException when registering a function after calling evaluate(), compile() or parse()
-     *
-     * @see ExpressionFunction
-     */
-    public function register($name, callable $compiler, callable $evaluator)
+    private function getParser(): Parser
     {
-        if (null !== $this->parser) {
-            throw new \LogicException('Registering functions after calling evaluate(), compile() or parse() is not supported.');
+        if (null === $this->parser) {
+            $this->parser = new Parser($this->functions, $this->operators);
         }
 
-        $this->functions[$name] = ['compiler' => $compiler, 'evaluator' => $evaluator];
-    }
-
-    /**
-     * Registers a function.
-     *
-     * @param string   $name      The function name
-     * @param callable $compiler  A callable able to compile the function
-     * @param callable $evaluator A callable able to evaluate the function
-     *
-     * @throws \LogicException when registering a function after calling evaluate(), compile() or parse()
-     *
-     * @see ExpressionOperation
-     */
-    public function operationRegister($name, callable $compiler, callable $evaluator, int $precedence , int  $associativity,string $description)
-    {
-        if (null !== $this->parser) {
-            throw new \LogicException('Registering operators after calling evaluate(), compile() or parse() is not supported.');
-        }
-
-        $this->operators[$name] = [ 'description' =>$description,'precedence' => $precedence, 'associativity' => $associativity ,'compiler' => $compiler, 'evaluator' => $evaluator];
-    }
-    public function addFunction(ExpressionFunction $function)
-    {
-        $this->register($function->getName(), $function->getCompiler(), $function->getEvaluator());
-    }
-    public function addOperator(ExpressionOperator $operator)
-    {
-        $this->operationRegister($operator->getName(), $operator->getCompiler(), $operator->getEvaluator(),$operator->getPrecedence() , $operator->getAssociativity(),$operator->getDescription());
-    }
-
-
-    public function registerFunctionProvider(ExpressionFunctionProviderInterface $provider)
-    {
-        foreach ($provider->getFunctions() as $function) {
-            $this->addFunction($function);
-        }
-    }
-
-    public function registerOperatorProvider(ExpressionOperatorProviderInterface $provider)
-    {
-        foreach ($provider->getOperators() as $function) {
-            $this->addOperator($function);
-        }
-    }
-
-    protected function registerFunctions()
-    {
-        $this->addFunction(ExpressionFunction::fromPhp('constant'));
-    }
-
-    protected function registerOperators()
-    {
-        $this->addOperator(ExpressionOperator::fromPhp('constant'));
+        return $this->parser;
     }
 
     private function getLexer(): Lexer
@@ -190,21 +198,16 @@ class ExpressionLanguage
         return $this->lexer;
     }
 
-    private function getParser(): Parser
+    /**
+     * Evaluate an expression.
+     *
+     * @param Expression|string $expression The expression to compile
+     * @param array $values An array of values
+     *
+     * @return mixed The result of the evaluation of the expression
+     */
+    public function evaluate($expression, $values = [])
     {
-        if (null === $this->parser) {
-            $this->parser = new Parser($this->functions , $this->operators);
-        }
-
-        return $this->parser;
-    }
-
-    private function getCompiler(): Compiler
-    {
-        if (null === $this->compiler) {
-            $this->compiler = new Compiler($this->functions);
-        }
-
-        return $this->compiler->reset();
+        return $this->parse($expression, array_keys($values))->getNodes()->evaluate($this->functions, $this->operators, $values);
     }
 }

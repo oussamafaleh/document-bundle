@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Event\RuleEvent;
-use Symfony\Contracts\EventDispatcher\Event;
+
 use App\Entity\Document;
+use Symfony\Contracts\EventDispatcher\Event;
+
 class FileEvent extends Event
 {
     const classifyFileRule = 'classify_file';
@@ -10,13 +13,12 @@ class FileEvent extends Event
     private $eventName;
 
     /**
-     *  @var Document
+     * @var Document
      */
     private $file;
 
     /** @var string */
     private $fileClass;
-
 
 
     /**
@@ -61,6 +63,7 @@ class FileEvent extends Event
     {
         $this->file = $file;
     }
+
     /**
      * @return string
      */

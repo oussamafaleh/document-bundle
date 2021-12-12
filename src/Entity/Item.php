@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\ItemRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ReflectionClass;
 
 /**
  * @ORM\Entity(repositoryClass=ItemRepository::class)
@@ -53,13 +55,12 @@ abstract class Item extends AbstractEntity
      */
     private $histories;
 
-  
-  
+
     public function __construct()
     {
         parent::__construct();
         $this->histories = new ArrayCollection();
-       
+
     }
 
 
@@ -73,15 +74,16 @@ abstract class Item extends AbstractEntity
         return $this->code;
     }
 
-    public function getType() {
-        return (new \ReflectionClass($this))->getShortName();
-    }
-
     public function setCode(string $code): self
     {
         $this->code = $code;
 
         return $this;
+    }
+
+    public function getType()
+    {
+        return (new ReflectionClass($this))->getShortName();
     }
 
     public function getLabel(): ?string
@@ -96,24 +98,24 @@ abstract class Item extends AbstractEntity
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
@@ -164,8 +166,4 @@ abstract class Item extends AbstractEntity
     }
 
 
-    
-  
-
-    
 }

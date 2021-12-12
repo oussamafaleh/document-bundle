@@ -3,14 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\HistoryRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=HistoryRepository::class)
  */
-class History  extends AbstractEntity
+class History extends AbstractEntity
 {
     /**
      * @ORM\Id
@@ -63,7 +63,6 @@ class History  extends AbstractEntity
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
-
 
 
     public function __construct()
@@ -173,12 +172,12 @@ class History  extends AbstractEntity
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 

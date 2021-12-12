@@ -3,17 +3,14 @@
 
 namespace App\EventListener;
 
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\VarDumper\Cloner\VarCloner;
-use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 
 class ExceptionListener
 {
     public const TWIG_ROUT = 'Twig';
+
     /**
      * On kernel exception redirect to 404 page.
      */

@@ -40,11 +40,11 @@ class FunctionNode extends Node
         $compiler->raw($function['compiler'](...$arguments));
     }
 
-    public function evaluate($functions,$operators, $values)
+    public function evaluate($functions, $operators, $values)
     {
         $arguments = [$values];
         foreach ($this->nodes['arguments']->nodes as $node) {
-            $arguments[] = $node->evaluate($functions,$operators, $values);
+            $arguments[] = $node->evaluate($functions, $operators, $values);
         }
 
         return $functions[$this->attributes['name']]['evaluator'](...$arguments);

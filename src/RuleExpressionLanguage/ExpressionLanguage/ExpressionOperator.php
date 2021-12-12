@@ -11,6 +11,10 @@
 
 namespace App\RuleExpressionLanguage\ExpressionLanguage;
 
+use InvalidArgumentException;
+use function count;
+use function function_exists;
+
 /**
  * Represents a function that can be used in an expression.
  *
@@ -39,21 +43,56 @@ class ExpressionOperator
     private $description;
 
     /**
-     * @param string   $name      The function name
-     * @param int   $precedence      The function name
-     * @param int   $associativity      The function name
-     * @param callable $compiler  A callable able to compile the function
+     * @param string $name The function name
+     * @param int $precedence The function name
+     * @param int $associativity The function name
+     * @param callable $compiler A callable able to compile the function
      * @param callable $evaluator A callable able to evaluate the function
      * @param callable $description A description of expression
      */
-    public function __construct(string $name, callable $compiler, callable $evaluator, int $precedence =0 , int  $associativity = 0, string $description =  "no discription yet")
+    public function __construct(string $name, callable $compiler, callable $evaluator, int $precedence = 0, int $associativity = 0, string $description = "no discription yet")
     {
         $this->name = $name;
         $this->compiler = $compiler;
         $this->evaluator = $evaluator;
         $this->precedence = $precedence;
         $this->associativity = $associativity;
-        $this->description =$description;
+        $this->description = $description;
+    }
+
+    /**
+     * Creates an ExpressionOperator from a PHP function name.
+     *
+     * @param string $phpOperatorName The PHP function name
+     * @param string|null $expressionOperatorName The expression function name (default: same than the PHP function name)
+     *
+     * @return self
+     *
+     * @throws InvalidArgumentException if given PHP function name does not exist
+     * @throws InvalidArgumentException if given PHP function name is in namespace
+     *                                   and expression function name is not defined
+     */
+    public static function fromPhp($phpOperatorName, $expressionOperatorName = null)
+    {
+        $phpOperatorName = ltrim($phpOperatorName, '\\');
+        if (!function_exists($phpOperatorName)) {
+            throw new InvalidArgumentException(sprintf('PHP function "%s" does not exist.', $phpOperatorName));
+        }
+
+        $parts = explode('\\', $phpOperatorName);
+        if (!$expressionOperatorName && count($parts) > 1) {
+            throw new InvalidArgumentException(sprintf('An expression function name must be defined when PHP function "%s" is namespaced.', $phpOperatorName));
+        }
+
+        $compiler = function (...$args) use ($phpOperatorName) {
+            return sprintf('\%s(%s)', $phpOperatorName, implode(', ', $args));
+        };
+
+        $evaluator = function ($p, ...$args) use ($phpOperatorName) {
+            return $phpOperatorName(...$args);
+        };
+
+        return new self($expressionOperatorName ?: end($parts), $compiler, $evaluator);
     }
 
     public function getDescription()
@@ -61,12 +100,10 @@ class ExpressionOperator
         return $this->description;
     }
 
-
     public function getPrecedence()
     {
         return $this->precedence;
     }
-
 
     public function getAssociativity()
     {
@@ -86,40 +123,5 @@ class ExpressionOperator
     public function getEvaluator()
     {
         return $this->evaluator;
-    }
-
-    /**
-     * Creates an ExpressionOperator from a PHP function name.
-     *
-     * @param string      $phpOperatorName        The PHP function name
-     * @param string|null $expressionOperatorName The expression function name (default: same than the PHP function name)
-     *
-     * @return self
-     *
-     * @throws \InvalidArgumentException if given PHP function name does not exist
-     * @throws \InvalidArgumentException if given PHP function name is in namespace
-     *                                   and expression function name is not defined
-     */
-    public static function fromPhp($phpOperatorName, $expressionOperatorName = null)
-    {
-        $phpOperatorName = ltrim($phpOperatorName, '\\');
-        if (!\function_exists($phpOperatorName)) {
-            throw new \InvalidArgumentException(sprintf('PHP function "%s" does not exist.', $phpOperatorName));
-        }
-
-        $parts = explode('\\', $phpOperatorName);
-        if (!$expressionOperatorName && \count($parts) > 1) {
-            throw new \InvalidArgumentException(sprintf('An expression function name must be defined when PHP function "%s" is namespaced.', $phpOperatorName));
-        }
-
-        $compiler = function (...$args) use ($phpOperatorName) {
-            return sprintf('\%s(%s)', $phpOperatorName, implode(', ', $args));
-        };
-
-        $evaluator = function ($p, ...$args) use ($phpOperatorName) {
-            return $phpOperatorName(...$args);
-        };
-
-        return new self($expressionOperatorName ?: end($parts), $compiler, $evaluator);
     }
 }

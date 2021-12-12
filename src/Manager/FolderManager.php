@@ -6,14 +6,15 @@ use App\Entity\Folder;
 use App\Entity\Item;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
-use App\Event\RuleEvent\FileEvent;
 use App\Form\DocumentType;
 use App\Form\FolderType;
 use App\Utils\MyTools;
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Form\FormFactory;
 use Elasticsearch\ClientBuilder;
+use Exception;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Security;
 
 class FolderManager extends AbstractManager
@@ -36,29 +37,21 @@ class FolderManager extends AbstractManager
 
     private $security;
     private $indexName;
-    private $es_port ;
-    private $es_host ;
+    private $es_port;
+    private $es_host;
 
-    public function __construct(EntityManager $entityManager, Security $security ,FormFactory $formFactory ,$indexName,  $es_port , $es_host)
+    public function __construct(EntityManager $entityManager, Security $security, FormFactory $formFactory, $indexName, $es_port, $es_host)
     {
         parent::__construct($entityManager);
 
-        $this->form  = $formFactory ;
+        $this->form = $formFactory;
         $this->security = $security;
         $this->indexName = $indexName;
-        $this->es_port= $es_port ;
-        $this->es_host= $es_host ;
+        $this->es_port = $es_port;
+        $this->es_host = $es_host;
 
-     
+
     }
-
-
-
-    public function getIndexName(){
-        return $this->indexName;
-    }
-   
-
 
     public function init($settings = [])
     {
@@ -72,7 +65,7 @@ class FolderManager extends AbstractManager
                 ->findOneBy(['code' => $this->getUserCode()]);
 
             if (!$this->user instanceof User) {
-                throw new \Exception('UNKNOWN_USER', 404);
+                throw new HttpException('UNKNOWN_USER', 404);
             }
         }
         if ($this->getParentCode()) {
@@ -82,7 +75,7 @@ class FolderManager extends AbstractManager
                 ->findOneBy(['code' => $this->getParentCode()]);
 
             if (!$this->parent instanceof Folder) {
-                throw new \Exception('UNKNOWN_PARENT',404);
+                throw new HttpException('UNKNOWN_PARENT', 404);
             }
         }
         if ($this->getItemCode()) {
@@ -93,7 +86,7 @@ class FolderManager extends AbstractManager
                 ->findOneBy(['code' => $this->getItemCode()]);
 
             if (!$this->item instanceof Item) {
-                throw new \Exception('UNKNOWN_ITEM',404);
+                throw new HttpException('UNKNOWN_ITEM', 404);
             }
         }
 
@@ -101,40 +94,12 @@ class FolderManager extends AbstractManager
         return $this;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getItemCode()
-    {
-        return $this->itemCode;
-    }
-
-
-
     /**
      * @return string
      */
     public function getUserCode()
     {
         return $this->userCode;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getParentCode()
-    {
-        return $this->parentCode;
-    }
-
-    /**
-     * @param string $itemCode
-     */
-    public function setItemCode(string $itemCode)
-    {
-        $this->itemCode = $itemCode;
     }
 
     /**
@@ -146,6 +111,14 @@ class FolderManager extends AbstractManager
     }
 
     /**
+     * @return string
+     */
+    public function getParentCode()
+    {
+        return $this->parentCode;
+    }
+
+    /**
      * @param string $parentCode
      */
     public function setParentCode(string $parentCode)
@@ -153,7 +126,21 @@ class FolderManager extends AbstractManager
         $this->parentCode = $parentCode;
     }
 
+    /**
+     * @return string
+     */
+    public function getItemCode()
+    {
+        return $this->itemCode;
+    }
 
+    /**
+     * @param string $itemCode
+     */
+    public function setItemCode(string $itemCode)
+    {
+        $this->itemCode = $itemCode;
+    }
 
     /**
      * @return array
@@ -162,7 +149,7 @@ class FolderManager extends AbstractManager
     public function create($folderParam)
     {
         if (!$this->checkSubItemsLabelUniqueness($folderParam['label'])) {
-            throw new \Exception('FOUND_ITEM');
+            throw new HttpException('FOUND_ITEM');
         }
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();
@@ -185,21 +172,41 @@ class FolderManager extends AbstractManager
             $this->apiEntityManager->persist($user_item_property);
             $this->parent->setUpdatedAt(new DateTime());
             $this->apiEntityManager->persist($this->parent);
-        
-        $this->IndexCreateFolder($folder);
+
+            $this->IndexCreateFolder($folder);
 
             $this->apiEntityManager->flush();
             $connection->commit();
             return [
                 'data' => [
-                'code' => $folder->getCode()
+                    'code' => $folder->getCode()
                 ],
                 'messages' => 'create_success'
             ];
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $connection->rollback();
-            throw new \Exception($ex->getMessage());
+            throw new HttpException($ex->getMessage());
         }
+    }
+
+    /**
+     * var parent_id
+     * @return bool
+     *
+     */
+    public function checkSubItemsLabelUniqueness($label)
+    {
+        $filters = [
+            'index' => -1,
+            'size' => -1
+        ];
+        $subItems = $this->listSubItem($filters)['data']['rows'];
+        foreach ($subItems as $subItem) {
+            if ($subItem['label'] === $label) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -226,72 +233,64 @@ class FolderManager extends AbstractManager
             'data' => MyTools::paginator($data, $filters['index'], $filters['size']),
             'parent_folder' => $this->parent->getLabel(),
             'parent_code' => $this->parent->getCode(),
-            'parent_roles' =>$parentRole ];
+            'parent_roles' => $parentRole];
     }
 
+    public function IndexCreateFolder(Folder $folder)
+    {
 
 
+        $user_code = $this->security->getUser()->getCode();
 
- /**
+        $array = [
+            $this->es_host . ':' . $this->es_port
+        ];
+
+        $client = ClientBuilder::create()
+            ->setHosts((array)$array[0])
+            ->build();
+
+        $created_at = date('d-m-y h:i:s');
+
+
+        $params = [
+            'index' => $this->getIndexName(),
+            'id' => $folder->getCode(),
+            'body' => [
+                'label' => $folder->getlabel(),
+                'created_at' => $created_at,
+                'update_at' => null,
+                'type' => 'folder',
+                'user_code' => $user_code
+
+
+            ]
+        ];
+
+        $client->index($params);
+
+    }
+
+    public function getIndexName()
+    {
+        return $this->indexName;
+    }
+
+    /**
      * @return array
      * list of subItems
      */
     public function listSharedItem($filters)
     {
 
-       $data = $this->apiEntityManager
+        $data = $this->apiEntityManager
             ->getRepository(Item::class)->findByFilters($filters);
         return [
             'messages' => 'list-item-success',
             'data' => MyTools::paginator($data, $filters['index'], $filters['size']),
-         
-        
+
+
         ];
-    }
-
-
-
-
-    /**
-     * @return array
-     *
-     * schema of current folder
-     */
-    public function getschema()
-    {
-        $i = 0;
-        $schema = array();
-        $parent = $this->parent;
-         $current = ['label' => $parent->getLabel(), 'code' => $parent->getCode()];
-
-        while (null !== $parent->getParent()) {
-            $i++;
-            $parent = $parent->getParent();
-            array_push($schema, ['label' => $parent->getLabel(), 'code' => $parent->getCode()]);
-        }
-        $schema = array_reverse($schema);
-        return ['current' => $current, 'schema' => $schema];
-
-    }
-
-    /**
-     * var parent_id
-     * @return bool
-     *
-     */
-    public function checkSubItemsLabelUniqueness( $label)
-    {
-        $filters = [
-            'index' => -1,
-            'size' => -1
-        ];
-        $subItems = $this->listSubItem($filters)['data']['rows'];
-        foreach ($subItems as $subItem) {
-            if ($subItem['label'] === $label) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -319,44 +318,6 @@ class FolderManager extends AbstractManager
         ]];
     }
 
-
-
-    public function IndexCreateFolder(Folder $folder){ 
-
-           
-      $user_code = $this->security->getUser()->getCode();   
-     
-      $array = [
-        $this->es_host.':'.$this->es_port
-    ];
-
-     $client = ClientBuilder::create()
-     ->setHosts((array)$array[0])
-     ->build(); 
-        
-         $created_at=$date = date('d-m-y h:i:s');
-       
-       
-        
-       
-          $params = [
-              'index' => $this->getIndexName(),
-              'id' => $folder->getCode(),
-              'body'  => [
-                'label' => $folder->getlabel(),
-                 'created_at'=>$created_at,
-                 'update_at'=>null ,
-                 'type' => 'folder',
-                 'user_code'=> $user_code
-                
-                 
-                ]
-          ];
- 
-          $client->index($params);
-  
-        }
-
     public function setTagged()
     {
 
@@ -372,6 +333,7 @@ class FolderManager extends AbstractManager
         ]];
 
     }
+
     /**
      * @return array
      * this method creates new folder for specific user
@@ -400,27 +362,51 @@ class FolderManager extends AbstractManager
         ]];
 
     }
-    public function listSubItemTwigData($filters){
+
+    public function listSubItemTwigData($filters)
+    {
         $schema = $this->getschema();
-        $data =$this->listSubItem($filters);
+        $data = $this->listSubItem($filters);
         $rederedData = [
             'data' => $data['data'],
             'current' => $schema['current'],
             'schema' => []
         ];
 
-        if ($this->security->isGranted('ROLE_OWNER',$this->parent->getCode() )){
-            $rederedData['schema'] =$schema['schema'];
+        if ($this->security->isGranted('ROLE_OWNER', $this->parent->getCode())) {
+            $rederedData['schema'] = $schema['schema'];
         }
-        if ($this->security->isGranted("ROLE_CREATE",$this->parent->getCode() )){
-            $folderForm = $this->form->create(FolderType::class );
+        if ($this->security->isGranted("ROLE_CREATE", $this->parent->getCode())) {
+            $folderForm = $this->form->create(FolderType::class);
             $rederedData['folder_form'] = $folderForm->createView();
 
-            $fileForm = $this->form->create(DocumentType::class );
-            $rederedData['file_form'] =$fileForm->createView();
+            $fileForm = $this->form->create(DocumentType::class);
+            $rederedData['file_form'] = $fileForm->createView();
         }
 
         return $rederedData;
+    }
+
+    /**
+     * @return array
+     *
+     * schema of current folder
+     */
+    public function getschema()
+    {
+        $i = 0;
+        $schema = array();
+        $parent = $this->parent;
+        $current = ['label' => $parent->getLabel(), 'code' => $parent->getCode()];
+
+        while (null !== $parent->getParent()) {
+            $i++;
+            $parent = $parent->getParent();
+            array_push($schema, ['label' => $parent->getLabel(), 'code' => $parent->getCode()]);
+        }
+        $schema = array_reverse($schema);
+        return ['current' => $current, 'schema' => $schema];
+
     }
 }
 

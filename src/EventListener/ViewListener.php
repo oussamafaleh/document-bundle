@@ -3,8 +3,8 @@
 namespace App\EventListener;
 
 use App\Manager\LoggerManager;
-use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ViewListener
@@ -27,7 +27,7 @@ class ViewListener
 
         $messages = [];
         if (isset($result['messages'])) {
-            $messages['code'] = 200 ;
+            $messages['code'] = 200;
             $messages['value'] = $this->translator->trans($result['messages'], [], 'messages');
             unset($result['messages']);
         }

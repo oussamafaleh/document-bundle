@@ -3,36 +3,20 @@
 namespace App\Manager;
 
 
-use App\Entity\User;
 use App\Entity\Folder;
 use App\Entity\Item;
+use App\Entity\User;
 use App\Entity\UserItemProperty;
-use App\Utils\MyTools;
-use Doctrine\ORM\EntityManager;
-
-use Exception;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\Form;
-use App\Form\ItemType;
-
-use Symfony\Component\Security\Core\Security;
-
 use App\Form\DocumentEditType;
 use App\Form\FolderEditType;
-
-use Symfony\Component\Form\FormFactory;
-
-use App\Repository\UserRepository;
-use App\Repository\ItemRepository;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-
+use App\Form\ItemType;
+use Doctrine\ORM\EntityManager;
 use Elasticsearch\ClientBuilder;
+use Exception;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Security\Core\Security;
+
 
 class ItemManager extends AbstractManager
 {
@@ -69,13 +53,6 @@ class ItemManager extends AbstractManager
         return $this->attachment;
     }
 
-
-    public function getIndexName()
-    {
-        return $this->indexName;
-    }
-
-
     public function init($settings = [])
     {
         parent::setSettings($settings);
@@ -88,7 +65,7 @@ class ItemManager extends AbstractManager
                 ->findOneBy(['code' => $this->getUserCode()]);
 
             if (!$this->user instanceof User) {
-                throw new Exception('UNKNOWN_USER');
+                throw new HttpException('UNKNOWN_USER');
             }
         }
         if ($this->getParentCode()) {
@@ -99,7 +76,7 @@ class ItemManager extends AbstractManager
                 ->findOneBy(['code' => $this->getParentCode()]);
 
             if (!$this->parent instanceof Folder) {
-                throw new Exception('UNKNOWN_PARENT');
+                throw new HttpException('UNKNOWN_PARENT');
             }
         }
         if ($this->getItemCode()) {
@@ -110,22 +87,12 @@ class ItemManager extends AbstractManager
                 ->findOneBy(['code' => $this->getItemCode()]);
 
             if (!$this->item instanceof Item) {
-                throw new Exception('UNKNOWN_ITEM');
+                throw new HttpException('UNKNOWN_ITEM');
             }
         }
 
         return $this;
     }
-
-
-    /**
-     * @return string
-     */
-    public function getItemCode()
-    {
-        return $this->itemCode;
-    }
-
 
     /**
      * @return string
@@ -135,13 +102,20 @@ class ItemManager extends AbstractManager
         return $this->userCode;
     }
 
-
     /**
      * @return string
      */
     public function getParentCode()
     {
         return $this->parentCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getItemCode()
+    {
+        return $this->itemCode;
     }
 
     /**
@@ -167,7 +141,6 @@ class ItemManager extends AbstractManager
     {
         $this->parentCode = $parentCode;
     }
-
 
     public function delete($item_code)
     {
@@ -207,7 +180,6 @@ class ItemManager extends AbstractManager
         return 'Folder Deleted Successfully!';
     }
 
-
     public function deleteIndex($item_code)
     {
         $array = [
@@ -223,22 +195,18 @@ class ItemManager extends AbstractManager
             'id' => $item_code
         ];
 
-        try {
-            $client->delete($params);
-        } catch (Missing404Exception $exception) {
-        }
+        $client->delete($params);
+
 
     }
 
+    public function getIndexName()
+    {
+        return $this->indexName;
+    }
 
     public function generateLink($item_code)
     {
-        /*
-         $itemExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
-         var_dump($fileExist);
-
-         */
-
         $item = $this->apiEntityManager
             ->getRepository(Item::class)->findOneBy(['code' => $item_code]);
 
@@ -253,10 +221,6 @@ class ItemManager extends AbstractManager
         } else {
             $url = "pas encore";
         }
-        // $prefixe="http://localhost:8000/folder/list-sub-item/";
-
-
-        //  $url = 'Url_Bundle'.$type.'/'.$item_code. '/droitacces/sharing';
 
 
         return $url;
@@ -269,11 +233,6 @@ class ItemManager extends AbstractManager
         $connection = $this->apiEntityManager->getConnection();
         $connection->beginTransaction();
 
-        /*
-             $itemExist =$this->itemManager->init([$item_code=> $this->getItemCode]);
-             var_dump($fileExist);
-
-             */
         $item = $this->apiEntityManager
             ->getRepository(Item::class)->findOneBy(['code' => $item_code]);
 
@@ -496,15 +455,15 @@ class ItemManager extends AbstractManager
         }
 
 
-        $form = $this->form->create(ItemType::class, $item);
+        $itemForm = $this->form->create(ItemType::class, $item);
 
 
-        $form->submit($request->request->all(), false);
+        $itemForm->submit($request->request->all(), false);
 
 
-        if (!$form->isValid()) {
+        if (!$itemForm->isValid()) {
             $errors = [];
-            foreach ($form->getErrors(true) as $error) {
+            foreach ($itemForm->getErrors(true) as $error) {
                 if ($error->getOrigin()) {
                     $errors[$error->getOrigin()->getName()][] = $error->getMessage();
                 }
@@ -543,7 +502,7 @@ class ItemManager extends AbstractManager
         $client = ClientBuilder::create()
             ->setHosts((array)$array[0])
             ->build();
-        $updated_at = $date = date('d-m-y h:i:s');
+        $updated_at = date('d-m-y h:i:s');
         $index = $this->getIndexName();
         $paramIndex = [
             'index' => $index,
@@ -560,9 +519,8 @@ class ItemManager extends AbstractManager
             ]
         ];
 
-        $response = $client->update($paramIndex);
+        $client->update($paramIndex);
     }
-
 
 
     public function searchKeyWord($keyword)
@@ -594,44 +552,6 @@ class ItemManager extends AbstractManager
         return $response = $client->search($params);
 
     }
-
-
-
-    public function search($search)
-    {
-
-        $user_code = $this->security->getUser()->getCode();
-        $array = [
-            $this->es_host . ':' . $this->es_port
-        ];
-
-        $client = ClientBuilder::create()
-            ->setHosts((array)$array[0])
-            ->build();
-
-        $index = $this->getIndexName();
-        $params = [
-            'index' => $index,
-            'body' => [
-                'query' => [
-                    "bool" => [
-                        "must" => [
-                            ['match' => [
-                                'user_code' => $user_code
-                            ]]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-        $params['body']['query']['bool']['must'][] = $search;
-        return  $client->search($params);
-
-
-    }
-
-
-
 
     public function searchType($search, $searchType)
     {
@@ -679,6 +599,38 @@ class ItemManager extends AbstractManager
 
     }
 
+    public function search($search)
+    {
+
+        $user_code = $this->security->getUser()->getCode();
+        $array = [
+            $this->es_host . ':' . $this->es_port
+        ];
+
+        $client = ClientBuilder::create()
+            ->setHosts((array)$array[0])
+            ->build();
+
+        $index = $this->getIndexName();
+        $params = [
+            'index' => $index,
+            'body' => [
+                'query' => [
+                    "bool" => [
+                        "must" => [
+                            ['match' => [
+                                'user_code' => $user_code
+                            ]]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $params['body']['query']['bool']['must'][] = $search;
+        return $client->search($params);
+
+
+    }
 
 
 }

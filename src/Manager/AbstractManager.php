@@ -5,9 +5,8 @@ namespace App\Manager;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /* * `
  * Base class for most animation objects.
@@ -15,12 +14,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 abstract class AbstractManager
 {
-/**
+    /**
      * ROLES FRONT
      */
     const ROLE_SUPER_USER = 'ROLE_SUPER_USER';
     const ROLE_USER = 'ROLE_USER';
-
 
 
     /**
@@ -39,7 +37,6 @@ abstract class AbstractManager
      * @var entityManager
      */
     protected $apiEntityManager;
-
 
 
     /**
@@ -72,30 +69,16 @@ abstract class AbstractManager
     }
 
 
-
     protected function setSettings($settings)
     {
         $this->settings = $settings;
 
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($this->settings as $property => $value) {
-            try {
-                $accessor->setValue($this, $property, $value);
-            } catch (ExceptionInterface $e) {
-                throw $e;
-            }
+            $accessor->setValue($this, $property, $value);
         }
         return $this;
     }
-
-
-
-
-
-
-
-
-
 
 
 }

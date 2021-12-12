@@ -3,8 +3,8 @@
 namespace App\ApiModel\Folder;
 
 use App\ApiModel\Traits\ApiUser;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Request\CommonParameterBag;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Authentication
@@ -13,6 +13,7 @@ use App\Request\CommonParameterBag;
 class Folder extends CommonParameterBag
 {
     use ApiUser;
+
     /**
      * @var string
      *
@@ -25,7 +26,6 @@ class Folder extends CommonParameterBag
      *
      */
     public $parent_code;
-
 
 
 }

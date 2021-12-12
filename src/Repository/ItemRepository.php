@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 
-use App\Utils\MyTools;
 use App\Entity\Item;
+use App\Utils\MyTools;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
@@ -87,8 +87,7 @@ class ItemRepository extends ServiceEntityRepository
         }
         $sql = 'SELECT ' . substr($sql, 0, -2)
             . ' FROM  item   AS i '
-            . ' INNER JOIN user_item_property AS p ON ( p.item_id = i.id ) '
-        ;
+            . ' INNER JOIN user_item_property AS p ON ( p.item_id = i.id ) ';
 
         if (!empty($isTagged)) {
             $parameters[':is_tagged'] = $isTagged;
@@ -110,10 +109,10 @@ class ItemRepository extends ServiceEntityRepository
             $where [] = ' i.type = :type';
         }
         if (!empty($role)) {
-            $parameters[':role'] = '"'.$role['name'].'"';
+            $parameters[':role'] = '"' . $role['name'] . '"';
             $parameters[':contain'] = $role['contain'];
             $where [] = ' JSON_CONTAINS( p.roles , :role   ) = :contain';
-    }
+        }
         if (!empty($where)) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }

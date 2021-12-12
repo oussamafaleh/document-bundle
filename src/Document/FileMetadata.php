@@ -2,9 +2,10 @@
 
 
 namespace App\Document;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-/** @MongoDB\EmbeddedDocument */
 
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+
+/** @MongoDB\EmbeddedDocument */
 class FileMetadata
 {
     /** @MongoDB\Field(type="string") */

@@ -12,6 +12,8 @@
 namespace App\RuleExpressionLanguage\ExpressionLanguage\Node;
 
 use App\RuleExpressionLanguage\ExpressionLanguage\Compiler;
+use BadMethodCallException;
+use function count;
 
 /**
  * Represents a node in the AST.
@@ -24,7 +26,7 @@ class Node
     public $attributes = [];
 
     /**
-     * @param array $nodes      An array of nodes
+     * @param array $nodes An array of nodes
      * @param array $attributes An array of attributes
      */
     public function __construct(array $nodes = [], array $attributes = [])
@@ -43,12 +45,12 @@ class Node
             $attributes[] = sprintf('%s: %s', $name, str_replace("\n", '', var_export($value, true)));
         }
 
-        $repr = [str_replace('App\RuleExpressionLanguage\ExpressionLanguage\Node\\', '', static::class).'('.implode(', ', $attributes)];
+        $repr = [str_replace('App\RuleExpressionLanguage\ExpressionLanguage\Node\\', '', static::class) . '(' . implode(', ', $attributes)];
 
-        if (\count($this->nodes)) {
+        if (count($this->nodes)) {
             foreach ($this->nodes as $node) {
-                foreach (explode("\n", (string) $node) as $line) {
-                    $repr[] = '    '.$line;
+                foreach (explode("\n", (string)$node) as $line) {
+                    $repr[] = '    ' . $line;
                 }
             }
 
@@ -67,19 +69,14 @@ class Node
         }
     }
 
-    public function evaluate($functions,$operators, $values)
+    public function evaluate($functions, $operators, $values)
     {
         $results = [];
         foreach ($this->nodes as $node) {
-            $results[] = $node->evaluate($functions,$operators, $values);
+            $results[] = $node->evaluate($functions, $operators, $values);
         }
 
         return $results;
-    }
-
-    public function toArray()
-    {
-        throw new \BadMethodCallException(sprintf('Dumping a "%s" instance is not supported yet.', static::class));
     }
 
     public function dump()
@@ -91,6 +88,11 @@ class Node
         }
 
         return $dump;
+    }
+
+    public function toArray()
+    {
+        throw new BadMethodCallException(sprintf('Dumping a "%s" instance is not supported yet.', static::class));
     }
 
     protected function dumpString($value)

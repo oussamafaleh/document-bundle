@@ -4,14 +4,13 @@ namespace App\Entity;
 
 use App\Repository\DocumentRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Item;
 
 /**
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
  */
 class Document extends Item
 {
-    
+
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -19,13 +18,10 @@ class Document extends Item
     private $extension;
 
 
-
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $size;
-
-
 
 
     public function getExtension(): ?string

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Utils\MyTools;
+use DateTime;
 use ReflectionClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -33,81 +34,9 @@ abstract class AbstractEntity
         }
 
         if (method_exists($this, 'setCreatedAt')) {
-            $this->setCreatedAt(new \DateTime());
+            $this->setCreatedAt(new DateTime());
         }
         return $this;
-    }
-
-    public function __toString()
-    {
-        if (method_exists($this, 'getCode')) {
-            return $this->getCode();
-        }
-        return null;
-    }
-
-    /**
-     * override this methods to select only some parameters key.
-     *
-     * @return array
-     */
-    public function getAttributes()
-    {
-        $attributes = [];
-        $reflection = new ReflectionClass($this);
-        $properties = $reflection->getProperties();
-        foreach ($properties as $property) {
-            $attributes[] = $property->getName();
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Format object to array
-     * @return type
-     */
-    public function toArray($toSnake = false, $eager = true, $prefix = '')
-    {
-        $return = [];
-
-        $attributes = $this->getAttributes();
-
-        $accessor = PropertyAccess::createPropertyAccessor();
-        foreach ($attributes as $newAttribute) {
-            if ($newAttribute && !in_array($newAttribute, self::IGNORED_ATTRIBUTES)) {
-
-                $key = ($toSnake ? MyTools::toSnake($newAttribute) : $newAttribute );
-
-                if (!empty($prefix)) {
-                    $key = $prefix . ($toSnake ? '_' . $key : ucfirst($key));
-                }
-
-                $return[$key] = $accessor->getValue($this, $newAttribute);
-
-                if ($return[$key] instanceof \DateTime) {
-
-                    $return[$key] = $return[$key]->format(static::DATE_TIME_FORMAT);
-                } else if (is_object($return[$key])) {
-
-                    $return[$key] = $return[$key]->__toString();
-                    if (!$eager) {
-                        unset($return[$key]);
-                    }
-                }
-            }
-        }
-
-        if (method_exists($this, 'getLabel')) {
-            $return ['label'] = $this->getLabel();
-        }
-
-        return $return;
-    }
-
-    public function serialize($mapping = null, $prefix = [])
-    {
-        return json_encode([$this->toArray($mapping, $prefix)]);
     }
 
     /**
@@ -127,6 +56,78 @@ abstract class AbstractEntity
         return $this;
     }
 
+    public function __toString()
+    {
+        if (method_exists($this, 'getCode')) {
+            return $this->getCode();
+        }
+        return null;
+    }
+
+    public function serialize($mapping = null, $prefix = [])
+    {
+        return json_encode([$this->toArray($mapping, $prefix)]);
+    }
+
+    /**
+     * Format object to array
+     * @return type
+     */
+    public function toArray($toSnake = false, $eager = true, $prefix = '')
+    {
+        $return = [];
+
+        $attributes = $this->getAttributes();
+
+        $accessor = PropertyAccess::createPropertyAccessor();
+        foreach ($attributes as $newAttribute) {
+            if ($newAttribute && !in_array($newAttribute, self::IGNORED_ATTRIBUTES)) {
+
+                $key = ($toSnake ? MyTools::toSnake($newAttribute) : $newAttribute);
+
+                if (!empty($prefix)) {
+                    $key = $prefix . ($toSnake ? '_' . $key : ucfirst($key));
+                }
+
+                $return[$key] = $accessor->getValue($this, $newAttribute);
+
+                if ($return[$key] instanceof DateTime) {
+
+                    $return[$key] = $return[$key]->format(static::DATE_TIME_FORMAT);
+                } else if (is_object($return[$key])) {
+
+                    $return[$key] = $return[$key]->__toString();
+                    if (!$eager) {
+                        unset($return[$key]);
+                    }
+                }
+            }
+        }
+
+        if (method_exists($this, 'getLabel')) {
+            $return ['label'] = $this->getLabel();
+        }
+
+        return $return;
+    }
+
+    /**
+     * override this methods to select only some parameters key.
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        $attributes = [];
+        $reflection = new ReflectionClass($this);
+        $properties = $reflection->getProperties();
+        foreach ($properties as $property) {
+            $attributes[] = $property->getName();
+        }
+
+        return $attributes;
+    }
+
     public function createDateTime($dateTime = null, $format = null)
     {
         date_default_timezone_set('Europe/Paris');
@@ -135,14 +136,14 @@ abstract class AbstractEntity
             return null;
         }
 
-        if ($dateTime instanceof \DateTime) {
+        if ($dateTime instanceof DateTime) {
             return $dateTime;
         }
         if ($format) {
-            return \DateTime::createFromFormat($format, trim($dateTime));
+            return DateTime::createFromFormat($format, trim($dateTime));
         }
 
-        return new \DateTime(trim($dateTime));
+        return new DateTime(trim($dateTime));
     }
 
     public function getFields($mapping)

@@ -82,8 +82,7 @@ class DocumentRepository extends ServiceEntityRepository
         $sql = 'SELECT ' . substr($sql, 0, -2)
             . ' FROM  item   AS i '
             . ' INNER JOIN document AS d ON ( d.id = i.id ) '
-            . ' INNER JOIN user_item_property AS p ON ( p.item_id = i.id ) '
-        ;
+            . ' INNER JOIN user_item_property AS p ON ( p.item_id = i.id ) ';
 
         if (!empty($user)) {
             $parameters[':user_id'] = $user;
@@ -104,7 +103,6 @@ class DocumentRepository extends ServiceEntityRepository
         if ($page > 0) {
             $sql .= ' LIMIT ' . $maxPerPage . ' OFFSET ' . (($page - 1) * $maxPerPage);
         }
-
 
 
         $cacheKey = sha1($sql . json_encode($parameters));

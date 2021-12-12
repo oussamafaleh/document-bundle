@@ -6,6 +6,7 @@ use App\Entity\Folder;
 use App\Entity\ServiceMessage;
 use App\Entity\User;
 use App\Entity\UserItemProperty;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -14,12 +15,12 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
 
-         $roles = ['ROLE_OWNER', 'ROLE_CREATE','ROLE_REMOVE','ROLE_READ','ROLE_EDIT'];
-         $user1 = new User();
-         $user1->setCode('0970229e-4867-4ada-b0ac-a199446cbc21')
-         ->setEmail('oussamafaleh1998@gmail.com');
+        $roles = ['ROLE_OWNER', 'ROLE_CREATE', 'ROLE_REMOVE', 'ROLE_READ', 'ROLE_EDIT'];
+        $user1 = new User();
+        $user1->setCode('0970229e-4867-4ada-b0ac-a199446cbc21')
+            ->setEmail('oussamafaleh1998@gmail.com');
 
-         $manager->persist($user1);
+        $manager->persist($user1);
 
         $user2 = new User();
         $user2->setCode('a5a38063-7fe1-4e8a-9841-aaad32afc0b1')
@@ -30,7 +31,7 @@ class AppFixtures extends Fixture
         $folder1 = new Folder();
         $folder1->setLabel('root')
             ->setCode('84150eb1-336a-4193-ba8d-6237bb7e374e')
-            ->setCreatedAt(new \DateTime());
+            ->setCreatedAt(new DateTime());
         $manager->persist($folder1);
         $userItemProp = new UserItemProperty();
         $userItemProp->setUser($user1)
@@ -52,7 +53,7 @@ class AppFixtures extends Fixture
         $templateFolder = new Folder();
         $templateFolder->setLabel('template')
             ->setCode('b7d39fc9-297e-489e-ae3e-59573b15b4f1')
-            ->setCreatedAt(new \DateTime());
+            ->setCreatedAt(new DateTime());
         $manager->persist($templateFolder);
         $userItemProp2 = new UserItemProperty();
         $userItemProp2->setUser($user1)
@@ -74,9 +75,9 @@ class AppFixtures extends Fixture
         foreach (range(0, 5) as $number) {
             foreach ($roles as $role) {
                 $subFolder1 = new Folder();
-                $subFolder1->setLabel('sub_folder_' .$role. $number)
+                $subFolder1->setLabel('sub_folder_' . $role . $number)
                     ->setParent($folder1)
-                    ->setCreatedAt(new \DateTime());
+                    ->setCreatedAt(new DateTime());
 
                 $manager->persist($subFolder1);
                 $userItemProp = new UserItemProperty();
@@ -88,7 +89,7 @@ class AppFixtures extends Fixture
             }
         }
 
-       //init history actions API
+        //init history actions API
         $createFolderService = new ServiceMessage();
         $createFolderService->setLabel("create_folder")
             ->setMessage("added a folder to ");
@@ -102,7 +103,7 @@ class AppFixtures extends Fixture
         $uploadFileService = new ServiceMessage();
         $uploadFileService->setLabel("upload_file")
             ->setMessage("uploaded the file to");
-        $manager->persist($uploadFileService);;
+        $manager->persist($uploadFileService);
 
         //init history actions
         $createFolderService = new ServiceMessage();
@@ -118,7 +119,7 @@ class AppFixtures extends Fixture
         $uploadFileService = new ServiceMessage();
         $uploadFileService->setLabel("upload_file_twig")
             ->setMessage("uploaded the file to");
-        $manager->persist($uploadFileService);;
+        $manager->persist($uploadFileService);
         $manager->flush();
     }
 }

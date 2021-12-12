@@ -2,43 +2,12 @@
 
 namespace App\Request;
 
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use ReflectionClass;
 
 class CommonParameterBag implements CommonParameterBagInterface
 {
-
-    /**
-     * override this method to customize which request parameters bags will be used.
-     *
-     * @return array
-     */
-    public function getFilteredType()
-    {
-        return array(
-            static::PARAMETERS_TYPE_HEADERS,
-            static::PARAMETERS_TYPE_QUERY,
-            static::PARAMETERS_TYPE_REQUEST,
-        );
-    }
-
-    /**
-     * override this methods to select only some parameters key.
-     *
-     * @return array
-     */
-    public function getFilteredKeys()
-    {
-        $attributes = [];
-        $reflection = new ReflectionClass($this);
-        $properties = $reflection->getProperties();
-        foreach ($properties as $property) {
-            $attributes[] = $property->getName();
-        }
-
-        return $attributes;
-    }
 
     /**
      * @param Request $request
@@ -59,8 +28,8 @@ class CommonParameterBag implements CommonParameterBagInterface
         foreach ($this->getFilteredType() as $type) {
             if (in_array($type, $allowedTypes)) {
                 $params = empty($filteredKeys) ?
-                        $request->$type->all() :
-                        array_intersect_key($request->$type->all(), array_flip($filteredKeys));
+                    $request->$type->all() :
+                    array_intersect_key($request->$type->all(), array_flip($filteredKeys));
 
                 if ($request->isMethod('POST') && !empty($request->getContent()) && json_decode($request->getContent()) !== null) {
                     $params = array_merge($params, json_decode($request->getContent(), true));
@@ -78,6 +47,37 @@ class CommonParameterBag implements CommonParameterBagInterface
 //                $this->add($params);
             }
         }
+    }
+
+    /**
+     * override this methods to select only some parameters key.
+     *
+     * @return array
+     */
+    public function getFilteredKeys()
+    {
+        $attributes = [];
+        $reflection = new ReflectionClass($this);
+        $properties = $reflection->getProperties();
+        foreach ($properties as $property) {
+            $attributes[] = $property->getName();
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * override this method to customize which request parameters bags will be used.
+     *
+     * @return array
+     */
+    public function getFilteredType()
+    {
+        return array(
+            static::PARAMETERS_TYPE_HEADERS,
+            static::PARAMETERS_TYPE_QUERY,
+            static::PARAMETERS_TYPE_REQUEST,
+        );
     }
 
 }

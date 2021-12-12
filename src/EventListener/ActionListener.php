@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 class ActionListener
 {
 
-    public function __construct( LoggerManager $loggerManager)
+    public function __construct(LoggerManager $loggerManager)
     {
         $this->loggerManager = $loggerManager;
     }
