@@ -1,7 +1,7 @@
 
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
- import TextWatcher from '@ckeditor/ckeditor5-typing/src/textwatcher';
- import { escapeRegExp } from 'lodash-es';
+import TextWatcher from '@ckeditor/ckeditor5-typing/src/textwatcher';
+import { escapeRegExp } from 'lodash-es';
 
 // All named transformations.
 const TRANSFORMATIONS = {

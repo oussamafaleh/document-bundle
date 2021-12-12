@@ -112,7 +112,7 @@ export default class extends Controller {
     format(){
         let form = document.getElementById("template-form").getElementsByClassName("form-control");
         form.forEach( (element) => {
-            console.log(document.querySelector('data-template-var='+element.id));
+            console.log(document.querySelector('span[data-template-var='+element.id+']'));
             //console.log(element);
             document.querySelector('span[data-template-var='+element.id+']').innerText = element.value;
            // document.querySelector('span[data-template-var='+element.id+']').removeAttribute('data-template-type');
